@@ -39,6 +39,19 @@ make clone       # Clone all repos fresh (for new machines)
 make pull        # Pull all repos
 ```
 
+## Environment configuration
+
+Path-sensitive tooling now uses explicit env/config knobs instead of machine-local hardcoded paths.
+
+| Variable | Used by | Default | Purpose |
+|----------|---------|---------|---------|
+| `CHAT_HTML_PATH` | `talkbank-chat/scripts/check-chat-manual-anchors.sh` | unset | Optional local `chat.html` path for anchor checks. |
+| `CHAT_HTML_URL` | `talkbank-chat/scripts/check-chat-manual-anchors.sh` | TalkBank URL | Source URL when `CHAT_HTML_PATH` is not set. |
+| `TALKBANK_DATA_ROOT` | `talkbank-private/batchalign/scripts/*` | `~/data` | Root of local corpus checkout for rerun/fix scripts. |
+| `WOR_VALIDATION_LOG` | `talkbank-private/batchalign/scripts/analyze_gra_warnings.py` | `~/test.log` | Default validation log path for `%gra` warning analysis. |
+| `BA4WAY_OLD_REPO` | `batchalign3/scripts/compare_4way_retokenize.sh` | unset | Optional checkout path for the old Jan baseline variant. |
+| `BA4WAY_OLD_PYTHON` | `batchalign3/scripts/compare_4way_retokenize.sh` | `python3` | Python executable used with `BA4WAY_OLD_REPO`. |
+
 ## Structure
 
 This meta-repo tracks cross-repo coordination files:

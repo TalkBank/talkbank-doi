@@ -106,6 +106,51 @@ Never hand-edit generated artifacts (`parser.c`, `tree-sitter-talkbank/test/corp
 ### Cache Policy
 The validation cache (`~/.cache/talkbank-utils/talkbank-cache.db`) contains results for 95,000+ files. Never delete it. Use `--force` to refresh specific paths.
 
+## Rust Coding Standards
+
+Universal standards for all Rust code across the workspace. Per-repo CLAUDE.md files carry an identical copy of these standards plus domain-specific additions.
+
+### Edition and Tooling
+- Rust **2024 edition**.
+- `cargo fmt` before committing. Use `cargo fmt` (not standalone `rustfmt`) for workspace-consistent formatting.
+- **Prefer `cargo nextest run`** for faster parallel-per-test execution. Use `cargo test --doc` for doctests (nextest can't run those).
+- Run `cargo clippy --all-targets -- -D warnings` periodically (dedicated lint passes), not on every change. Fix real issues; do not silence with `#[allow(clippy::...)]` without explicit approval.
+
+### Error Handling
+- **No panics for recoverable conditions.** Use typed errors (`thiserror`); use `miette` for rich diagnostics where appropriate.
+- **No silent swallowing.** Every unexpected condition must be handled with explicit error reporting — no `.ok()`, `.unwrap_or_default()`, or silent fallbacks that hide bugs.
+
+### Output and Logging
+- **Library code:** `tracing` macros (`tracing::info!`, `tracing::warn!`, etc.) — never `println!`/`eprintln!`.
+- **CLI binaries:** `println!`/`eprintln!` for user-facing output; `tracing` for debug logging.
+- **Test code:** `println!` is acceptable (cargo captures it).
+
+### Lazy Initialization
+- `LazyLock<Regex>` (from `std::sync`) for constant regex patterns. Never call `Regex::new()` inside functions or loops.
+- `OnceLock` for per-instance memoization of runtime-determined values.
+- Prefer `const` when possible (even better than lazy).
+- All lazy init via `std::sync` — no external crate dependencies needed.
+
+### Type Design
+- **Avoid boolean blindness:** use enums for multi-way choices. Single `bool` for simple on/off is fine.
+- **`BTreeMap` for deterministic JSON** in tests and snapshot tests (not `HashMap`). Ensures consistent, reviewable diffs.
+- Prefer explicit enums over ambiguous `Option` when there are multiple meaningful states.
+
+### File Size Limits
+- **Recommended:** ≤400 lines per file.
+- **Hard limit:** ≤800 lines per file (must be split).
+
+### Refactoring Triggers
+Stop and refactor when you see:
+- `x: i32, y: i32` for domain data → use domain structs
+- Multiple booleans for state → use enum with variants
+- `fn parse() -> Option<T>` where failure reason matters → use `Result<T, ParseError>`
+- `match s { "win" => ... }` on raw strings → parse to `enum` at boundary
+
+### Git
+Conventional Commits format: `<type>[scope]: <description>`
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`
+
 ## Per-Repo Guidance
 
 Each repo has its own CLAUDE.md (37 files, ~3,800 lines total). Key entry points:
