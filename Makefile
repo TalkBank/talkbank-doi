@@ -1,4 +1,4 @@
-REPOS = tree-sitter-talkbank talkbank-chat talkbank-chatter talkbank-clan batchalign3
+REPOS = tree-sitter-talkbank talkbank-chat talkbank-chatter talkbank-clan batchalign3 batchalign-hk-plugin
 
 .PHONY: status check test verify-all clone pull
 
@@ -46,6 +46,7 @@ clone:
 	gh repo clone TalkBank/talkbank-chatter
 	gh repo clone TalkBank/talkbank-clan
 	gh repo clone TalkBank/batchalign3
+	gh repo clone TalkBank/batchalign-hk-plugin
 	gh repo clone TalkBank/talkbank-private
 
 # Pull all repos
