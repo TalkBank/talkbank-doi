@@ -7,8 +7,9 @@ batchalign3/
 talkbank-private/
 batchalign-hk-plugin/
 
-# Tool caches
-.claude/
+# Tool caches (but keep skills)
+.claude/*
+!.claude/skills/
 .mypy_cache/
 
 # Temp files
