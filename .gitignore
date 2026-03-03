@@ -1,0 +1,15 @@
+# Sub-repos (each has its own git history)
+tree-sitter-talkbank/
+talkbank-chat/
+talkbank-chatter/
+talkbank-clan/
+batchalign3/
+talkbank-private/
+batchalign-hk-plugin/
+
+# Tool caches
+.claude/
+.mypy_cache/
+
+# Temp files
+*.cha

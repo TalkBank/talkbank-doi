@@ -1,0 +1,110 @@
+{
+  "generated_at_utc": "2026-02-25T14:55:49.312262+00:00",
+  "scope": "doctest/test coverage opportunity audit for non-batchalign3 repos",
+  "projects": {
+    "batchalign-hk-plugin": {
+      "rust": {
+        "total_files": 0,
+        "src_like_files": 0,
+        "test_like_files": 0,
+        "files_with_cfg_test": 0,
+        "files_with_doc_comments": 0,
+        "files_with_doctest_hints": 0
+      },
+      "python": {
+        "total_files": 36,
+        "src_like_files": 36,
+        "test_like_files": 0
+      },
+      "suggestions": [
+        "Add Python pytest smoke tests for key modules and scripts."
+      ]
+    },
+    "talkbank-chat": {
+      "rust": {
+        "total_files": 906,
+        "src_like_files": 561,
+        "test_like_files": 345,
+        "files_with_cfg_test": 119,
+        "files_with_doc_comments": 786,
+        "files_with_doctest_hints": 175
+      },
+      "python": {
+        "total_files": 3,
+        "src_like_files": 3,
+        "test_like_files": 0
+      },
+      "suggestions": [
+        "Add Python pytest smoke tests for key modules and scripts."
+      ]
+    },
+    "talkbank-chatter": {
+      "rust": {
+        "total_files": 105,
+        "src_like_files": 102,
+        "test_like_files": 3,
+        "files_with_cfg_test": 9,
+        "files_with_doc_comments": 92,
+        "files_with_doctest_hints": 9
+      },
+      "python": {
+        "total_files": 0,
+        "src_like_files": 0,
+        "test_like_files": 0
+      },
+      "suggestions": [
+        "Increase Rust integration/unit tests for src modules with minimal direct test coverage."
+      ]
+    },
+    "talkbank-clan": {
+      "rust": {
+        "total_files": 39,
+        "src_like_files": 37,
+        "test_like_files": 2,
+        "files_with_cfg_test": 20,
+        "files_with_doc_comments": 35,
+        "files_with_doctest_hints": 13
+      },
+      "python": {
+        "total_files": 0,
+        "src_like_files": 0,
+        "test_like_files": 0
+      },
+      "suggestions": []
+    },
+    "talkbank-private": {
+      "rust": {
+        "total_files": 0,
+        "src_like_files": 0,
+        "test_like_files": 0,
+        "files_with_cfg_test": 0,
+        "files_with_doc_comments": 0,
+        "files_with_doctest_hints": 0
+      },
+      "python": {
+        "total_files": 12,
+        "src_like_files": 10,
+        "test_like_files": 2
+      },
+      "suggestions": []
+    },
+    "tree-sitter-talkbank": {
+      "rust": {
+        "total_files": 2,
+        "src_like_files": 2,
+        "test_like_files": 0,
+        "files_with_cfg_test": 1,
+        "files_with_doc_comments": 2,
+        "files_with_doctest_hints": 1
+      },
+      "python": {
+        "total_files": 3,
+        "src_like_files": 2,
+        "test_like_files": 1
+      },
+      "suggestions": [
+        "Increase Rust integration/unit tests for src modules with minimal direct test coverage."
+      ]
+    }
+  }
+}

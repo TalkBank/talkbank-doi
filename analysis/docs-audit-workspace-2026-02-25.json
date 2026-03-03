@@ -1,0 +1,6071 @@
+{
+  "generated_at_utc": "2026-02-25T14:28:44.435033+00:00",
+  "scope": "workspace markdown documentation audit across talkbank projects",
+  "projects": {
+    "batchalign-hk-plugin": {
+      "total_docs": 1,
+      "tier_counts": {
+        "repo-doc": 1
+      },
+      "historical_candidates_not_archived": []
+    },
+    "batchalign3": {
+      "total_docs": 186,
+      "tier_counts": {
+        "active-doc": 28,
+        "archived-book": 33,
+        "archived-doc": 1,
+        "archived-report": 2,
+        "archived-root-note": 1,
+        "book-navigation": 1,
+        "internal-private": 9,
+        "published-book": 109,
+        "repo-doc": 2
+      },
+      "historical_candidates_not_archived": [
+        "book/src/decisions/rust-migration-proposal.md",
+        "book/src/developer/documentation-audit-2026-02-25.md",
+        "book/src/developer/manual-anchor-audit.md",
+        "rust/crates/talkbank-parser-tests/PARSER_TEST_AUDIT.md"
+      ]
+    },
+    "talkbank-chat": {
+      "total_docs": 747,
+      "tier_counts": {
+        "active-doc": 602,
+        "archived-book": 23,
+        "archived-doc": 1,
+        "book-navigation": 1,
+        "component-doc": 29,
+        "internal-private": 9,
+        "published-book": 78,
+        "repo-doc": 4
+      },
+      "historical_candidates_not_archived": [
+        "book/src/architecture/batchalign-warnings-audit.md",
+        "book/src/architecture/check-parity-audit.md",
+        "book/src/architecture/error-code-audit.md",
+        "book/src/architecture/option-result-audit.md",
+        "book/src/architecture/reorganization-roadmap.md",
+        "book/src/architecture/sentinel-audit.md",
+        "book/src/architecture/talkbank-clan-PORTING-ROADMAP.md",
+        "book/src/architecture/talkbank-utils-PORTING-ROADMAP.md",
+        "book/src/architecture/utf8-audit.md",
+        "book/src/architecture/validation-completion-audit.md",
+        "book/src/contributing/execution-checklist.md",
+        "crates/talkbank-parser-tests/PARSER_TEST_AUDIT.md",
+        "docs/audits/performance-audit-2026-02-24.md",
+        "docs/doctests-assessment.md",
+        "docs/validation/STRICT_TIMELINE_MODE_PROPOSAL.md",
+        "docs/word-concept-comparison.md",
+        "spec/docs/ALIGNMENT_DIVERGENCE_REPORT.md",
+        "spec/docs/ERROR_SPEC_AUDIT_RESOLUTION.md"
+      ]
+    },
+    "talkbank-chatter": {
+      "total_docs": 25,
+      "tier_counts": {
+        "active-doc": 12,
+        "archived-doc": 1,
+        "archived-report": 2,
+        "component-doc": 8,
+        "internal-private": 2
+      },
+      "historical_candidates_not_archived": []
+    },
+    "talkbank-clan": {
+      "total_docs": 5,
+      "tier_counts": {
+        "active-doc": 2,
+        "internal-private": 1,
+        "repo-doc": 2
+      },
+      "historical_candidates_not_archived": []
+    },
+    "talkbank-private": {
+      "total_docs": 25,
+      "tier_counts": {
+        "active-doc": 16,
+        "archived-doc": 8,
+        "internal-private": 1
+      },
+      "historical_candidates_not_archived": [
+        "batchalign/docs/fleet-management-plan.md"
+      ]
+    },
+    "tree-sitter-talkbank": {
+      "total_docs": 5,
+      "tier_counts": {
+        "internal-private": 1,
+        "repo-doc": 4
+      },
+      "historical_candidates_not_archived": []
+    }
+  },
+  "entries": [
+    {
+      "project": "batchalign-hk-plugin",
+      "path": "README.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "README.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "BATCHALIGN2_DELTA.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust-next/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust-next/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "benchmarks/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "apps/dashboard-desktop/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/SUMMARY.md",
+      "tier": "book-navigation",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/introduction.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/documentation-readiness.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/rust-next.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/rust-contributor-onboarding.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/deployment-separation.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/manual-anchor-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/tauri-react-dashboard.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/docx-bookmark-workflow.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/testing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/telemetry-runbook.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/pre-commit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/plugins.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/rust-core.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/dioxus-dashboard.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/adding-engines.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/rust-manual-crosswalk.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/rust-workspace-map.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/python-versioning.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/python-314t-migration.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/building.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/documentation-audit-2026-02-25.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/documentation-scope.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/developer/string-check-optimizations.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/troubleshooting.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/quick-start.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/rev-ai.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/rust-server.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/python-api.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/plugins.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/cli-reference.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/installation.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/user-guide/server-mode.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/talkbank-batchalign-transition.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/cache-rust-migration.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/lenient-parsing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/rusqlite-vs-sqlx-spike-2026-02.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/provenance-type-system.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/rust-morphosyntax-case.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/tauri-react-dashboard-adoption.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/dioxus-dashboard-cutover-gate.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/align-improvements.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/downstream-integration.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/rust-implementation-coverage.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/eliminating-dp-alignment.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/bug-fixes-backport.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/long-term-architecture-charter.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/type-safety-summary.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/off-the-shelf-framework-adoption-adr.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/server-orchestration-adr.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/dioxus-dashboard-adoption.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/rust-migration-proposal.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/plugin-migration-compatibility-adr.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/google-translate-migration.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/talkbank-model-amendments.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/models-training-runtime-adr.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/decisions/rust-migration.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/pipeline-system.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/server-architecture.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/overview.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/python-rust-interface.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/server-performance-gains.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/caching.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/validation.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/chat-parsing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/server-known-issues.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/server-model-loading.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/error-handling.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/engine-interface.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/rust-server-migration.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/architecture/dispatch-system.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/wor-tier-bullet-bug.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/whisper-asr.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/filesystem-paths.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/utr-auto-add-history.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/textgrid.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/l2-handling.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/master-tier-output.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/benchmark-results.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/benchmarks.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/forced-alignment.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/utr-alignment.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/mor-gra-generation.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/proportional-fa-estimation.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/align-monotonicity.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/utr-in-align-pipeline.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/retrace-detection.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/per-utterance-language-routing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/align-correctness-fixes.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/benchmark-methodology.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/throughput-analysis.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/morphotag-divergences.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/wor-tier-python-vs-rust.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/gra-format.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/per-word-language-routing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/align-throughput.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/wor-tier.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/python-gra-generation-analysis.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/tier-parse-leniency.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/wor-terminator-bullet-behavior.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/gra-correctness-guarantee.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/morphotag-throughput.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/morphosyntax.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/media-conversion.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/chat-format.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/multilingual.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/command-io.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/language-handling.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/mwt-handling.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "book/src/reference/concurrency.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/README.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/root-notes/FINAL_LAST_STEPS.md",
+      "tier": "archived-root-note",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/reports/pinned-batchalign-variants-2026-02-25.md",
+      "tier": "archived-report",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/reports/2026-02-24-python-interpreter-footprint.md",
+      "tier": "archived-report",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/developer/progress-reporting.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/developer/python-rust-discrepancies.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/developer/framework-adoption-backlog.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/developer/regeneration-plan.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/developer/python-rust-morphotag-comparison.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/ten-year-platform-roadmap.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-cutover-execution-2026-02-24.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/python-rust-boundary-audit.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/rust-migration-perf-predictions.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-deprecation-track.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/hk-pluginization-assessment.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/rust-migration-benchmark-report.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/server-rust-rewrite-assessment.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/correctness-findings.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/coref-utseg-assessment.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-uat-signoff-template.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/rust-only-align-assessment.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/python-master-bug-audit.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/disposition-audit.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/one-year-execution-plan-2026-2027.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/string-audit-report.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/experience-report.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/job-retry-proposal.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-uat-execution-sheet.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/retrace-regression-postmortem.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/decisions/correctness-campaign.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/architecture/validation-ux-audit.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/architecture/caching-report.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/reference/umor-ugra-assessment.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/reference/comparison-report.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/reference/wor-tier-text-audit.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/reference/corpus-audit-report.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "docs/archive/book-src/reference/test-corpora-report.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-transform/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-transform/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-json/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-tree-sitter-parser/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-tree-sitter-parser/PARSING_PATTERNS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-tree-sitter-parser/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-model/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-model/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-parser-api/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-errors/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-direct-parser/API_PREFIX_CONVENTIONS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-direct-parser/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-parser-tests/GOLDEN_WORDS_IMPLEMENTATION.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-parser-tests/PARSER_TEST_AUDIT.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-parser-tests/GOLDEN_WORDS_STRATEGY.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-parser-tests/FIXES_COMPLETED.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-parser-tests/FINAL_SUMMARY.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-parser-tests/CURRENT_STATUS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-pipeline/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-derive/CHANGELOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-model/docs/LANGUAGE_RESOLUTION.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-model/docs/QUOTATION_LINKERS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/crates/talkbank-tree-sitter-parser/docs/ERROR_OFFSET_ADJUSTMENT.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/grammar/.kiro/steering/product.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/grammar/.kiro/steering/structure.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/grammar/.kiro/steering/tech.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/grammar/.kiro/specs/grammar-completion/requirements.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/grammar/.kiro/specs/grammar-completion/tasks.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust/grammar/.kiro/specs/grammar-completion/design.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust-next/crates/batchalign-dashboard-dioxus/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "batchalign3",
+      "path": "rust-next/crates/batchalign-dashboard-dioxus/smoke/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "CODE_OF_CONDUCT.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "README.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "CONTRIBUTING.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "SECURITY.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "corpus/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "tests/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/VALIDATION_INFRASTRUCTURE.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/index.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/word-concept-comparison.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/doctests-assessment.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "schema/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": ".github/copilot-instructions.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/SUMMARY.md",
+      "tier": "book-navigation",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/introduction.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/chat-format/overview.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/chat-format/mor-tier.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/chat-format/utterances.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/chat-format/symbols.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/chat-format/dependent-tiers.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/chat-format/word-syntax.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/chat-format/headers.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/user-guide/batch-workflows.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/user-guide/vscode-extension.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/user-guide/cli-reference.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/user-guide/chat-processing-playbook.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/user-guide/installation.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/user-guide/validation-errors.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/ci-and-release.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/grammar-workflow.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/acceptance-test-matrix.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/quality-gates.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/execution-checklist.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/maintenance-model.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/coding-standards-extended.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/setup.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/documentation-architecture.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/testing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/coding-standards.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/error-testing-consolidation.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/spec-workflow.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/open-source-governance.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/contributing/chat-processing-playbook.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/validation-completion-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/passive-stub-migration.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/overview.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/validation-remaining-work.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/utf8-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/transform-pipeline.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/talkbank-utils-PORTING-ROADMAP.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/end-user-experience.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/future-work.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/directparser-final-summary.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/batchalign-warnings-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/async-rust-analysis.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/ui-wishlist.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/error-code-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/sentinel-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/permissiveness-regression.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/early-detection-testing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/parsing.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/performance-optimizations.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/error-diagnostics-ux.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/option-result-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/implementation-workstreams.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/legacy-archive.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/error-system.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/repo-architecture.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/executive-summary.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/risk-register.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/data-model.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/directparser-fixes-summary.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/parser-model-contracts.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/grammar-governance.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/crate-reference.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/talkbank-clan-PORTING-ROADMAP.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/performance-future-work.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/grammar.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/pos-tag-fix-summary.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/spec-system.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/reorganization-roadmap.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/check-parity-audit.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/directparser-midword-fixes-summary.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/spec-tooling.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/integrating/json-schema.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/integrating/diagnostic-contract.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/integrating/library-usage.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/repo-split/OVERVIEW.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/repo-split/tree-sitter-talkbank.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/repo-split/clan.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/repo-split/chatter.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "book/src/architecture/repo-split/talkbank-core.md",
+      "tier": "published-book",
+      "reason": "published contributor docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/integrator/diagnostic-schema.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/integrator/index.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/grammar/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/README.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/audits/performance-audit-2026-02-24.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/specs/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/corpus/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/parser/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/testing/STATUS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/testing/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/architecture/symbol-registry.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/architecture/grammar-redesign.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/architecture/parser-error-recovery.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/architecture/index.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/architecture/leniency-policy.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/architecture/grammar-stakeholders.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/contributor/index.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/contributor/compile-times.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/contributor/dev-checks.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/contributor/branch-protection.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E504.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E530.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E712.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E702.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E514.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E716.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E722.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E388.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E510.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E401.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E706.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E524.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E501.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E723.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E389.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E511.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E525.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E505.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E531.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E713.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E602.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E703.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Omitted.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E404.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E515.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W601.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E365.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E351.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W724.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E211.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E718.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Complex.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E708.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E250.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E310.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E341.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E386.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E375.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E324.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E304.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E244.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E355.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E361.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E330.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E003.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E382.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Tag.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E320.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E371.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E231.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E345.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E314.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E305.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E245.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E354.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E214.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E220.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E360.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E331.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E002.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E999.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Pauses.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E383.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E321.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E370.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E230.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E344.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E315.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E364.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E350.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E210.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E301.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E241.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E719.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E709.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E251.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E311.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E340.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E387.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E374.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E325.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E357.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E306.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E246.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E390.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E001.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E363.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E502 (false positive).md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E508.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E518.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W108.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E373.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E233.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E322.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E380.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E316.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E207.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E347.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E367.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Alignment.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W603.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E302.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E242.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E353.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E213.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E528.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E203.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E252.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E312.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/index.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E326.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E377.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E384.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E366.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W602.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E303.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E243.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E352.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E212.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E529.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E202.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E342.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E253.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E313.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E385.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E356.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E307.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E247.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E391.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E362.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E509.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/NONE.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E519.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E372.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E232.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E323.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E101.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E381.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E317.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E346.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E714.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E720.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E502.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E369.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E512.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E526.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E704.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E724.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W211.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E506.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E601.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E710.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E532.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E308.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E248.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E359.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E209.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E258.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E318.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E522.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E700.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E516.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W210.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E507.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E600.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E533.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E309.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E249.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E358.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Events.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E208.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E348.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E259.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E319.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E523.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E701.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E517.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Terminator.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E715.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E604.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E721.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E503.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/W999.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E368.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E378.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/Multiple.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E513.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E527.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/errors/E705.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/transform/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/validation/STRICT_TIMELINE_MODE_PROPOSAL.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/validation/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/parser/divergence-analysis/summary.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/parser/divergence-analysis/investigation.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/parser/divergence-analysis/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/parser/divergence-analysis/how-to-investigate.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/flat-mor-model-impact.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/XPHO_XMOD_FIX_SUMMARY.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/ERROR_CODE_OVERHAUL_COMPLETE.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/CHANGELOG.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/PARSE_ERRORS_REVIEW.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/TREE_SITTER_PARSE_FAILURES.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/REGRESSION_TEST_STRATEGY.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/PARSER_COMPARISON.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/UNKNOWN_VARIANTS_REPORT.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/ERROR_CODE_MACRO_REFACTORING.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/GRAMMAR_ISSUES_FOUND.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/README.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/NITPICKING_CODE_REVIEW.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/OFFSET_AUDIT.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/LOGGING.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/DATA_PARSE_FAILURES.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/ERROR_CODE_REPLACEMENT_LOG.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/CORPUS_REORGANIZATION.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/ERROR_CODE_OVERHAUL_PLAN.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/GEMINI.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/QUESTIONS.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/CORPUS_MANIFEST_GUIDE.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "docs/archive/book-src/architecture/legacy/ERROR_CODE_AUDIT.md",
+      "tier": "archived-book",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/tools/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/GRAMMAR_PATTERNS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/WRITING_ERROR_SPECS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/CHAT_TO_JSON_PIPELINE.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/ALIGNMENT_DIVERGENCE_REPORT.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/ALIGNMENT_RULES.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/ERROR_CATALOG.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/SPEC_VALIDATOR.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/MARKDOWN_SPEC_IMPLEMENTATION.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/SESSION_SUMMARY.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/ERROR_SPEC_AUDIT_RESOLUTION.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/docs/ERROR_SPEC_FORMAT.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/symbols/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E600_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E323_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E504_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E514_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E351_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E341_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E001_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E522_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E532_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E377_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E716.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E367_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W210_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E315_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E305_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E230_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E348_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E220_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E358_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E703_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E713_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E252_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E242_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Pauses_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E383_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E999_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E366_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E376_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E533_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E523_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E304_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E314_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Events_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W211_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E359_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E231_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E712_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E702_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E382_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E243_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E253_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E207_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E601_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E322_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E340_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E350_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E515_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E505_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E316_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E306_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E531_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E374_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E364_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E002_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E390_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E380_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E251_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E241_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E404_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E700_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E710_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E233_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E502_wor_cascade_regression.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E528_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E101_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E241_illegal_untranscribed_marker.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E719_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E709_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E507_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E517_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E352_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E342_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E389_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E330_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E248_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E320_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E258_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E214_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E529_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Terminator_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E708_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E718_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E353_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E516_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E506_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E259_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E321_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E249_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E331_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E602_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E388_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E307_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E317_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E365_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E375_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E530_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E003_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E724_gra_circular_dependency.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E250_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E381_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E391_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Multiple_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E701_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E232_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E245_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Tag_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E384_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W601_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E704_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E714_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W724_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E312_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E302_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E208_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E370_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E360_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E525_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E356_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E346_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E503_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E513_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E324_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E722_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E211_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E369_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W999_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Alignment_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E512_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E502_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E347_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E357_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E325_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Complex_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E522_undefined_participant.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E723_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E378_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E368_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E210_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E385_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E244_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E401_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E715_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E705_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E303_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E313_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E524_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E361_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E371_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E209_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E604_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E355_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E345_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E510_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/NONE_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E308_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E318_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/SPEC_ENHANCEMENT_GUIDE.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E212_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E202_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E721_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E519_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E509_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W602_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E387_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E246_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E373_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E363_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E526_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E311_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E301_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W603_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E706_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E508_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E518_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E247_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E386_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E527_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E362_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E372_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E604_gra_without_mor.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E310_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E326_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E511_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E501_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E344_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E354_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/Omitted_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E319_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E309_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E203_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E213_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/E720_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/errors/W108_auto.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/utterance/with_mor.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/main_tier/multi_word.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/main_tier/overlap_utterance.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/main_tier/overlap-with-action.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/main_tier/overlap-points.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/main_tier/simple_utterance.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_13.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_gra_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_12.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/gra_incroot.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_gra_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/com_example_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/com_example_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/gra_root.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/com_example_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/gra_complex.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/com_example_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/wor_example_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_ud_multivalue_comma.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/com_example_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_gra_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_15.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_gra_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_14.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_gra_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/pho_example_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/tiers/mor_example_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/said_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/well_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/ab_12.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/ba_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/chicken_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/Mary_Had_A_Little_Lamb_12.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/overlap_enclosed.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/dancingschool_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/a_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/dl_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/hoohoohoohoohoo_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/the_19.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/0the_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/this_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/0for_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/choochoos_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/bar_16.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/kl_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/liing_11.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/damelo_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/chooschoos_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/ab_13.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/ye2_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foo_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/pitch_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/what_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/cou_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/example_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/yeah_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/ql_14.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/somsomebodybody_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foobar_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/GrammatikNazi_11.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/ab3_15.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/cl_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/g_15.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/here_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/a2_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/grr5_14.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/capitalized_compound_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foo3_13.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/there_now_14.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/an_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/a_11.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/word_15.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/up_11.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/l\u00e0_19.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/e_14.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/example_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/he_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/colle_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/hunu_17.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/already_17.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/k3_13.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/example_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/al_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/f\u00e9_15.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/bls_19.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/inthe_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/boomboomboomboom_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foosas_18.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/nl_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/b_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/aa3_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/Yeah_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foobar_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/je_17.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/0diewp_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/c_13.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/him_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/both_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/grr_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/that_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/in_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/a_17.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/el_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/pinb_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/mais_16.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/frag_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/example_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/k_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/sl_12.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/2_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/woofwoof_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/0die_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foobar_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/3_11.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/g\u02b0an_6.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/b_12.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/zhei4ge_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/icecream_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/wwhats_5.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/rl_15.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/grr5_19.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/3_9.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/abc_14.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/fl_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/yl_13.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/aubg_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/piao4liang4_2.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/in_18.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/i_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/barnml_10.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/yyy_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/gl_8.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foo_12.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/\u00e9tudier_18.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/abou_16.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foobar_0.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/0omitted_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/pl_11.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/k3_18.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/childx_1.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/foo_16.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/uhuhuh_7.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/Well_4.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/word/bl_3.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/header/participants_single.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/constructs/header/languages_single.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "spec/tools/src/bootstrap/EXAMPLES_GUIDE.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "tests/error_corpus/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "tests/test_utils/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "tests/component_roundtrip_tests/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "tests/alignment_validation/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "tests/fixtures/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "tests/error_corpus/validation_gaps/STATUS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-transform/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-transform/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-transform/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-json/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-json/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-tree-sitter-parser/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-tree-sitter-parser/PARSING_PATTERNS.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-tree-sitter-parser/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-tree-sitter-parser/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-model/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-model/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-model/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-api/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-api/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-errors/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-errors/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-errors/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-direct-parser/API_PREFIX_CONVENTIONS.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-direct-parser/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-direct-parser/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-direct-parser/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-tests/GOLDEN_WORDS_IMPLEMENTATION.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-tests/PARSER_TEST_AUDIT.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-tests/GOLDEN_WORDS_STRATEGY.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-tests/FIXES_COMPLETED.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-tests/FINAL_SUMMARY.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-parser-tests/CURRENT_STATUS.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-pipeline/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-pipeline/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-derive/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-derive/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-model/docs/LANGUAGE_RESOLUTION.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-model/docs/QUOTATION_LINKERS.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chat",
+      "path": "crates/talkbank-tree-sitter-parser/docs/ERROR_OFFSET_ADJUSTMENT.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/SETUP.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/DEVELOPER.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/GUIDE.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/IMPLEMENTATION_GUIDE.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/CLAN-FEATURES.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/QUICK_START.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/images/ICON_DESIGN.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "vscode/images/screenshots/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "docs/archive/README.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "docs/lsp/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "docs/lsp/improvements.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "docs/cli/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "docs/archive/reports/java-chatter-vs-rust-comparison.md",
+      "tier": "archived-report",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "docs/archive/reports/java-chatter-vs-rust-report.md",
+      "tier": "archived-report",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-cli/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-cli/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-cli/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-lsp/ARCHITECTURE.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-lsp/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-lsp/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-lsp/DEBUGGING.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-lsp/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-highlight/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-chatter",
+      "path": "crates/talkbank-highlight/README.md",
+      "tier": "component-doc",
+      "reason": "crate/component docs"
+    },
+    {
+      "project": "talkbank-clan",
+      "path": "CHANGELOG.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "talkbank-clan",
+      "path": "README.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "talkbank-clan",
+      "path": "CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-clan",
+      "path": "docs/clan-replacement-analysis.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-clan",
+      "path": "docs/CLAN-IMPROVEMENTS.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/DOCS_MAP.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/MORPHOTAG_DIVERGENCES.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/AGENTS.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/stanza-pad-bug.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/morphotag-divergences-2026-02-16.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/net-autotune-regression-2026-02-24.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/fleet-inventory.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/index.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/cluster-setup.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/net-job-failures-2026-02-08.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/fleet-management-plan.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/clean-lemma-analysis.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/tailscale-cli-migration.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/ssh-key-migration.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/ansible/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "batchalign/docs/bench_correctness_diffs/summary.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/metrics/README.md",
+      "tier": "active-doc",
+      "reason": "active docs outside book"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/README.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/batchalign/root-notes/BOSS_REPORT.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/batchalign/root-notes/OVERNIGHT_PLAN.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/batchalign/root-notes/OVERNIGHT_PLAN_REVISED.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/batchalign/root-notes/EMAIL_TO_BRIAN.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/batchalign/root-notes/OVERNIGHT_PLAN_FINAL.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/batchalign/reports/master-branch-audit.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "talkbank-private",
+      "path": "docs/archive/batchalign/reports/master-branch-status.md",
+      "tier": "archived-doc",
+      "reason": "archived historical/internal documentation"
+    },
+    {
+      "project": "tree-sitter-talkbank",
+      "path": "CHAT_ANCHORS.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "tree-sitter-talkbank",
+      "path": "CHANGELOG.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "tree-sitter-talkbank",
+      "path": "README.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "tree-sitter-talkbank",
+      "path": "CONTRIBUTING.md",
+      "tier": "repo-doc",
+      "reason": "top-level repo docs"
+    },
+    {
+      "project": "tree-sitter-talkbank",
+      "path": "CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "agent/internal guidance"
+    }
+  ]
+}

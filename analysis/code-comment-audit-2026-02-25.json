@@ -1,0 +1,146 @@
+{
+  "generated_at_utc": "2026-02-25T14:58:05.914796+00:00",
+  "scope": "Rust/Python comment coverage audit across talkbank workspace",
+  "projects": {
+    "batchalign-hk-plugin": {
+      "rust": {
+        "files": 0,
+        "nonempty_lines": 0,
+        "comment_lines": 0,
+        "comment_ratio": 0.0,
+        "pub_fn": 0,
+        "pub_fn_with_doc_comment": 0,
+        "pub_fn_doc_ratio": null
+      },
+      "python": {
+        "files": 36,
+        "nonempty_lines": 5243,
+        "comment_lines": 1601,
+        "comment_ratio": 0.3054,
+        "defs": 342,
+        "defs_with_docstring": 342,
+        "def_doc_ratio": 1.0
+      }
+    },
+    "batchalign3": {
+      "rust": {
+        "files": 823,
+        "nonempty_lines": 118741,
+        "comment_lines": 19776,
+        "comment_ratio": 0.1665,
+        "pub_fn": 1291,
+        "pub_fn_with_doc_comment": 886,
+        "pub_fn_doc_ratio": 0.6863
+      },
+      "python": {
+        "files": 180,
+        "nonempty_lines": 26074,
+        "comment_lines": 5244,
+        "comment_ratio": 0.2011,
+        "defs": 1324,
+        "defs_with_docstring": 681,
+        "def_doc_ratio": 0.5144
+      }
+    },
+    "talkbank-chat": {
+      "rust": {
+        "files": 906,
+        "nonempty_lines": 116867,
+        "comment_lines": 24545,
+        "comment_ratio": 0.21,
+        "pub_fn": 1173,
+        "pub_fn_with_doc_comment": 1173,
+        "pub_fn_doc_ratio": 1.0
+      },
+      "python": {
+        "files": 3,
+        "nonempty_lines": 591,
+        "comment_lines": 340,
+        "comment_ratio": 0.5753,
+        "defs": 20,
+        "defs_with_docstring": 20,
+        "def_doc_ratio": 1.0
+      }
+    },
+    "talkbank-chatter": {
+      "rust": {
+        "files": 105,
+        "nonempty_lines": 14174,
+        "comment_lines": 2433,
+        "comment_ratio": 0.1717,
+        "pub_fn": 163,
+        "pub_fn_with_doc_comment": 163,
+        "pub_fn_doc_ratio": 1.0
+      },
+      "python": {
+        "files": 0,
+        "nonempty_lines": 0,
+        "comment_lines": 0,
+        "comment_ratio": 0.0,
+        "defs": 0,
+        "defs_with_docstring": 0,
+        "def_doc_ratio": null
+      }
+    },
+    "talkbank-clan": {
+      "rust": {
+        "files": 39,
+        "nonempty_lines": 9630,
+        "comment_lines": 2269,
+        "comment_ratio": 0.2356,
+        "pub_fn": 38,
+        "pub_fn_with_doc_comment": 38,
+        "pub_fn_doc_ratio": 1.0
+      },
+      "python": {
+        "files": 0,
+        "nonempty_lines": 0,
+        "comment_lines": 0,
+        "comment_ratio": 0.0,
+        "defs": 0,
+        "defs_with_docstring": 0,
+        "def_doc_ratio": null
+      }
+    },
+    "talkbank-private": {
+      "rust": {
+        "files": 0,
+        "nonempty_lines": 0,
+        "comment_lines": 0,
+        "comment_ratio": 0.0,
+        "pub_fn": 0,
+        "pub_fn_with_doc_comment": 0,
+        "pub_fn_doc_ratio": null
+      },
+      "python": {
+        "files": 12,
+        "nonempty_lines": 2057,
+        "comment_lines": 330,
+        "comment_ratio": 0.1604,
+        "defs": 41,
+        "defs_with_docstring": 41,
+        "def_doc_ratio": 1.0
+      }
+    },
+    "tree-sitter-talkbank": {
+      "rust": {
+        "files": 2,
+        "nonempty_lines": 111,
+        "comment_lines": 35,
+        "comment_ratio": 0.3153,
+        "pub_fn": 0,
+        "pub_fn_with_doc_comment": 0,
+        "pub_fn_doc_ratio": null
+      },
+      "python": {
+        "files": 3,
+        "nonempty_lines": 137,
+        "comment_lines": 22,
+        "comment_ratio": 0.1606,
+        "defs": 15,
+        "defs_with_docstring": 15,
+        "def_doc_ratio": 1.0
+      }
+    }
+  }
+}
