@@ -68,6 +68,12 @@ batchalign-core              <- PyO3 bridge to Python (in batchalign3 repo)
 
 Supporting crates: `talkbank-derive` (proc macros), `talkbank-json` (schema validation), `talkbank-pipeline` (config types), `talkbank-highlight` (syntax highlighting), `talkbank-parser-tests` (equivalence tests), `send2clan-sys` (FFI to CLAN).
 
+### Content Walker (shared primitive)
+
+`talkbank-model` exports `for_each_leaf()` / `for_each_leaf_mut()` — closure-based walkers that centralize the recursive traversal of `UtteranceContent` (24 variants) and `BracketedItem` (22 variants). Callers provide only a leaf-handling closure receiving `ContentLeaf` or `ContentLeafMut` (Word, ReplacedWord, or Separator).
+
+Domain-aware gating is built in: `Some(Mor)` skips retrace groups, `Some(Pho|Sin)` skips PhoGroup/SinGroup, `None` recurses everything. Used by `talkbank-model` (%wor generation) and `batchalign-chat-ops` (word extraction, FA injection/postprocess).
+
 ### Cross-Repo Path Dependencies
 
 All Rust repos use local path dependencies. The sibling directory layout is load-bearing:

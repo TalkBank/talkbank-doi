@@ -12,5 +12,8 @@ batchalign-hk-plugin/
 !.claude/skills/
 .mypy_cache/
 
+# Build artifacts
+*.dSYM
+
 # Temp files
 *.cha
