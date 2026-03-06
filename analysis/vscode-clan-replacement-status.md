@@ -108,15 +108,22 @@ file (`.cut` format, whitespace-indented tree), then lets the user step through
 utterances selecting codes from the tree. Used in research workflows where
 trained coders annotate transcripts with a predefined coding scheme.
 
+### ~~Gap 3: Coder Mode~~ ✅ DONE (2026-03-06)
+
+Implemented as `talkbank.startCoder` in `coderPanel.ts`. Loads `.cut` codes files,
+steps through uncoded utterances, inserts `%cod:` tiers via hierarchical QuickPick.
+Keybindings: `Cmd+Enter` (next), `Cmd+Shift+C` (insert code).
+
 ### Gap 4: Minor Features
 
 | Feature | Priority | Notes |
 |---------|----------|-------|
-| CSV/Excel export from analysis panels | Medium | Button in existing panel toolbar |
-| Corpus-level analysis (run on directory) | Medium | Already have validation explorer pattern |
-| Waveform zoom/scroll | Low | Current view works for typical recordings |
+| ~~CSV/Excel export from analysis panels~~ | ~~Medium~~ | ✅ DONE |
+| ~~Corpus-level analysis (run on directory)~~ | ~~Medium~~ | ✅ DONE |
+| ~~Waveform zoom/scroll~~ | ~~Low~~ | ✅ DONE |
 | Audio anonymization | Low | Niche use case |
-| Foot-pedal configuration | Low | Settings UI |
+| ~~Foot-pedal configuration~~ | ~~Low~~ | ✅ DONE (keybindings editor) |
+| ~~Picture display~~ | ~~Low~~ | ✅ DONE (`picturePanel.ts`) |
 
 ---
 
