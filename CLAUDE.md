@@ -109,6 +109,8 @@ All CHAT parsing and serialization must go through AST manipulation (Rust crates
 ### Generated Files
 Never hand-edit generated artifacts (`parser.c`, `tree-sitter-talkbank/test/corpus/`, generated Rust tests). Regenerate from their source inputs.
 
+**Cross-repo generation:** `make test-gen` (run from `talkbank-chat/`) writes tree-sitter grammar test corpus into `../tree-sitter-talkbank/test/corpus/`. After spec changes, commit in both repos.
+
 ### Cache Policy
 The validation cache (`~/.cache/talkbank-utils/talkbank-cache.db`) contains results for 95,000+ files. Never delete it. Use `--force` to refresh specific paths.
 
