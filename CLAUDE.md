@@ -144,6 +144,20 @@ Universal standards for all Rust code across the workspace. Per-repo CLAUDE.md f
 - **`BTreeMap` for deterministic JSON** in tests and snapshot tests (not `HashMap`). Ensures consistent, reviewable diffs.
 - Prefer explicit enums over ambiguous `Option` when there are multiple meaningful states.
 
+### Newtypes Over Primitives
+- **No primitive obsession.** Domain values must have domain types. Function signatures should be self-documenting through type names, not parameter names.
+- **Rust:** Use newtype structs (e.g., `struct TimestampMs(u64)`, `struct SpeakerId(String)`) or the `interned_newtype!` macro from `talkbank-model`. Newtypes should implement `Display`, `From`/`Into` for the underlying type, and derive `Clone`, `Debug`, `PartialEq`, `Eq` as appropriate.
+- **Python:** Use `typing.NewType` (e.g., `TimestampMs = NewType("TimestampMs", int)`) or Pydantic constrained types at module/IPC boundaries. For lightweight internal use, `type` aliases are acceptable when they clarify intent.
+- **Scope:** Applies to public API boundaries, struct fields, and function signatures. Local variables inside a function body may use bare primitives when the context is unambiguous.
+- **Common domain types to prefer over bare primitives:**
+  - Timestamps/durations: `TimestampMs`, `DurationMs` (not bare `u64`/`int`)
+  - Speaker identifiers: `SpeakerId` (not bare `String`/`str`)
+  - Language codes: `LanguageCode` (not bare `String`/`str`)
+  - File paths: `AudioPath`, `ChatFilePath` (not bare `String`/`str`)
+  - Counts: named newtypes when ambiguity exists (word count vs morpheme count)
+- **Parsing boundaries:** Parse raw strings into newtypes at the boundary (file I/O, CLI args, IPC). Interior code should never handle raw strings for typed values.
+- **No ad-hoc format parsing.** Use real parsers (XML: `quick-xml`, JSON: `serde_json`, etc.) not regex or string splitting for structured formats. Regex is appropriate only for flat text pattern matching (search, normalization, validation of simple formats).
+
 ### File Size Limits
 - **Recommended:** ≤400 lines per file.
 - **Hard limit:** ≤800 lines per file (must be split).
@@ -151,9 +165,12 @@ Universal standards for all Rust code across the workspace. Per-repo CLAUDE.md f
 ### Refactoring Triggers
 Stop and refactor when you see:
 - `x: i32, y: i32` for domain data → use domain structs
+- `start_ms: u64, end_ms: u64` → use `TimestampMs` newtype or `TimeSpan` struct
+- `fn foo(lang: &str, speaker: &str, path: &str)` → use `LanguageCode`, `SpeakerId`, typed path
 - Multiple booleans for state → use enum with variants
 - `fn parse() -> Option<T>` where failure reason matters → use `Result<T, ParseError>`
 - `match s { "win" => ... }` on raw strings → parse to `enum` at boundary
+- Regex or `split()`/`find()` on XML, JSON, or other structured formats → use a proper parser
 
 ### Git
 Conventional Commits format: `<type>[scope]: <description>`
