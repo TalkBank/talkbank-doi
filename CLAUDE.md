@@ -48,22 +48,23 @@ For per-repo commands, see each repo's CLAUDE.md.
 
 ### Crate Dependency Flow (Rust)
 
-```
-talkbank-errors              <- Error types, ErrorSink trait, Span
-    |
-talkbank-model               <- Data model (ChatFile AST), validation, alignment
-    |
-talkbank-parser-api          <- ChatParser trait abstraction
-    |
-talkbank-tree-sitter-parser  <- Canonical parser (tree-sitter CST -> model)
-talkbank-direct-parser       <- Experimental parser (chumsky combinators)
-    |
-talkbank-transform           <- Pipelines: parse+validate, CHAT<->JSON roundtrip, caching
-    |
-talkbank-cli (chatter)       <- CLI tool (in talkbank-chatter repo)
-talkbank-lsp                 <- Language server (in talkbank-chatter repo)
-talkbank-clan                <- CLAN analysis commands (in talkbank-clan repo)
-batchalign-core              <- PyO3 bridge to Python (in batchalign3 repo)
+```mermaid
+flowchart TD
+    errors["talkbank-errors\nError types, ErrorSink, Span"]
+    model["talkbank-model\nChatFile AST, validation, alignment"]
+    api["talkbank-parser-api\nChatParser trait"]
+    ts["talkbank-tree-sitter-parser\nCanonical parser"]
+    dp["talkbank-direct-parser\nExperimental parser"]
+    transform["talkbank-transform\nPipelines, CHAT↔JSON, caching"]
+    cli["talkbank-cli (chatter)\n📦 talkbank-chatter"]
+    lsp["talkbank-lsp\n📦 talkbank-chatter"]
+    clan["talkbank-clan\n📦 talkbank-clan"]
+    ba["batchalign-core\n📦 batchalign3"]
+
+    errors --> model --> api
+    api --> ts & dp
+    ts & dp --> transform
+    transform --> cli & lsp & clan & ba
 ```
 
 Supporting crates: `talkbank-derive` (proc macros), `talkbank-json` (schema validation), `talkbank-pipeline` (config types), `talkbank-highlight` (syntax highlighting), `talkbank-parser-tests` (equivalence tests), `send2clan-sys` (FFI to CLAN).
@@ -140,7 +141,13 @@ Universal standards for all Rust code across the workspace. Per-repo CLAUDE.md f
 - All lazy init via `std::sync` — no external crate dependencies needed.
 
 ### Type Design
-- **Avoid boolean blindness:** use enums for multi-way choices. Single `bool` for simple on/off is fine.
+- **No boolean blindness.** Enums over bools for anything beyond simple on/off. This is a hard rule.
+  - **Banned:** 2+ bool parameters on a function, 2+ related bool fields on a struct, opposite bool pairs (`foo`/`no_foo`), bool return where meaning is unclear without reading docs.
+  - **Rust:** `#[derive(Default, clap::ValueEnum)]` enum with named variants. For clap CLI args, use `#[arg(value_enum)]` instead of `--flag`/`--no-flag` pairs.
+  - **Python:** `enum.Enum` or `typing.Literal["option1", "option2"]` for multi-way choices. `bool` only for simple on/off.
+  - **TypeScript:** Union types (`type Mode = 'auto' | 'force' | 'disable'`) or enums. `boolean` only for simple on/off.
+  - **OK as bool:** `verbose`, `force`, `quiet`, `test_echo`, `dry_run`, single `include_*`/`skip_*` flags — anything where the parameter name fully communicates what `true` means.
+  - **Not OK as bool:** engine selection (`whisper: bool, rev: bool`), mode switching (`tui: bool, no_tui: bool`), `valid: bool` return from cache (use `enum CacheOutcome { Valid, Invalid }`).
 - **`BTreeMap` for deterministic JSON** in tests and snapshot tests (not `HashMap`). Ensures consistent, reviewable diffs.
 - Prefer explicit enums over ambiguous `Option` when there are multiple meaningful states.
 
@@ -167,10 +174,31 @@ Stop and refactor when you see:
 - `x: i32, y: i32` for domain data → use domain structs
 - `start_ms: u64, end_ms: u64` → use `TimestampMs` newtype or `TimeSpan` struct
 - `fn foo(lang: &str, speaker: &str, path: &str)` → use `LanguageCode`, `SpeakerId`, typed path
-- Multiple booleans for state → use enum with variants
+- Multiple booleans for state → use enum with variants (see boolean blindness rule above)
+- `fn foo(a: bool, b: bool)` or `--flag`/`--no-flag` pairs → use enum with `clap::ValueEnum`
 - `fn parse() -> Option<T>` where failure reason matters → use `Result<T, ParseError>`
 - `match s { "win" => ... }` on raw strings → parse to `enum` at boundary
 - Regex or `split()`/`find()` on XML, JSON, or other structured formats → use a proper parser
+
+### Mermaid Diagrams
+
+**Use Mermaid diagrams extensively** to illustrate data flows, architecture, and processing pipelines in all documentation (CLAUDE.md files, mdBook pages, READMEs). GitHub renders Mermaid natively in Markdown; all mdBook builds have `mdbook-mermaid` enabled.
+
+When to add a diagram:
+- **Data flow pipelines** — parsing, validation, alignment, orchestration, IPC
+- **Architecture boundaries** — what owns what, where data crosses between Rust/Python/TypeScript
+- **State machines** — job lifecycle, daemon states, worker states
+- **Decision trees** — dispatch routing, filter chains, cache hit/miss logic
+- **Type relationships** — trait hierarchies, crate dependencies
+
+Diagram guidelines:
+- Use `flowchart TD` or `flowchart LR` for data flows and pipelines
+- Use `sequenceDiagram` for request/response protocols (IPC, HTTP, LSP)
+- Use `stateDiagram-v2` for lifecycle/state machines
+- Use `classDiagram` for trait hierarchies and type relationships
+- Keep diagrams focused — one concept per diagram, not everything-on-one-page
+- Place diagrams inline near the text they illustrate, not in a separate section
+- Prefer diagrams over ASCII art for anything with more than 3 nodes
 
 ### Git
 Conventional Commits format: `<type>[scope]: <description>`
