@@ -152,7 +152,7 @@ Purpose:
 - Change type: `revise`
 - Summary: Added status metadata and replaced proposal-era roadmap link with current architecture links.
 - Verified against:
-  - docs: `book/src/architecture/{chat-divorce,rust-server-migration,python-rust-interface}.md`
+  - docs: `book/src/architecture/{chat-ownership-boundary,rust-server-migration,python-rust-interface}.md`
 - Follow-ups: P1 architecture synchronization continues in `overview.md` and `python-rust-interface.md`.
 
 ## 2026-03-05 13:XX (local)
@@ -160,7 +160,7 @@ Purpose:
 - Change type: `revise`
 - Summary: Added status/last-verified metadata headers to anchor architecture pages to current-state documentation conventions.
 - Verified against:
-  - docs: `book/src/architecture/{chat-divorce,rust-server-migration}.md`
+  - docs: `book/src/architecture/{chat-ownership-boundary,rust-server-migration}.md`
 - Follow-ups: Continue P1 drift audit for `server-architecture.md` and `validation.md`.
 
 ## 2026-03-05 13:XX (local)
@@ -469,7 +469,7 @@ Purpose:
 - Follow-ups: Continue code-first sweep for remaining legacy wording around older ASR flag spellings and any docs that still imply random-port daemon behavior or broad DP remap in current runtime paths.
 
 ## 2026-03-05 16:XX (local)
-- Page: `book/src/user-guide/installation.md`, `book/src/reference/benchmarks.md`, `book/src/reference/whisper-asr.md`, `book/src/architecture/python-rust-interface.md`, `book/src/architecture/server-model-loading.md`, `book/src/architecture/chat-divorce.md`, `book/src/migration/algorithms-and-language.md`
+- Page: `book/src/user-guide/installation.md`, `book/src/reference/benchmarks.md`, `book/src/reference/whisper-asr.md`, `book/src/architecture/python-rust-interface.md`, `book/src/architecture/server-model-loading.md`, `book/src/architecture/chat-ownership-boundary.md`, `book/src/migration/algorithms-and-language.md`
 - Change type: `revise`
 - Summary: Corrected remaining current-state drift around ASR flag spelling, transcribe default-engine claims, FA runtime mapping wording, and overbroad “DP removed” migration language.
 - Verified against:

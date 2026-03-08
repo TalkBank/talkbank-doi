@@ -41,7 +41,7 @@ Check and potentially update:
 - [ ] `batchalign3/CLAUDE.md` — test counts, architecture summary
 - [ ] `batchalign3/rust-next/CLAUDE.md` — if Rust server changed
 - [ ] `batchalign3/book/src/architecture/server-known-issues.md` — if fixing a known issue
-- [ ] `batchalign3/book/src/architecture/chat-divorce.md` — if adding divorce phase
+- [ ] `batchalign3/book/src/architecture/chat-ownership-boundary.md` — if changing CHAT ownership boundary
 
 ### Change in talkbank-clan (analysis commands)
 
