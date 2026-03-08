@@ -1,10 +1,86 @@
 # TalkBank CHAT / CLAN Roadmap
 
-**Date:** 2026-03-06  
-**Scope:** `talkbank-chat`, `talkbank-clan`, `talkbank-chatter`, book/docs, parity testing  
+**Date:** 2026-03-06 (updated 2026-03-08)
+**Scope:** `talkbank-chat`, `talkbank-clan`, `talkbank-chatter`, book/docs, parity testing, converters
 **Purpose:** Consolidate the next work into one plan that can be studied and executed deliberately, with strong parity and testing discipline.
 
-## 1. Working Principles
+## Execution Status (2026-03-07)
+
+### Phase A: Parser Semantic Context Audit — COMPLETE
+- A1: Context classification table written at `talkbank-parser-api/CONTEXT-CLASSIFICATION.md`
+  - 2/24 methods are context-sensitive (main_tier, utterance — CA mode only)
+  - 22/24 are context-free (forwarding to base methods)
+- A2: No external callers use fragment parsing — all use whole-file parse (context derived from headers)
+- A3: No expansion of `FragmentSemanticContext` needed
+- A4: Fragment parity tests already exist for CA mode
+
+### Phase B: Expand Golden Test Coverage — COMPLETE
+- B1: Added 9 new golden tests (GEM x2, INDENT, ROLES, TRIM x2, CHAT2TEXT x2, CHAT2ELAN)
+- B3: Added 11 option variant golden tests:
+  - FREQ: `+t%mor` (morpheme tokens), `+t*CHI` (speaker filter), `+scookie` (word include), `+z1-1` (utterance range), `+t%mor` on eng-conversation
+  - MLU: `+t*CHI` (speaker filter), `-t%mor` (word-based MLU)
+  - KWAL: multiple `+s` keywords, `+sgoing` on eng-conversation
+  - COMBO: `+s` AND search on mor-gra.cha, `+s` AND search on eng-conversation
+- Infrastructure: Added `run_rust_filtered()` helper for tests with `FilterConfig` (speaker/word/range filtering)
+- Total golden tests: 75 → 98
+- All transforms now have golden tests (23/23)
+- All converters now have golden tests (14/14)
+
+### Phase C: Command Semantics Cleanup — COMPLETE
+- C1: Text-hacking classification audit at `talkbank-clan/TEXT-HACKING-AUDIT.md`
+  - Found 4 category (c) files: dss.rs, eval.rs, kideval.rs, postmortem.rs
+- C2: Converted eval.rs and kideval.rs to typed `MorTier.items` access
+  - Added framework helpers: `extract_mor_tier()`, `classify_mor_item()`, `count_morphemes_typed()`
+- C3: Converted dss.rs and ipsyn.rs to typed `MorTier` access (2026-03-08)
+  - Added `mor_pattern_matches()`, `any_item_has_pos()` to `framework/mor.rs`
+  - Fixed pre-existing bug: DSS "v-PAST" compound patterns now correctly match
+  - Updated kideval.rs to use `Vec<Mor>` instead of `Vec<String>` for DSS/IPSYN state
+- C4: Full re-audit of remaining 10 files (vocd, combo, kwal, chip, uniq, chains, trnfix, rely, keymap, mortable)
+  - All classified as (a) legitimate boundary or (b) generic text-token fallback by policy
+  - Zero remaining category (c) violations across all command code
+- Remaining: postmortem.rs %mor AST rewriting (transform, not command — Phase D dependency)
+
+### Phase D: Command Parity Work — MOSTLY COMPLETE
+- D1: Full parity audit of all 53 golden test snapshot pairs completed
+  - Audit document: `talkbank-clan/COMMAND-PARITY-AUDIT.md`
+  - **Fixed:** Word matching changed from substring to exact + wildcard across KWAL, COMBO, and WordFilter
+    - Added shared `word_pattern_matches()` to `framework/word_filter.rs`
+    - KWAL `+scookie` no longer matches "cookies" (CLAN parity)
+    - COMBO search terms use exact match (CLAN parity)
+    - `+s`/`-s` FilterConfig uses exact match (CLAN parity)
+  - **Fixed:** 6 stale @rust snapshots refreshed (MLU, SUGAR, UNIQ, VOCD, WDLEN, CHECK)
+  - **Fixed (2026-03-08):** FREQ `+t%mor` clitic splitting — post-clitics now counted as separate items
+  - **Fixed (2026-03-08):** PHONFREQ IPA character counting — now includes all Unicode alphabetic + compound markers
+  - **Resolved (2026-03-08):** FREQ `+z` range — not a real gap, CLAN requires `+zu`/`+zw`/`+zt` prefix
+  - Classified all divergences: 10 format-only, 10 empty-CLAN (test corpus too small)
+  - Remaining: MODREP stress markers (cosmetic), converter parity gaps (separate audit)
+- postmortem.rs AST-based %mor rewriting still pending
+
+### Phase E: Documentation Modernization — PARTIALLY COMPLETE
+- E2: Created tracking artifacts (CONTEXT-CLASSIFICATION.md, TEXT-HACKING-AUDIT.md)
+- E3: Created dependent-tier semantics matrix at `book/src/appendices/dependent-tier-semantics.md`
+- E4: Created transform taxonomy at `book/src/appendices/transform-taxonomy.md`
+- E1: Per-command book audit — deferred to Phase D
+- E5: VS Code docs update — deferred
+
+### Updated Baseline (2026-03-08)
+- **75 golden tests** with 21 new variant tests (speaker filtering, cross-corpus) for DSS, IPSYN, EVAL, KIDEVAL, VOCD, MLT, MLU, WDLEN, DIST, FLUCALC, CHAINS, COOCCUR, SUGAR, FREQPOS, TIMEDUR
+- **453 total tests** in talkbank-clan (448 pass, 5 pre-existing transform/converter failures)
+- **0 text-hacking violations** across all command code (full re-audit complete)
+
+## 1. Current Inventory
+
+Concrete numbers grounding the rest of this document:
+
+- **77 commands total**: 34 analysis + 23 transforms + 14 converters + 6 deliberately not implemented
+- **75 golden tests**: 42 analysis + 21 transform + 12 converter, producing 122 snapshot files
+- **73 reference corpus files** at 100% parser equivalence
+- **Status matrix**: `talkbank-clan/book/src/appendices/status-matrix.md` covers all 77 commands
+- **VS Code feature assessment**: `talkbank-chatter/vscode/CLAN-FEATURES.md` (572 lines)
+- **Fragment context system**: `FragmentSemanticContext` with 24 `*_with_context()` methods in the `ChatParser` trait
+- **Source of truth**: `~/CLAN.html` (53,690 lines, local copy of the CLAN manual)
+
+## 2. Working Principles
 
 These are the rules the implementation should now follow.
 
@@ -17,9 +93,9 @@ These are the rules the implementation should now follow.
 7. Every bug found and fixed must be recorded in docs.
 8. Every rewritten path must get tests.
 
-## 2. Current State
+## 3. Current State
 
-### 2.1 What is materially better now
+### 3.1 What is materially better now
 
 - Much of the semantic CLAN logic in `talkbank-clan` no longer reparses serialized CHAT text.
 - `%mor` / `%gra` handling has been moved toward typed AST access where our model supports it.
@@ -34,15 +110,17 @@ These are the rules the implementation should now follow.
 - Fragment parsing now has an explicit semantic context API.
 - Public tree-sitter convenience wrappers now obey the same context rules as the trait-backed APIs.
 
-### 2.2 What is still incomplete
+### 3.2 What is still incomplete
 
 - Fragment semantic context is not yet rolled through all callers and not yet meaningfully used by all fragment parsers.
 - A number of CLAN commands still need parity review against `CLAN.html`, CLAN binaries, and corpus behavior.
 - Some transforms are correctly text-level, but their boundaries and rationale should be tightened.
 - The modern `talkbank-clan` book still does not yet absorb all relevant non-GUI content from `CLAN.html`.
-- We still need stronger golden generation from actual legacy CLAN command runs.
+- The golden harness is operational (75 tests, 122 snapshots). Coverage needs expansion to more commands and option combinations.
+- ~20 command/transform files still use `to_chat_string()` or `split_whitespace()` for semantic inspection (see Section 5.3 audit).
+- `CLAN.html` is at `~/CLAN.html`, not inside the workspace tree. Consider symlinking or documenting the path convention.
 
-## 3. Source-of-Truth Method
+## 4. Source-of-Truth Method
 
 Every parity task should follow this order.
 
@@ -57,9 +135,9 @@ Every parity task should follow this order.
 
 This should be treated as the standard workflow, not an optional extra.
 
-## 4. Main Workstreams
+## 5. Main Workstreams
 
-## 4.1 Fragment Parser Semantic Context
+## 5.1 Fragment Parser Semantic Context
 
 ### Goal
 
@@ -100,7 +178,7 @@ We already proved that fragment parsing can silently drift from whole-file seman
 - Wider `*_with_context(...)` adoption
 - No remaining convenience wrappers that bypass trait semantics
 
-## 4.2 Fragment Parser Entry-Point Parity
+## 5.2 Fragment Parser Entry-Point Parity
 
 ### Goal
 
@@ -119,7 +197,7 @@ Ensure isolated parser entrypoints behave like the same parser’s whole-file pa
 
 The reference corpus is not just for full files. It should drive fragment parser expectations too.
 
-## 4.3 AST-First CLAN Command Semantics
+## 5.3 AST-First CLAN Command Semantics
 
 ### Goal
 
@@ -138,17 +216,27 @@ This is much better than it was, but still not fully settled.
    - still-wrong semantic reparsing
 3. Eliminate the still-wrong category.
 
-### Specific areas to study
+### Specific files identified
 
-- generic `--tier` fallbacks in `CHAINS`, `KEYMAP`, `RELY`
-- any commands still using serialized main-tier text for semantic analysis
-- commands with mixed semantic and presentation responsibilities
+**Commands using `to_chat_string()` for semantic inspection** (not just display):
+- `vocd.rs`, `combo.rs`, `kwal.rs`, `chip.rs`, `uniq.rs`
+
+**Commands using `split_whitespace()` on serialized tier content:**
+- `chains.rs`, `kideval.rs`, `trnfix.rs`, `rely.rs`, `keymap.rs`, `eval.rs`, `dss.rs`, `mortable.rs`
+
+**Transform files with text reparsing:**
+- `fixbullets.rs`, `postmortem.rs`, `lines.rs`, `dataclean.rs`
+
+**Framework files:**
+- `cod.rs` (intentional: semantic layer), `chat_ast.rs`, `transform.rs`
+
+Each needs classification: (a) legitimate display boundary, (b) generic text-token fallback by policy, (c) still-wrong semantic reparsing.
 
 ### Policy question
 
 For commands that currently accept arbitrary tiers and tokenize them generically, decide whether parity actually requires that or whether the command should be restricted to semantically modeled tiers.
 
-## 4.4 `%cod` Semantic Model
+## 5.4 `%cod` Semantic Model
 
 ### Goal
 
@@ -179,7 +267,7 @@ Only move `%cod` into the shared grammar/model if:
 - the main command semantics are supported,
 - roundtripping remains reliable.
 
-## 4.5 `%mor` / `%gra` Structural Improvement
+## 5.5 `%mor` / `%gra` Structural Improvement
 
 ### Goal
 
@@ -201,11 +289,19 @@ Use typed structure where it exists, but do not overclaim parity where our data 
    - acceptable conservative simplifications
 4. Expand the shared model only where justified by command needs and corpus evidence.
 
+### Known Model Gaps
+
+1. **Compound stems opaque**: `MorStem` is an interned `Arc<str>`. Compounds like `fire+truck` stored as raw string — no `CompoundStem { parts }`.
+2. **No pre-clitics**: `Mor` has `main: MorWord` + `post_clitics: SmallVec<[MorWord; 2]>` but no `pre_clitics` (French `$pro|je verb|manger`).
+3. **No ambiguity chains**: Legacy CLAN uses `^`-separated alternatives (`noun|bank^verb|bank`). No `MorAmbiguity` type. Status matrix notes: “POST: Requires ^-separated ambiguity format not in grammar.”
+4. **PosCategory is opaque**: Interned `Arc<str>`, no enum of valid UD POS tags. Content/function word distinction requires string comparison.
+5. **MorFeature is flat**: `{ key: Option<Arc<str>>, value: Arc<str> }` — no deeper decomposition for agglutinative/fusional languages.
+
 ### Caution
 
 Do not let “typed” become “fictionally precise”. If the current model cannot represent a CLAN distinction, document the limitation instead of implying we support it.
 
-## 4.6 Other “Free Text” Dependent Tiers
+## 5.6 Other “Free Text” Dependent Tiers
 
 ### Goal
 
@@ -226,30 +322,36 @@ Systematically determine whether any other dependent tiers need a minimal semant
    - richly structured and under-modeled
 4. Add a doc table summarizing the result.
 
+### Existing Classification
+
+The `DependentTier` enum already classifies all tiers (28 variants):
+
+1. **Fully structured** (7): Mor, Gra, Pho, Mod, Sin, Act, Cod
+2. **Bullet-bearing text** (7): Add, Com, Exp, Gpx, Int, Sit, Spa
+3. **Simple text** (10): Alt, Coh, Def, Eng, Err, Fac, Flo, Gls, Ort, Par
+4. **Special** (4): Tim, Wor, UserDefined, Unsupported
+
+Classification exists in code; the doc table should formalize it and assess which text tiers might need structure.
+
 ### Expected output
 
 A stable “dependent tier semantics matrix” saying which tiers should remain raw text and which should gain structure.
 
-## 4.7 Transform Classification and Cleanup
+## 5.7 Transform Classification and Cleanup
 
 ### Goal
 
 Keep text-level transforms where appropriate, but make sure semantic transforms are not implemented as raw text hacks.
 
-### Current understanding
+### Full 23-Transform Inventory
 
-Probably acceptable as text/layout transforms:
-- `LONGTIER`
-- `LINES`
-- `INDENT`
-- much of `DATACLEAN`
+**Text/layout** (by design): LONGTIER, LINES, INDENT, LOWCASE, CHSTRING
 
-Structured or explicitly guarded already:
-- `QUOTES`
-- `ORT`
-- `RETRACE`
-- `COMBTIER`
-- `POSTMORTEM` now errors rather than silently degrading `%mor`
+**Structured/AST** (operate on typed model): QUOTES, ORT, RETRACE, COMBTIER, POSTMORTEM, FLO, FIXBULLETS, TIERORDER, TRIM, MAKEMOD, COMPOUND, REPEAT, ROLES, DATES, DELIM
+
+**Mixed/needs audit**: DATACLEAN, FIXIT, GEM
+
+4 transforms use text reparsing patterns: `fixbullets.rs`, `postmortem.rs`, `lines.rs`, `dataclean.rs`.
 
 ### Remaining tasks
 
@@ -258,7 +360,7 @@ Structured or explicitly guarded already:
 3. Add tests that lock any intentional text-level behavior to its stated scope.
 4. Continue removing silent structural degradation.
 
-## 4.8 CLAN Command Parity Audit
+## 5.8 CLAN Command Parity Audit
 
 ### Goal
 
@@ -273,11 +375,13 @@ Bring `talkbank-clan` command behavior as close as reasonably possible to legacy
 
 ### Current high-value targets
 
-- `FIXBULLETS`
-- `TIERORDER`
-- `KWAL`
-- `RELY`
-- any command where `CLAN.html` clearly describes richer behavior than we currently implement
+FIXBULLETS, TIERORDER, KWAL, and RELY all already have golden tests with "Verified" parity in the status matrix. The priority is now **edge cases and option variants**, not initial parity work. Focus on:
+
+- option combinations not yet covered by golden tests
+- commands where `CLAN.html` (at `~/CLAN.html`) clearly describes richer behavior than we currently implement
+- commands with no golden tests yet
+
+Reference: `talkbank-clan/book/src/appendices/status-matrix.md`
 
 ### Per-command parity checklist
 
@@ -292,7 +396,7 @@ For each command:
 7. Fix code.
 8. Document bug, fix, and any remaining divergence.
 
-## 4.9 Golden Test Generation from Legacy CLAN
+## 5.9 Golden Test Generation from Legacy CLAN
 
 ### Goal
 
@@ -302,27 +406,24 @@ Exploit the fact that we can run old CLAN binaries to generate stronger executab
 
 The manual explains intent, but binaries settle edge behavior. For tricky commands, we should not guess.
 
+### Current state
+
+The harness is operational:
+- `tests/clan_golden.rs` with `run_clan()` function, `strip_clan_header()` normalization, insta snapshots
+- `tests/converter_golden.rs` and `tests/transform_golden.rs` for those categories
+- `scripts/parity-check.sh` for batch comparison (10 commands across corpus)
+- 75 golden tests producing 122 snapshots
+
+Infrastructure is complete; the work is about **expansion**, not creation.
+
 ### Work items
 
-1. Build a repeatable harness for running legacy CLAN commands on fixture corpora.
-2. Store inputs and normalized outputs suitable for golden comparison.
-3. Document normalization rules where CLAN output contains unstable formatting.
-4. Tag tests by command and option set.
+1. Expand coverage to more commands and option variants.
+2. Add converter `@clan` parity for converters that currently have `@rust`-only snapshots (CHAT2SRT, LAB2CHAT, LENA2CHAT, RTF2CHAT).
+3. Add golden tests for CHAT2TEXT and CHAT2ELAN (no snapshots yet).
+4. Document normalization rules as they arise (header stripping already done).
 
-### First commands to prioritize
-
-- `TRIM`
-- `FIXBULLETS`
-- `TIERORDER`
-- `KWAL`
-- `RELY`
-- `%cod` commands
-
-### Design requirement
-
-The harness should make it easy to add a new command fixture once and keep reusing it.
-
-## 4.10 Reference Corpus and Spec Growth
+## 5.10 Reference Corpus and Spec Growth
 
 ### Goal
 
@@ -342,7 +443,7 @@ Use the sacred reference corpus and spec machinery to drive parser correctness, 
 - more `%cod` selector forms
 - more edge-case dependent tiers that appear in real corpora
 
-## 4.11 Documentation Modernization
+## 5.11 Documentation Modernization
 
 ### Goal
 
@@ -363,7 +464,7 @@ Make the `talkbank-clan` book the modern command manual, incorporating and impro
 
 Docs should never quietly describe desired behavior as if it were already implemented.
 
-## 4.12 VS Code Extension Documentation Split
+## 5.12 VS Code Extension Documentation Split
 
 ### Goal
 
@@ -371,15 +472,17 @@ Carry forward the GUI/editor functionality from CLAN documentation into the VS C
 
 ### Work items
 
+`CLAN-FEATURES.md` (572 lines) already exists in `talkbank-chatter/vscode/` with a detailed feature parity assessment. The work is refinement and updates, not creation from scratch.
+
 1. Extract GUI-related material from `CLAN.html` during command audits.
 2. Classify it as:
    - command semantics
    - editor workflow
    - media workflow
    - legacy GUI-only behavior
-3. Write or update a VS Code extension plan/doc set for the editor workflows we actually support or intend to support.
+3. Update `CLAN-FEATURES.md` with findings from ongoing command audits.
 
-## 4.13 Testing Policy and CI Discipline
+## 5.13 Testing Policy and CI Discipline
 
 ### Goal
 
@@ -401,29 +504,62 @@ Make “all new code written or rewritten must be tested” an enforced working 
 3. Keep bug-fix docs paired with tests in the same change.
 4. Where feasible, add CI gates or scripts that make the expected test set obvious.
 
-## 5. Concrete Near-Term Execution Order
+## 5.14 Converter Parity
+
+### Goal
+
+Bring the 14 converters to the same parity discipline as analysis commands and transforms.
+
+### Full converter inventory
+
+| Converter | Golden Test | `@clan` Parity |
+|-----------|:-----------:|:--------------:|
+| CHAT2TEXT | — | — |
+| CHAT2ELAN | — | — |
+| CHAT2PRAAT | Yes | Yes |
+| CHAT2SRT | Yes | — |
+| ELAN2CHAT | Yes | Yes |
+| LAB2CHAT | Yes | — |
+| LENA2CHAT | Yes | — |
+| LIPP2CHAT | Yes | Yes |
+| PLAY2CHAT | Yes | Yes |
+| PRAAT2CHAT | Yes | Yes |
+| RTF2CHAT | Yes | — |
+| SALT2CHAT | Yes | Yes |
+| SRT2CHAT | Yes | Yes |
+| TEXT2CHAT | Yes | Yes |
+
+### Work items
+
+1. Add golden tests for CHAT2TEXT and CHAT2ELAN.
+2. Add `@clan` parity snapshots for CHAT2SRT, LAB2CHAT, LENA2CHAT, RTF2CHAT where legacy binaries are available.
+3. Review converter files for text-hacking patterns (see `chat2elan.rs` using `find(":\t")` to extract speaker-prefixed text).
+
+## 6. Concrete Near-Term Execution Order
 
 This is the recommended sequence for the next serious pass.
 
 ### Phase A: Finish parser semantics infrastructure
 
-1. Audit remaining fragment parsers for real semantic-context needs.
+1. Audit remaining fragment parsers for real semantic-context needs. Note: `FragmentSemanticContext` currently carries only `@Options` flags with `ca_mode()` and `bullets_mode()`. Audit whether additional context is needed.
 2. Expand context-aware behavior only where justified.
 3. Push `*_with_context(...)` into real callers that already know file semantics.
 4. Keep parity tests growing from the reference corpus.
 
-### Phase B: Strengthen parity harnesses
+### Phase B: Expand parity coverage
 
-1. Build the legacy CLAN golden harness.
-2. Start with the highest-risk commands.
+1. Expand golden test coverage (harness operational, 75 tests). Priority: option variants, converter parity, edge-case fixtures.
+2. Add `@clan` parity for converters with available legacy binaries.
 3. Add normalization rules and document them.
+
+**Note:** Phases A and B are independent and can run in parallel.
 
 ### Phase C: Finish command semantics cleanup
 
 1. Revisit remaining generic text-token fallbacks.
 2. Tighten `%cod` command behavior under real CLAN outputs.
 3. Continue `%mor` / `%gra` cleanup carefully, respecting model limitations.
-4. Review any remaining semantic reparsing of serialized CHAT.
+4. Triage the ~20 files identified in Section 5.3 audit.
 
 ### Phase D: Finish command parity work
 
@@ -439,7 +575,7 @@ This is the recommended sequence for the next serious pass.
 2. Keep the audit appendix and status matrix current.
 3. Split GUI material into extension-facing docs.
 
-## 6. Open Design Questions
+## 7. Open Design Questions
 
 These need deliberate answers rather than incremental drift.
 
@@ -449,7 +585,7 @@ These need deliberate answers rather than incremental drift.
 4. How much of CLAN’s `%mor` richness should be modeled in shared AST versus handled conservatively in commands?
 5. Which GUI workflows from legacy CLAN are actually targets for the VS Code extension?
 
-## 7. Done Means
+## 8. Done Means
 
 This work is in good shape when all of the following are true.
 
@@ -462,14 +598,14 @@ This work is in good shape when all of the following are true.
 7. GUI/editor material is documented in the extension domain instead of leaking into CLI docs.
 8. Every material rewrite ships with tests and bug documentation.
 
-## 8. Suggested Tracking Artifacts
+## 9. Suggested Tracking Artifacts
 
 To keep this manageable, maintain:
 
-- one command parity tracker
-- one fragment parser context tracker
-- one dependent-tier semantics matrix
-- one legacy CLAN golden fixture index
-- one docs modernization checklist
+- one command parity tracker — **partially exists**: `status-matrix.md` covers all 77 commands
+- one fragment parser context tracker — **does not exist yet**
+- one dependent-tier semantics matrix — **partially exists**: `DependentTier` enum classifies all 28 variants; needs doc formalization
+- one legacy CLAN golden fixture index — **partially exists**: snapshot naming convention (`@clan`/`@rust`) serves as implicit index
+- one docs modernization checklist — **does not exist yet**
 
 This roadmap should be updated as those trackers become more concrete.
