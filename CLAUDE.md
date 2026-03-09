@@ -23,13 +23,12 @@ Sub-repos are gitignored. Each has its own git history, CLAUDE.md, and build sys
 
 | Directory | Purpose | Language |
 |-----------|---------|----------|
-| `tree-sitter-talkbank/` | Tree-sitter grammar for CHAT format | JavaScript/C |
-| `talkbank-chat/` | CHAT spec, core Rust crates (parsing, model, validation, transform) | Rust |
-| `talkbank-chatter/` | CLI (`chatter`), LSP server, VS Code extension | Rust/TypeScript |
-| `talkbank-clan/` | CLAN analysis commands (FREQ, MLU, MLT, etc.) | Rust |
+| `talkbank-tools/` | Unified: grammar, spec, Rust crates (10), CLI, LSP, VS Code extension | Rust/TypeScript |
 | `batchalign3/` | ASR, forced alignment, morphosyntax pipeline | Python/Rust (PyO3) |
 | `batchalign-hk-plugin/` | HK deployment plugin for batchalign | Python |
 | `talkbank-private/` | Internal archive, deploy scripts, ops docs | |
+
+Archived (read-only): `tree-sitter-talkbank/`, `talkbank-chat/`, `talkbank-chatter/`, `talkbank-clan/`
 
 ## Cross-Repo Commands
 
@@ -50,24 +49,28 @@ For per-repo commands, see each repo's CLAUDE.md.
 
 ```mermaid
 flowchart TD
-    errors["talkbank-errors\nError types, ErrorSink, Span"]
-    model["talkbank-model\nChatFile AST, validation, alignment"]
-    api["talkbank-parser-api\nChatParser trait"]
-    ts["talkbank-tree-sitter-parser\nCanonical parser"]
-    dp["talkbank-direct-parser\nExperimental parser"]
+    model["talkbank-model\nData model, validation, alignment, errors"]
+    derive["talkbank-derive\nProc macros"]
+    parser["talkbank-parser\nCanonical parser (tree-sitter)"]
+    dp["talkbank-direct-parser\nAlternative parser (chumsky)"]
     transform["talkbank-transform\nPipelines, CHAT↔JSON, caching"]
-    cli["talkbank-cli (chatter)\n📦 talkbank-chatter"]
-    lsp["talkbank-lsp\n📦 talkbank-chatter"]
-    clan["talkbank-clan\n📦 talkbank-clan"]
-    ba["batchalign-core\n📦 batchalign3"]
+    clan["talkbank-clan\nCLAN analysis commands"]
+    cli["talkbank-cli (chatter)\nCLI: validate, normalize, convert"]
+    lsp["talkbank-lsp\nLanguage Server Protocol"]
+    s2c["send2clan-sys\nFFI to CLAN app"]
+    tests["talkbank-parser-tests\nEquivalence tests"]
+    ba["batchalign-chat-ops\n📦 batchalign3"]
 
-    errors --> model --> api
-    api --> ts & dp
-    ts & dp --> transform
-    transform --> cli & lsp & clan & ba
+    derive --> model
+    model --> parser & dp
+    parser & dp --> transform
+    transform --> clan & cli & lsp & ba
+    clan --> cli & lsp
+    s2c --> cli
+    parser & dp --> tests
 ```
 
-Supporting crates: `talkbank-derive` (proc macros), `talkbank-json` (schema validation), `talkbank-pipeline` (config types), `talkbank-highlight` (syntax highlighting), `talkbank-parser-tests` (equivalence tests), `send2clan-sys` (FFI to CLAN).
+All 10 crates live in `talkbank-tools/crates/` (single workspace). `batchalign3` path-deps into `talkbank-tools/crates/`.
 
 ### Content Walker (shared primitive)
 
@@ -77,43 +80,45 @@ Domain-aware gating is built in: `Some(Mor)` skips retrace groups, `Some(Pho|Sin
 
 ### Cross-Repo Path Dependencies
 
-All Rust repos use local path dependencies. The sibling directory layout is load-bearing:
+`talkbank-tools` is self-contained (single workspace, all crates intra-repo). `batchalign3` uses local path dependencies into `talkbank-tools`:
 
 ```
 ~/talkbank/
-├── tree-sitter-talkbank/       # Grammar (referenced by talkbank-chat and talkbank-chatter)
-├── talkbank-chat/              # Core crates (referenced by all other Rust repos)
-│   └── crates/                 # talkbank-errors, talkbank-model, talkbank-transform, etc.
-├── talkbank-chatter/           # CLI, LSP (depends on talkbank-chat crates + tree-sitter-talkbank)
-├── talkbank-clan/              # Analysis (depends on talkbank-chat crates)
+├── talkbank-tools/             # Unified: grammar, spec, 10 Rust crates, VS Code
+│   ├── grammar/                # Tree-sitter grammar (intra-repo)
+│   ├── crates/                 # talkbank-model, talkbank-parser, talkbank-transform, etc.
+│   ├── spec/                   # CHAT specification (source of truth)
+│   ├── corpus/                 # Reference corpus (73 files)
+│   └── vscode/                 # VS Code extension
 ├── batchalign3/
-│   ├── rust/crates/            # batchalign-core (path deps to talkbank-chat)
-│   └── rust-next/crates/       # Standalone Rust server (path deps to talkbank-chat)
-└── batchalign-hk-plugin/       # HK deployment plugin
+│   ├── crates/                 # batchalign-chat-ops (path deps to talkbank-tools/crates/)
+│   └── pyo3/                   # batchalign-core PyO3 bridge (path deps to talkbank-tools/crates/)
+├── batchalign-hk-plugin/       # HK deployment plugin
+└── talkbank-private/           # Internal archive, deploy scripts
 ```
 
 ## Critical Policies
 
 ### Reference Corpus
-`talkbank-chat/corpus/reference/` (73 files) must pass parser equivalence at 100%. If a grammar/parser change breaks even one file, revert immediately.
+`talkbank-tools/corpus/reference/` (73 files) must pass parser equivalence at 100%. If a grammar/parser change breaks even one file, revert immediately.
 
 ### Grammar Change Workflow
 `parser.c` is generated from `grammar.js` — never edit it directly. After any `grammar.js` change:
 1. `tree-sitter generate` (mandatory, including after reverts)
 2. `tree-sitter test`
-3. `cargo test -p talkbank-tree-sitter-parser && cargo test -p talkbank-parser-tests`
+3. `cargo nextest run -p talkbank-parser && cargo nextest run -p talkbank-parser-tests`
 4. Verify reference corpus
 
 ### CHAT Handling — No Text Hacking
 All CHAT parsing and serialization must go through AST manipulation (Rust crates or `batchalign_core`), never ad-hoc string/regex manipulation. This applies to both Rust and Python code.
 
 ### Generated Files
-Never hand-edit generated artifacts (`parser.c`, `tree-sitter-talkbank/test/corpus/`, generated Rust tests). Regenerate from their source inputs.
+Never hand-edit generated artifacts (`parser.c`, `grammar/test/corpus/`, generated Rust tests). Regenerate from their source inputs.
 
-**Cross-repo generation:** `make test-gen` (run from `talkbank-chat/`) writes tree-sitter grammar test corpus into `../tree-sitter-talkbank/test/corpus/`. After spec changes, commit in both repos.
+**Generation:** `make test-gen` (run from `talkbank-tools/`) writes tree-sitter grammar test corpus into `grammar/test/corpus/` (all intra-repo now).
 
 ### Cache Policy
-The validation cache (`~/.cache/talkbank-utils/talkbank-cache.db`) contains results for 95,000+ files. Never delete it. Use `--force` to refresh specific paths.
+The validation cache (`~/.cache/talkbank-chat/talkbank-cache.db`) contains results for 95,000+ files. Never delete it. Use `--force` to refresh specific paths.
 
 ## Rust Coding Standards
 
@@ -206,14 +211,8 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`
 
 ## Per-Repo Guidance
 
-Each repo has its own CLAUDE.md (37 files, ~3,800 lines total). Key entry points:
-
-| Repo | CLAUDE.md | Lines | Sub-files |
-|------|-----------|-------|-----------|
-| `tree-sitter-talkbank/` | `CLAUDE.md` | 95 | — |
-| `talkbank-chat/` | `CLAUDE.md` | 254 | 13 (crates, spec, fuzz) |
-| `talkbank-chatter/` | `CLAUDE.md` | 147 | 5 (crates, vscode) |
-| `talkbank-clan/` | `CLAUDE.md` | 75 | — |
-| `batchalign3/` | `CLAUDE.md` | 394 | 10 (rust, rust-next, frontend) |
-| `batchalign-hk-plugin/` | `CLAUDE.md` | 155 | — |
-| `talkbank-private/` | — | — | — |
+| Repo | CLAUDE.md files | Notes |
+|------|----------------|-------|
+| `talkbank-tools/` | root + `grammar/` + `spec/` + `spec/tools/` + `vscode/` (5 files) | All crate-level docs consolidated into root |
+| `batchalign3/` | root + `crates/batchalign-chat-ops/` + `pyo3/` (3 files) | Python pipeline + Rust extensions |
+| `batchalign-hk-plugin/` | root (1 file) | HK deployment plugin |
