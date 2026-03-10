@@ -48,11 +48,6 @@ talkbank-browser-check/
 data/
 
 # =============================================================
-# Absorbed (pending deletion)
-# =============================================================
-talkbank-private/
-
-# =============================================================
 # Tool caches & build artifacts
 # =============================================================
 .claude/*
@@ -60,3 +55,4 @@ talkbank-private/
 .mypy_cache/
 *.dSYM
 *.cha
+talkbank-private.archived/
