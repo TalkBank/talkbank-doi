@@ -1,0 +1,38 @@
+Brian's on homebank.talkbank.org:
+aphasia.talkbank.org
+asd.talkbank.org
+biling.talkbank.org
+ca.talkbank.org
+childes.talkbank.org
+class.talkbank.org
+dementia.talkbank.org
+fluency.talkbank.org
+homebank.talkbank.org
+phon.talkbank.org
+psychosis.talkbank.org
+psyling.talkbank.org
+rhd.talkbank.org
+samtale.talkbank.org
+slabank.talkbank.org
+talkbank.talkbank.org  (aka talkbank.org)
+tbi.talkbank.org
+voice.talkbank.org  (not yet used)
+
+Brian's on git.talkbank.org:
+gitlab.talkbank.org
+psyling.talkbank.org
+semtalk.talkbank.org
+
+John:
+sla.talkbank.org
+sla2.talkbank.org
+
+Franklin:
+oai.talkbank.org (on homebank.talkbank.org)
+
+Leonid:
+dali.talkbank.org
+
+For some reason git.talkbank.org goes to psyling.talkbank.org
+
+

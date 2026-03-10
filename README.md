@@ -1,65 +1,63 @@
-# TalkBank Development Workspace
+# talkbank-dev
 
-Meta-repo for [TalkBank](https://talkbank.org/) — tools for linguistic research on conversational data in CHAT format (Codes for the Human Analysis of Transcripts).
-
-Data flows: spec → grammar (tree-sitter) → Rust (parsers, model, validation) → applications (CLI, LSP, VS Code, Python pipeline).
+Private development workspace for [TalkBank](https://talkbank.org/) — the single home for all TalkBank project assets: code repos, corpus data, deploy infrastructure, web sites, legacy tools, and documentation.
 
 ## Setup
 
-Clone this meta-repo then pull all sub-repos:
-
 ```sh
-git clone git@github.com:TalkBank/talkbank.git ~/talkbank
-cd ~/talkbank
-make clone
+# Fresh machine:
+git clone git@github.com:TalkBank/talkbank-dev.git ~/talkbank-dev
+cd ~/talkbank-dev
+make clone           # Clone everything (code + data + web + collaborator)
+
+# Or start minimal:
+make clone-minimal   # Just talkbank-tools + batchalign3
+
+# Existing machine with scattered clones:
+make adopt --dry-run # Preview what would move
+make adopt           # Move ~/staging, ~/webdev, ~/data/*, etc. into workspace
 ```
 
 Prerequisites: `gh` CLI (authenticated), Rust toolchain, Node.js, `uv` (Python).
 
 ## Repositories
 
+### Core Development (public)
+
 | Directory | GitHub | Description |
 |-----------|--------|-------------|
-| `tree-sitter-talkbank/` | [TalkBank/tree-sitter-talkbank](https://github.com/TalkBank/tree-sitter-talkbank) | Tree-sitter grammar for CHAT |
-| `talkbank-chat/` | [TalkBank/talkbank-chat](https://github.com/TalkBank/talkbank-chat) | CHAT spec and core Rust libraries |
-| `talkbank-chatter/` | [TalkBank/chatter](https://github.com/TalkBank/chatter) | CLI, LSP server, VS Code extension |
-| `talkbank-clan/` | [TalkBank/clan](https://github.com/TalkBank/clan) | CLAN analysis library |
-| `batchalign3/` | [TalkBank/batchalign3](https://github.com/TalkBank/batchalign3) | Alignment and transcription pipeline |
-| `batchalign-hk-plugin/` | [TalkBank/batchalign-hk-plugin](https://github.com/TalkBank/batchalign-hk-plugin) | HK deployment plugin |
-| `talkbank-private/` | [TalkBank/talkbank-private](https://github.com/TalkBank/talkbank-private) | Internal archive (private) |
+| `talkbank-tools/` | [TalkBank/talkbank-tools](https://github.com/TalkBank/talkbank-tools) | Grammar, spec, Rust crates, CLI, LSP, VS Code extension |
+| `batchalign3/` | [TalkBank/batchalign3](https://github.com/TalkBank/batchalign3) | NLP pipeline: Rust server + Python ML model server |
+
+### Infrastructure, Tools, CLAN, Web, Data
+
+34 additional repos across infrastructure, pre-commit tools, legacy CLAN, collaborator tools, bank websites, and 16 corpus data repos. See `docs/inventory.md` for the complete list.
 
 ## Commands
 
 ```sh
-make status      # Git status across all repos
-make check       # Cargo check all Rust repos
-make test        # Run tests across repos
-make verify-all  # Full cross-repo verification gate
-make clone       # Clone all repos fresh (for new machines)
-make pull        # Pull all repos
+make help            # All available targets
+make clone           # Clone ALL repos
+make clone-minimal   # Just code repos
+make clone-data      # Corpus data (16 repos from GitLab)
+make status          # Git status across all repos
+make pull            # Pull all repos
+make check           # Cargo check all Rust workspaces
+make test            # Run tests
+make verify-all      # Full verification gate
 ```
 
-## Environment configuration
+## Structure (tracked in this repo)
 
-Path-sensitive tooling now uses explicit env/config knobs instead of machine-local hardcoded paths.
+```
+analysis/       Workspace-wide audits and reports
+archive/        Archived docs and code
+deploy/         Batchalign deploy: Ansible playbooks, scripts, tools
+docs/           Internal docs, build notes, legacy documentation
+known-issues/   Validation baselines for external corpora
+ops/            Operational scripts
+scripts/        Maintenance, analysis, and migration scripts
+artifacts/      Build artifacts archive
+```
 
-| Variable | Used by | Default | Purpose |
-|----------|---------|---------|---------|
-| `CHAT_HTML_PATH` | `talkbank-chat/scripts/check-chat-manual-anchors.sh` | unset | Optional local `chat.html` path for anchor checks. |
-| `CHAT_HTML_URL` | `talkbank-chat/scripts/check-chat-manual-anchors.sh` | TalkBank URL | Source URL when `CHAT_HTML_PATH` is not set. |
-| `TALKBANK_DATA_ROOT` | `talkbank-private/batchalign/scripts/*` | `~/data` | Root of local corpus checkout for rerun/fix scripts. |
-| `WOR_VALIDATION_LOG` | `talkbank-private/batchalign/scripts/analyze_gra_warnings.py` | `~/test.log` | Default validation log path for `%gra` warning analysis. |
-| `BA4WAY_OLD_REPO` | `batchalign3/scripts/compare_4way_retokenize.sh` | unset | Optional checkout path for the old Jan baseline variant. |
-| `BA4WAY_OLD_PYTHON` | `batchalign3/scripts/compare_4way_retokenize.sh` | `python3` | Python executable used with `BA4WAY_OLD_REPO`. |
-
-## Structure
-
-This meta-repo tracks cross-repo coordination files:
-- `Makefile` — cross-repo build/test/status commands
-- `RELEASE-PLAN.md` — coordinated release planning
-- `analysis/` — workspace-wide audits and reports
-- `scripts/` — one-off maintenance scripts
-
-Sub-repos are gitignored with independent git histories. The sibling directory layout is load-bearing — Rust repos use path dependencies that assume this exact structure.
-
-Each sub-repo has its own `CLAUDE.md` with detailed build commands, architecture, and coding standards.
+All sub-repos are gitignored with independent git histories. The sibling layout is load-bearing — `batchalign3` uses Rust path dependencies assuming `talkbank-tools/` is a sibling.

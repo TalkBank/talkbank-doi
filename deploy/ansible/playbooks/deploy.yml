@@ -1,0 +1,16 @@
+# Full deployment: build, install, configure, restart all fleet servers
+#
+# Usage:
+#   ansible-playbook -i inventory.yml playbooks/deploy.yml
+#   ansible-playbook -i inventory.yml playbooks/deploy.yml --limit bilbo
+#
+# Requires pre-built wheels (set via extra vars):
+#   -e batchalign3_wheel=/path/to/wheel.whl
+#   -e batchalign_core_wheel=/path/to/core.whl
+---
+- name: Deploy batchalign fleet
+  hosts: compute_servers
+  serial: 1  # One server at a time to avoid downtime
+  roles:
+    - batchalign
+    - server

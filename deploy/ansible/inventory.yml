@@ -1,0 +1,105 @@
+# TalkBank Fleet Inventory
+#
+# 16 managed devices across CMU lab, Brian's home, Hong Kong, and cloud.
+# All are on the same Tailscale tailnet. SSH transport uses Tailscale hostnames.
+#
+# RAM values drive batchalign max_concurrent_jobs (~25 GB per worker).
+# Audited via Ansible gather_facts on 2026-02-22. Unreachable machines (lilly, cbs) use defaults.
+
+all:
+  vars:
+    ansible_user: macw
+    ansible_python_interpreter: /usr/bin/python3
+    batchalign_port: 8000
+    python_version: "3.12"
+
+  children:
+    # ── CMU Lab Compute Servers ───────────────────────────────────────
+    # These 9 machines run (or will run) batchalign3 serve.
+    compute_servers:
+      hosts:
+        net:
+          ram_gb: 256
+          max_concurrent_jobs: 8
+          is_media_server: true
+          media_roots:
+            - /Volumes/Net/TalkBank/media/
+          media_mappings:
+            english-data: /Volumes/Net/data/english-data
+            biling-data: /Volumes/Net/data/biling-data
+            clinical-data: /Volumes/Net/data/clinical-data
+            other-data: /Volumes/Net/data/other-data
+        bilbo:
+          ram_gb: 256
+          max_concurrent_jobs: 8
+        brian:
+          ram_gb: 96
+          max_concurrent_jobs: 3
+        davida:
+          ram_gb: 32
+          max_concurrent_jobs: 1
+        frodo:
+          ram_gb: 32
+          max_concurrent_jobs: 1
+        andrew:
+          ram_gb: 32
+          max_concurrent_jobs: 1
+        lilly:
+          ram_gb: 64           # unreachable — default, audit when back online
+          max_concurrent_jobs: 2
+        sue:
+          ram_gb: 64
+          max_concurrent_jobs: 2
+        vaishnavi:
+          ram_gb: 64
+          max_concurrent_jobs: 2
+
+    # ── Brian's Home Machines ─────────────────────────────────────────
+    home:
+      hosts:
+        study:
+          ram_gb: 96
+          max_concurrent_jobs: 3
+        monkey:
+          ram_gb: 32
+          max_concurrent_jobs: 1
+
+    # ── Laptops ───────────────────────────────────────────────────────
+    laptop:
+      hosts:
+        hermes:
+          ram_gb: 16
+          max_concurrent_jobs: 1
+        fromm:
+          ram_gb: 16
+          max_concurrent_jobs: 1
+
+    # ── Hong Kong ─────────────────────────────────────────────────────
+    hongkong:
+      hosts:
+        tb-hk:
+          ram_gb: 48
+          max_concurrent_jobs: 1
+        cbs:
+          ansible_user: cbs
+          ram_gb: 64           # unreachable — default, audit when back online
+          max_concurrent_jobs: 2
+
+    # ── Cloud Servers (Linux) ─────────────────────────────────────────
+    cloud:
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      hosts:
+        talkbank:
+          ansible_host: talkbank
+        git-talkbank:
+          ansible_host: git-talkbank
+
+    # ── Composite Groups ──────────────────────────────────────────────
+    # All macOS machines (for macOS-specific tasks like launchctl, brew)
+    all_macs:
+      children:
+        compute_servers:
+        home:
+        laptop:
+        hongkong:

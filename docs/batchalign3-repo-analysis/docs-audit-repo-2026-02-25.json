@@ -1,0 +1,933 @@
+{
+  "generated_at_utc": "2026-02-25T14:14:58.121014+00:00",
+  "scope": "project markdown documentation inventory (excluding vendored and build dirs)",
+  "total_docs": 183,
+  "tier_counts": {
+    "archived-book": 33,
+    "archived-report": 2,
+    "archived-root-note": 1,
+    "book-navigation": 1,
+    "component-doc": 26,
+    "historical-report": 1,
+    "internal-private": 9,
+    "published-book": 107,
+    "repo-doc": 3
+  },
+  "entries": [
+    {
+      "path": "BATCHALIGN2_DELTA.md",
+      "tier": "repo-doc",
+      "reason": "top-level repository documentation"
+    },
+    {
+      "path": "CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "README.md",
+      "tier": "repo-doc",
+      "reason": "top-level repository documentation"
+    },
+    {
+      "path": "benchmarks/README.md",
+      "tier": "historical-report",
+      "reason": "date-scoped report artifacts retained for provenance"
+    },
+    {
+      "path": "book/src/SUMMARY.md",
+      "tier": "book-navigation",
+      "reason": "mdBook table of contents"
+    },
+    {
+      "path": "book/src/architecture/caching.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/chat-parsing.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/dispatch-system.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/engine-interface.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/error-handling.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/overview.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/pipeline-system.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/python-rust-interface.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/rust-server-migration.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/server-architecture.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/server-known-issues.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/server-model-loading.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/server-performance-gains.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/architecture/validation.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/align-improvements.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/bug-fixes-backport.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/cache-rust-migration.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/dioxus-dashboard-adoption.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/dioxus-dashboard-cutover-gate.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/downstream-integration.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/eliminating-dp-alignment.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/google-translate-migration.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/lenient-parsing.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/long-term-architecture-charter.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/models-training-runtime-adr.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/off-the-shelf-framework-adoption-adr.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/plugin-migration-compatibility-adr.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/provenance-type-system.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/rusqlite-vs-sqlx-spike-2026-02.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/rust-implementation-coverage.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/rust-migration-proposal.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/rust-migration.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/rust-morphosyntax-case.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/server-orchestration-adr.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/talkbank-batchalign-transition.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/talkbank-model-amendments.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/decisions/type-safety-summary.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/adding-engines.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/building.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/deployment-separation.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/dioxus-dashboard.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/documentation-audit-2026-02-25.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/documentation-readiness.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/documentation-scope.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/docx-bookmark-workflow.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/manual-anchor-audit.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/plugins.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/pre-commit.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/python-314t-migration.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/python-versioning.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/rust-contributor-onboarding.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/rust-core.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/rust-manual-crosswalk.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/rust-next.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/rust-workspace-map.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/string-check-optimizations.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/telemetry-runbook.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/developer/testing.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/introduction.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/align-correctness-fixes.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/align-monotonicity.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/align-throughput.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/benchmark-methodology.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/benchmark-results.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/benchmarks.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/chat-format.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/command-io.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/concurrency.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/filesystem-paths.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/forced-alignment.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/gra-correctness-guarantee.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/gra-format.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/l2-handling.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/language-handling.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/master-tier-output.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/media-conversion.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/mor-gra-generation.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/morphosyntax.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/morphotag-divergences.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/morphotag-throughput.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/multilingual.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/mwt-handling.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/per-utterance-language-routing.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/per-word-language-routing.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/proportional-fa-estimation.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/python-gra-generation-analysis.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/retrace-detection.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/textgrid.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/throughput-analysis.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/tier-parse-leniency.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/utr-alignment.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/utr-auto-add-history.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/utr-in-align-pipeline.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/whisper-asr.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/wor-terminator-bullet-behavior.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/wor-tier-bullet-bug.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/wor-tier-python-vs-rust.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/reference/wor-tier.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/cli-reference.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/installation.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/plugins.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/python-api.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/quick-start.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/rev-ai.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/rust-server.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/server-mode.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "book/src/user-guide/troubleshooting.md",
+      "tier": "published-book",
+      "reason": "published in mdBook SUMMARY"
+    },
+    {
+      "path": "docs/archive/README.md",
+      "tier": "repo-doc",
+      "reason": "top-level repository documentation"
+    },
+    {
+      "path": "docs/archive/book-src/architecture/caching-report.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/architecture/validation-ux-audit.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/coref-utseg-assessment.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/correctness-campaign.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/correctness-findings.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-cutover-execution-2026-02-24.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-deprecation-track.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-uat-execution-sheet.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-uat-signoff-template.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/disposition-audit.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/experience-report.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/hk-pluginization-assessment.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/job-retry-proposal.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/one-year-execution-plan-2026-2027.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/python-master-bug-audit.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/python-rust-boundary-audit.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/retrace-regression-postmortem.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/rust-migration-benchmark-report.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/rust-migration-perf-predictions.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/rust-only-align-assessment.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/server-rust-rewrite-assessment.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/string-audit-report.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/ten-year-platform-roadmap.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/developer/framework-adoption-backlog.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/developer/progress-reporting.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/developer/python-rust-discrepancies.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/developer/python-rust-morphotag-comparison.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/developer/regeneration-plan.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/reference/comparison-report.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/reference/corpus-audit-report.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/reference/test-corpora-report.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/reference/umor-ugra-assessment.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/book-src/reference/wor-tier-text-audit.md",
+      "tier": "archived-book",
+      "reason": "historical/internal page moved out of published mdBook"
+    },
+    {
+      "path": "docs/archive/reports/2026-02-24-python-interpreter-footprint.md",
+      "tier": "archived-report",
+      "reason": "dated historical report moved out of active root docs"
+    },
+    {
+      "path": "docs/archive/reports/pinned-batchalign-variants-2026-02-25.md",
+      "tier": "archived-report",
+      "reason": "dated historical report moved out of active root docs"
+    },
+    {
+      "path": "docs/archive/root-notes/FINAL_LAST_STEPS.md",
+      "tier": "archived-root-note",
+      "reason": "root-level planning note moved out of active root docs"
+    },
+    {
+      "path": "rust-next/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "rust-next/README.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust-next/crates/batchalign-dashboard-dioxus/README.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust-next/crates/batchalign-dashboard-dioxus/smoke/README.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/CLAUDE.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "rust/crates/talkbank-derive/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-direct-parser/API_PREFIX_CONVENTIONS.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-direct-parser/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-errors/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-json/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-model/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-model/README.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-model/docs/LANGUAGE_RESOLUTION.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-model/docs/QUOTATION_LINKERS.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-parser-api/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-parser-tests/CURRENT_STATUS.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-parser-tests/FINAL_SUMMARY.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-parser-tests/FIXES_COMPLETED.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-parser-tests/GOLDEN_WORDS_IMPLEMENTATION.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-parser-tests/GOLDEN_WORDS_STRATEGY.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-parser-tests/PARSER_TEST_AUDIT.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-pipeline/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-transform/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-transform/README.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-tree-sitter-parser/CHANGELOG.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-tree-sitter-parser/PARSING_PATTERNS.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-tree-sitter-parser/README.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/crates/talkbank-tree-sitter-parser/docs/ERROR_OFFSET_ADJUSTMENT.md",
+      "tier": "component-doc",
+      "reason": "crate-level technical docs/changelogs"
+    },
+    {
+      "path": "rust/grammar/.kiro/specs/grammar-completion/design.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "rust/grammar/.kiro/specs/grammar-completion/requirements.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "rust/grammar/.kiro/specs/grammar-completion/tasks.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "rust/grammar/.kiro/steering/product.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "rust/grammar/.kiro/steering/structure.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    },
+    {
+      "path": "rust/grammar/.kiro/steering/tech.md",
+      "tier": "internal-private",
+      "reason": "internal contributor/agent guidance; not public docs surface"
+    }
+  ]
+}

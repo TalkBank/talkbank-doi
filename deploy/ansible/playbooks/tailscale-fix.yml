@@ -1,0 +1,78 @@
+# Restart Tailscale and verify connectivity on a specific machine
+#
+# Use --limit to target a specific host:
+#   ansible-playbook playbooks/tailscale-fix.yml --limit brian
+#
+# Actions:
+#   1. Restart tailscaled (launchctl on macOS, systemctl on Linux)
+#   2. Wait for Tailscale to come back up
+#   3. Verify SSH is enabled
+#   4. Check/deploy DNS resolver fix (macOS only)
+---
+- name: Fix Tailscale on target machine
+  hosts: all
+  gather_facts: true
+  tasks:
+    # ── macOS: restart via launchctl ──────────────────────────────────
+    - name: Restart tailscaled (macOS — brew services)
+      become: true
+      command: brew services restart tailscale
+      when: ansible_os_family == "Darwin"
+
+    # ── Linux: restart via systemctl ──────────────────────────────────
+    - name: Restart tailscaled (Linux — systemd)
+      become: true
+      systemd:
+        name: tailscaled
+        state: restarted
+      when: ansible_os_family != "Darwin"
+
+    # ── Wait for Tailscale to come back ───────────────────────────────
+    - name: Wait for tailscaled to be ready
+      command: tailscale status --self
+      register: ts_status
+      retries: 10
+      delay: 3
+      until: ts_status.rc == 0
+      changed_when: false
+
+    - name: Show Tailscale status
+      debug:
+        msg: "{{ ts_status.stdout }}"
+
+    # ── Verify SSH is enabled ─────────────────────────────────────────
+    - name: Check Tailscale SSH
+      shell: tailscale debug prefs 2>/dev/null | grep -o '"RunSSH":[a-z]*'
+      register: ts_ssh
+      changed_when: false
+      ignore_errors: true
+
+    - name: Warn if SSH is not enabled
+      debug:
+        msg: "WARNING: Tailscale SSH is NOT enabled. Run: sudo tailscale up --ssh"
+      when: '"true" not in (ts_ssh.stdout | default(""))'
+
+    # ── DNS resolver fix (macOS only) ─────────────────────────────────
+    - name: Check for ts.net DNS resolver
+      stat:
+        path: /etc/resolver/ts.net
+      register: dns_resolver
+      when: ansible_os_family == "Darwin"
+
+    - name: Deploy ts.net DNS resolver
+      become: true
+      copy:
+        dest: /etc/resolver/ts.net
+        content: |
+          nameserver 100.100.100.100
+        mode: "0644"
+      when:
+        - ansible_os_family == "Darwin"
+        - not dns_resolver.stat.exists
+
+    - name: Summary
+      debug:
+        msg: >
+          {{ inventory_hostname }}: Tailscale restarted.
+          SSH={{ ts_ssh.stdout | default('unknown') }}.
+          DNS fix={{ 'present' if (dns_resolver.stat.exists | default(true)) else 'DEPLOYED' }}.

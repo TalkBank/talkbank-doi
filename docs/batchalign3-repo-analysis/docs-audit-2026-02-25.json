@@ -1,0 +1,1006 @@
+{
+  "generated_at_utc": "2026-02-25T14:14:55.886493+00:00",
+  "scope": "batchalign3 docs audit: published book docs vs archived historical/internal docs",
+  "totals": {
+    "live_book_docs": 107,
+    "published_in_summary": 107,
+    "archived_docs": 33,
+    "all_audited_docs": 140
+  },
+  "live_by_section": {
+    "architecture": 14,
+    "decisions": 23,
+    "developer": 21,
+    "introduction.md": 1,
+    "reference": 39,
+    "user-guide": 9
+  },
+  "archived_by_section": {
+    "architecture": 2,
+    "decisions": 21,
+    "developer": 5,
+    "reference": 5
+  },
+  "entries": [
+    {
+      "path": "book/src/architecture/caching.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/chat-parsing.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/dispatch-system.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/engine-interface.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/error-handling.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/overview.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/pipeline-system.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/python-rust-interface.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/rust-server-migration.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/server-architecture.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/server-known-issues.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/server-model-loading.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/server-performance-gains.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/architecture/validation.md",
+      "status": "kept",
+      "published": true,
+      "section": "architecture",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/align-improvements.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/bug-fixes-backport.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/cache-rust-migration.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/dioxus-dashboard-adoption.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/dioxus-dashboard-cutover-gate.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/downstream-integration.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/eliminating-dp-alignment.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/google-translate-migration.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/lenient-parsing.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/long-term-architecture-charter.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/models-training-runtime-adr.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/off-the-shelf-framework-adoption-adr.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/plugin-migration-compatibility-adr.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/provenance-type-system.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/rusqlite-vs-sqlx-spike-2026-02.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/rust-implementation-coverage.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/rust-migration-proposal.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/rust-migration.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/rust-morphosyntax-case.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/server-orchestration-adr.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/talkbank-batchalign-transition.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/talkbank-model-amendments.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/decisions/type-safety-summary.md",
+      "status": "kept",
+      "published": true,
+      "section": "decisions",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/adding-engines.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/building.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/deployment-separation.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/dioxus-dashboard.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/documentation-audit-2026-02-25.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/documentation-readiness.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/documentation-scope.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/docx-bookmark-workflow.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/manual-anchor-audit.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/plugins.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/pre-commit.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/python-314t-migration.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/python-versioning.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/rust-contributor-onboarding.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/rust-core.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/rust-manual-crosswalk.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/rust-next.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/rust-workspace-map.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/string-check-optimizations.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/telemetry-runbook.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/developer/testing.md",
+      "status": "kept",
+      "published": true,
+      "section": "developer",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/introduction.md",
+      "status": "kept",
+      "published": true,
+      "section": "introduction.md",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/align-correctness-fixes.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/align-monotonicity.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/align-throughput.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/benchmark-methodology.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/benchmark-results.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/benchmarks.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/chat-format.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/command-io.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/concurrency.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/filesystem-paths.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/forced-alignment.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/gra-correctness-guarantee.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/gra-format.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/l2-handling.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/language-handling.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/master-tier-output.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/media-conversion.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/mor-gra-generation.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/morphosyntax.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/morphotag-divergences.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/morphotag-throughput.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/multilingual.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/mwt-handling.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/per-utterance-language-routing.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/per-word-language-routing.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/proportional-fa-estimation.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/python-gra-generation-analysis.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/retrace-detection.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/textgrid.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/throughput-analysis.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/tier-parse-leniency.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/utr-alignment.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/utr-auto-add-history.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/utr-in-align-pipeline.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/whisper-asr.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/wor-terminator-bullet-behavior.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/wor-tier-bullet-bug.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/wor-tier-python-vs-rust.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/reference/wor-tier.md",
+      "status": "kept",
+      "published": true,
+      "section": "reference",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/cli-reference.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/installation.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/plugins.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/python-api.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/quick-start.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/rev-ai.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/rust-server.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/server-mode.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "book/src/user-guide/troubleshooting.md",
+      "status": "kept",
+      "published": true,
+      "section": "user-guide",
+      "reason": "active published documentation"
+    },
+    {
+      "path": "docs/archive/book-src/architecture/caching-report.md",
+      "status": "archived",
+      "published": false,
+      "section": "architecture",
+      "reason": "historical evaluation snapshot"
+    },
+    {
+      "path": "docs/archive/book-src/architecture/validation-ux-audit.md",
+      "status": "archived",
+      "published": false,
+      "section": "architecture",
+      "reason": "historical evaluation snapshot"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/coref-utseg-assessment.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/correctness-campaign.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/correctness-findings.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-cutover-execution-2026-02-24.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-deprecation-track.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-uat-execution-sheet.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/dioxus-dashboard-uat-signoff-template.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/disposition-audit.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/experience-report.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/hk-pluginization-assessment.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/job-retry-proposal.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/one-year-execution-plan-2026-2027.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/python-master-bug-audit.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/python-rust-boundary-audit.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/retrace-regression-postmortem.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/rust-migration-benchmark-report.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/rust-migration-perf-predictions.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/rust-only-align-assessment.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/server-rust-rewrite-assessment.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/string-audit-report.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/decisions/ten-year-platform-roadmap.md",
+      "status": "archived",
+      "published": false,
+      "section": "decisions",
+      "reason": "dated decision support artifact (execution sheet/audit/proposal/report)"
+    },
+    {
+      "path": "docs/archive/book-src/developer/framework-adoption-backlog.md",
+      "status": "archived",
+      "published": false,
+      "section": "developer",
+      "reason": "internal workflow log or temporary planning artifact"
+    },
+    {
+      "path": "docs/archive/book-src/developer/progress-reporting.md",
+      "status": "archived",
+      "published": false,
+      "section": "developer",
+      "reason": "internal workflow log or temporary planning artifact"
+    },
+    {
+      "path": "docs/archive/book-src/developer/python-rust-discrepancies.md",
+      "status": "archived",
+      "published": false,
+      "section": "developer",
+      "reason": "internal workflow log or temporary planning artifact"
+    },
+    {
+      "path": "docs/archive/book-src/developer/python-rust-morphotag-comparison.md",
+      "status": "archived",
+      "published": false,
+      "section": "developer",
+      "reason": "internal workflow log or temporary planning artifact"
+    },
+    {
+      "path": "docs/archive/book-src/developer/regeneration-plan.md",
+      "status": "archived",
+      "published": false,
+      "section": "developer",
+      "reason": "internal workflow log or temporary planning artifact"
+    },
+    {
+      "path": "docs/archive/book-src/reference/comparison-report.md",
+      "status": "archived",
+      "published": false,
+      "section": "reference",
+      "reason": "comparison/audit snapshot retained for provenance"
+    },
+    {
+      "path": "docs/archive/book-src/reference/corpus-audit-report.md",
+      "status": "archived",
+      "published": false,
+      "section": "reference",
+      "reason": "comparison/audit snapshot retained for provenance"
+    },
+    {
+      "path": "docs/archive/book-src/reference/test-corpora-report.md",
+      "status": "archived",
+      "published": false,
+      "section": "reference",
+      "reason": "comparison/audit snapshot retained for provenance"
+    },
+    {
+      "path": "docs/archive/book-src/reference/umor-ugra-assessment.md",
+      "status": "archived",
+      "published": false,
+      "section": "reference",
+      "reason": "comparison/audit snapshot retained for provenance"
+    },
+    {
+      "path": "docs/archive/book-src/reference/wor-tier-text-audit.md",
+      "status": "archived",
+      "published": false,
+      "section": "reference",
+      "reason": "comparison/audit snapshot retained for provenance"
+    }
+  ]
+}

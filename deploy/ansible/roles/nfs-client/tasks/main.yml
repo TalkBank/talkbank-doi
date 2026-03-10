@@ -1,0 +1,50 @@
+# Mount NFS media and data volumes from Net on client machines
+# Skipped on the media server itself
+---
+- name: Create media mount point directories
+  file:
+    path: "{{ item.mount }}"
+    state: directory
+    mode: '0755'
+  become: true
+  loop: "{{ nfs_media_exports }}"
+  when: not (is_media_server | default(false))
+
+- name: Mount NFS media volumes
+  mount:
+    path: "{{ item.mount }}"
+    src: "{{ nfs_media_server }}:{{ item.source }}"
+    fstype: nfs
+    opts: ro,soft,intr,bg
+    state: mounted
+  become: true
+  loop: "{{ nfs_media_exports }}"
+  when: not (is_media_server | default(false))
+
+- name: Create data mount point directories
+  file:
+    path: "{{ item.mount }}"
+    state: directory
+    mode: '0755'
+  become: true
+  loop: "{{ nfs_data_exports | default([]) }}"
+  when: not (is_media_server | default(false))
+
+- name: Mount NFS data volumes
+  mount:
+    path: "{{ item.mount }}"
+    src: "{{ nfs_media_server }}:{{ item.source }}"
+    fstype: nfs
+    opts: ro,soft,intr,bg
+    state: mounted
+  become: true
+  loop: "{{ nfs_data_exports | default([]) }}"
+  when: not (is_media_server | default(false))
+
+- name: Verify NFS mounts are accessible
+  command: ls "{{ item.mount }}"
+  loop: "{{ nfs_media_exports + (nfs_data_exports | default([])) }}"
+  when: not (is_media_server | default(false))
+  changed_when: false
+  register: mount_check
+  ignore_errors: true

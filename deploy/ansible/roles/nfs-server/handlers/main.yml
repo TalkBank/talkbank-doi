@@ -1,0 +1,4 @@
+---
+- name: restart nfsd
+  command: nfsd restart
+  become: true

@@ -1,0 +1,61 @@
+# Sudoers
+
+/etc/sudoers on git.
+
+macw ALL=NOPASSWD:/usr/bin/rsync
+macw ALL=NOPASSWD:/usr/sbin/apachetl
+
+TODO
+Need to put back
+
+sudo usermod -aG sudo username
+
+sudo visudo /etc/sudoers.d/macw
+
+/etc/apache2/mods-available/ssl.conf
+/etc/apache2/sites-available/000-default.conf
+/etc/apache2/sites-available/default-ssl.conf
+
+sudo apt-get install nodejs
+
+Failed to connect to https://changelogs.ubuntu.com/meta-release-lts. Check your Internet connection or proxy settings
+
+sudo: unable to resolve host git: Temporary failure in name resolution
+
+/etc/resolv.conf problem??
+https://askubuntu.com/questions/604760/can-not-edit-resolv-conf
+
+https://askubuntu.com/questions/91543/apt-get-update-fails-to-fetch-files-temporary-failure-resolving-error/91585
+
+resolvectl
+
+apt-get install systemd
+
+macw@git:~$ sudo systemctl enable systemd-resolved.service
+sudo: unable to resolve host git: Temporary failure in name resolution
+Failed to enable unit: Unit file systemd-resolved.service does not exist.
+
+https://askubuntu.com/questions/1244860/dns-issues-after-upgrading-to-20-04
+
+sudo apt-get install systemd-resolved
+
+sudo ln -s /usr/bin/resolvectl /usr/bin/systemd-resolve
+
+there is no /run/systemd/resolve/
+
+hack: add
+
+/etc/network/interfaces
+
+dns-nameservers 1.1.1.1
+
+macw@git:~$ sudo dpkg-reconfigure resolvconf
+sudo: unable to resolve host git: Temporary failure in name resolution
+/usr/sbin/dpkg-reconfigure: resolvconf is broken or not fully installed
+
+sudo apt-get install --reinstall dpkg
+https://askubuntu.com/questions/438345/how-to-remove-install-a-package-that-is-not-fully-installed
+
+https://packages.ubuntu.com/noble/systemd
+
+https://packages.ubuntu.com/noble/systemd-resolved

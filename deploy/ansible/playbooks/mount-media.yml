@@ -1,0 +1,14 @@
+# Set up NFS media sharing: export on Net, mount on clients
+#
+# Usage:
+#   ansible-playbook -i inventory.yml playbooks/mount-media.yml
+---
+- name: Configure NFS server (Net)
+  hosts: compute_servers
+  roles:
+    - nfs-server
+
+- name: Mount NFS on clients
+  hosts: compute_servers
+  roles:
+    - nfs-client

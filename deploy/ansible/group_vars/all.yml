@@ -1,0 +1,42 @@
+# Shared variables for all hosts
+batchalign_version: "0.8.0"  # Updated by CI/deploy
+batchalign_config_dir: "~/.batchalign3"
+batchalign_port: 8000
+default_lang: eng
+warmup: true
+job_ttl_days: 7
+
+# NFS media mount point on clients
+nfs_media_server: net
+nfs_media_exports:
+  - source: /Volumes/Net/TalkBank/media
+    mount: /Volumes/TalkBank/media
+
+# NFS data mount point on clients
+nfs_data_exports:
+  - source: /Volumes/Net/data
+    mount: /Volumes/TalkBank/data
+
+# Media mappings for NFS clients (non-Net compute servers)
+client_media_mappings:
+  english-data: /Volumes/TalkBank/data/english-data
+  biling-data: /Volumes/TalkBank/data/biling-data
+  clinical-data: /Volumes/TalkBank/data/clinical-data
+  other-data: /Volumes/TalkBank/data/other-data
+
+# Fleet server list (all CMU lab machines that run batchalign3 serve)
+fleet_servers:
+  - { name: net, url: "http://net:8000" }
+  - { name: bilbo, url: "http://bilbo:8000" }
+  - { name: brian, url: "http://brian:8000" }
+  - { name: davida, url: "http://davida:8000" }
+  - { name: frodo, url: "http://frodo:8000" }
+  - { name: andrew, url: "http://andrew:8000" }
+  - { name: lilly, url: "http://lilly:8000" }
+  - { name: sue, url: "http://sue:8000" }
+  - { name: vaishnavi, url: "http://vaishnavi:8000" }
+
+# Redis (on net only)
+redis_host: net
+redis_port: 6379
+redis_maxmemory: 32gb

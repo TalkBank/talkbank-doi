@@ -1,0 +1,75 @@
+Subject: Re: Compound lemma markers and %mor for UD
+
+Brian,
+
+I tracked this down in the code and docs. Here's the full picture:
+
+
+1. Your list of language-specific markers -- mostly right
+
+  Language  | Marker | What it does                        | Status in our pipeline
+  ----------|--------|-------------------------------------|----------------------------------------------
+  Basque    | !      | Derivational boundary (partxi!se)   | Preserved -- passes through to %mor
+  Estonian  | =      | Compound boundary (maja=uks)         | Preserved -- passes through to %mor
+  Finnish   | #      | Compound boundary (jaa#kaappi)       | Mangled -- # is a reserved CHAT character
+            |        |                                     |   (legacy prefix marker), replaced with _
+  Many      | _      | Stanza multi-word expression         | Stripped entirely -- New_York -> NewYork
+            |        |   convention (New_York, parce_que)   |
+
+So = and ! are fine, # and _ are problematic. These markers come from the
+UD treebanks themselves -- Stanza just passes them through from the training
+data.
+
+
+2. The comma in Dutch/French -- this is NOT a lemma marker
+
+The commas you were seeing are UD multi-value features, not part of the
+lemma. They appear in CONLLU column 6 (FEATS), not column 3 (LEMMA). For
+example, a Dutch relative-interrogative pronoun gets PronType=Int,Rel --
+meaning it's both interrogative and relative. In our %mor output, this
+appears in the features after the lemma:
+
+    pron|wat-Int,Rel
+
+The comma does NOT separate "inherent vs inflectional" features -- it's
+UD's standard notation for "this feature has multiple values." This is
+already handled correctly in our code -- commas in feature values are
+preserved as-is. Tested and working.
+
+So Leonid's concern about "the comma after the lemma in Dutch" should
+already be resolved -- there is no comma in the lemma, and the commas in
+the features are being preserved correctly.
+
+
+3. Unified Unicode separator -- not yet implemented
+
+Franklin has not yet implemented a unified Unicode character for compound
+lemma boundaries. The clean_lemma analysis doc (reference below) lays out
+the options, but this is a design decision that needs your sign-off: which
+character to use, and whether to also handle the _ (MWE) case.
+
+
+4. clean_lemma -- the New_York -> NewYork issue
+
+This is documented thoroughly. The short version: of our 16 ported CLAN
+commands, only FREQ with --mor is affected by any of this. MLU doesn't
+care (it counts items, not text). The other 14 commands don't read %mor at
+all. The New_York issue is real but hasn't been addressed yet -- it's
+queued for when we decide on the unified separator convention.
+
+
+Reference docs (all updated as of today):
+
+  - Full clean_lemma analysis with compound boundary inventory:
+    talkbank-private/batchalign/docs/clean-lemma-analysis.md
+
+  - %mor tier format specification (including compound boundaries section):
+    talkbank-chat/book/src/chat-format/mor-tier.md
+
+  - Morphosyntax pipeline architecture (module locations, mapping details):
+    batchalign3/book/src/reference/morphosyntax.md
+
+Happy to discuss the Unicode separator question whenever you're ready to
+tackle it.
+
+Franklin

@@ -1,0 +1,25 @@
+# Configure NFS exports on Net (media server)
+# Only runs on hosts with is_media_server: true
+---
+- name: Ensure nfsd is enabled
+  command: nfsd enable
+  become: true
+  when: is_media_server | default(false)
+  changed_when: false
+
+- name: Configure NFS exports
+  template:
+    src: exports.j2
+    dest: /etc/exports
+    mode: '0644'
+    backup: true
+  become: true
+  when: is_media_server | default(false)
+  notify: restart nfsd
+
+- name: Ensure nfsd is running
+  command: nfsd start
+  become: true
+  when: is_media_server | default(false)
+  changed_when: false
+  ignore_errors: true

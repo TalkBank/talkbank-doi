@@ -1,0 +1,23 @@
+# Install and configure Redis on Net for distributed cache
+---
+- name: Install Redis via Homebrew
+  homebrew:
+    name: redis
+    state: present
+  when: is_media_server | default(false)
+
+- name: Configure Redis
+  template:
+    src: redis.conf.j2
+    dest: /usr/local/etc/redis.conf
+    mode: '0644'
+    backup: true
+  when: is_media_server | default(false)
+  notify: restart redis
+
+- name: Start Redis
+  command: brew services start redis
+  when: is_media_server | default(false)
+  changed_when: false
+  ignore_errors: true
+

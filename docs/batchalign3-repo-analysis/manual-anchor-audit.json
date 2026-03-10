@@ -1,0 +1,22 @@
+{
+  "missing": {
+    "CHAT": [],
+    "CLAN": []
+  },
+  "reference_count": 617,
+  "scan_file_count": 99,
+  "summary": {
+    "CHAT": {
+      "anchors_used": 242,
+      "docx_bookmark_count": 931,
+      "html_anchor_count": 1254,
+      "missing_in_html": 0
+    },
+    "CLAN": {
+      "anchors_used": 9,
+      "docx_bookmark_count": 1791,
+      "html_anchor_count": 2121,
+      "missing_in_html": 0
+    }
+  }
+}

@@ -1,19 +1,62 @@
-# Sub-repos (each has its own git history)
-tree-sitter-talkbank/
-talkbank-chat/
-talkbank-chatter/
-talkbank-clan/
-batchalign3/
-talkbank-private/
-batchalign-hk-plugin/
+# =============================================================
+# Sub-repos: each has its own git history, cloned by `make clone`
+# =============================================================
 
-# Tool caches (but keep skills)
+# Core development (public)
+talkbank-tools/
+batchalign3/
+
+# Infrastructure & deployment
+staging/
+webdev/
+web/
+gra-cgi/
+sync-media/
+generate-from-chat/
+cdcs-to-csv/
+
+# Pre-commit / build tools
+update-chat-types/
+save-word-html-pdf/
+talkbank-xml-schema/
+
+# CHAT tools
+java-chatter-stable/
+talkbank-ipa-fragments/
+
+# Legacy CLAN
+OSX-CLAN/
+clan-info/
+
+# Collaborator repos (read-only reference)
+phon/
+phontalk/
+
+# Web repos (bank sites)
+# These live under web/ (mani-managed), but if cloned standalone:
+talkbank-web/
+
+# APIs & libraries
+TBDBr/
+TBDBpy/
+balite/
+
+# Browser & validation tools
+talkbank-browser-check/
+
+# Corpus data repos (GitLab → GitHub migration)
+data/
+
+# =============================================================
+# Absorbed (pending deletion)
+# =============================================================
+talkbank-private/
+
+# =============================================================
+# Tool caches & build artifacts
+# =============================================================
 .claude/*
 !.claude/skills/
 .mypy_cache/
-
-# Build artifacts
 *.dSYM
-
-# Temp files
 *.cha

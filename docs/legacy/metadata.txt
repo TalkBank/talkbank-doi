@@ -1,0 +1,37 @@
+Metadata
+
+0metadata.cdc
+
+for marking corpus
+for DOIs
+
+get out of CMDI
+
+headers used by DOI:
+(ok) DOI
+Title (TODO remove lang)
+(could be more detailed) Creator
+Date (only grabs year)
+
+TODO Creator headers should be collected actually (DataCite can have multiple)
+
+TODO IMDI_Country (me: GeoLocation, geoLocationPlace); Brian wants Language
+TODO Subject.olac:language (me: yes, DataCite has Language)
+TODO Description (me: yes, DataCite has)
+
+TODO DOI DataCite schema
+https://schema.datacite.org/
+https://datacite-metadata-schema.readthedocs.io/en/latest/
+
+publisher: TalkBank
+do we have doi or ror etc?
+
+resourceType: Dataset
+
+    "doi",
+    "target",
+    "title",
+    "creator",
+    "publisher",
+    "publicationyear",
+    "resourcetype",

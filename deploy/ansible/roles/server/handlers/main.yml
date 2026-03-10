@@ -1,0 +1,3 @@
+---
+- name: restart batchalign server
+  shell: batchalign3 serve stop && sleep 2 && batchalign3 serve start

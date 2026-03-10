@@ -1,0 +1,26 @@
+# Fleet health check — query /health on all servers
+#
+# Usage:
+#   ansible-playbook -i inventory.yml playbooks/status.yml
+---
+- name: Fleet health check
+  hosts: compute_servers
+  gather_facts: false
+  tasks:
+    - name: Check server health
+      uri:
+        url: "http://{{ inventory_hostname }}:{{ batchalign_port }}/health"
+        method: GET
+        return_content: true
+        timeout: 5
+      register: health
+      ignore_errors: true
+
+    - name: Report health status
+      debug:
+        msg: >
+          {{ inventory_hostname }}:
+          {% if health.failed %}DOWN{% else %}
+          OK (workers={{ health.json.workers_available }},
+          jobs={{ health.json.active_jobs }},
+          version={{ health.json.version }}){% endif %}

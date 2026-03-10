@@ -19,7 +19,7 @@ Primary public milestone sequence:
 ### Repo boundaries (final)
 - Keep `tree-sitter-talkbank` separate.
 - Keep `talkbank-clan` separate.
-- Keep both `batchalign3/rust` and `batchalign3/rust-next` active (explicitly documented roles).
+- Keep `batchalign3` as one repo with a `pyo3/` bridge crate and the root `crates/` workspace.
 
 ### Crate boundaries (final)
 - `talkbank-chat`: keep current crate split (no merge now), but classify:
@@ -52,12 +52,11 @@ Rules:
 2. `talkbank-lsp` manifest:
 - Replace direct `path` dep (`talkbank-clan`) with workspace version dependency.
 
-3. `batchalign3` (`rust` and `rust-next`):
+3. `batchalign3` (`pyo3` and `crates`):
 - Replace `../../talkbank-chat/...` path deps with crates.io versions.
-- Keep `rust -> rust-next` internal path dependency allowed (same repo).
 - Document role split:
-  - `rust/`: PyO3 packaging and Python-facing bridge.
-  - `rust-next/`: server/runtime core.
+  - `pyo3/`: PyO3 packaging and Python-facing bridge.
+  - `crates/`: CLI, app, and shared Rust workspace crates.
 
 4. `talkbank-chat`:
 - Ensure public crates have complete publish metadata (`description`, `readme`, `license`, keywords/categories already mostly present).
@@ -83,7 +82,7 @@ Rules:
 - Tag and publish GitHub release with changelog + minimal install docs.
 
 ### Phase 3: Batchalign3 immediate follow-up
-- Update `batchalign3/rust` and `rust-next` to semver deps.
+- Update `batchalign3/pyo3` and the root `crates/` workspace to semver deps where release policy requires it.
 - Build and publish Python package (`batchalign3`) with pinned Rust crate versions.
 - Verify clean install in isolated environment without sibling checkouts.
 
@@ -116,6 +115,6 @@ Rules:
 - Repos remain separate (5 repos total).
 - `tree-sitter-talkbank` remains separate.
 - `talkbank-clan` remains separate.
-- `batchalign3` keeps both Rust trees active.
+- `batchalign3` uses the current `pyo3/` + `crates/` layout.
 - Primary `chatter` distribution is crates.io (`cargo install`).
 - `batchalign3` consumes published crates.io dependencies (not vendored, not path-based) for release.

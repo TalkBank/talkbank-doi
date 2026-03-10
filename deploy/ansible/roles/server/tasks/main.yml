@@ -1,0 +1,36 @@
+# Configure and start batchalign3 server
+---
+- name: Ensure config directory exists
+  file:
+    path: "{{ batchalign_config_dir | expanduser }}"
+    state: directory
+    mode: '0755'
+
+- name: Deploy server.yaml
+  template:
+    src: server.yaml.j2
+    dest: "{{ batchalign_config_dir | expanduser }}/server.yaml"
+    mode: '0644'
+  notify: restart batchalign server
+
+- name: Deploy fleet.yaml
+  template:
+    src: fleet.yaml.j2
+    dest: "{{ batchalign_config_dir | expanduser }}/fleet.yaml"
+    mode: '0644'
+
+- name: Start batchalign server
+  command: batchalign3 serve start
+  changed_when: true
+
+- name: Wait for server to be healthy
+  uri:
+    url: "http://localhost:{{ batchalign_port }}/health"
+    method: GET
+    return_content: true
+  register: health
+  until: health.json.status == "ok"
+  retries: 36
+  delay: 5
+  # 36 * 5 = 180 seconds max wait (model warmup)
+

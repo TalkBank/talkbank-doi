@@ -1,0 +1,21 @@
+# Quick connectivity check across all fleet hosts
+#
+# Usage:
+#   ansible-playbook playbooks/ping.yml
+#   ansible-playbook playbooks/ping.yml --limit all_macs
+#
+# Or use the ad-hoc shorthand:
+#   ansible all -m ping
+---
+- name: Fleet connectivity check
+  hosts: all
+  gather_facts: false
+  ignore_unreachable: true
+  tasks:
+    - name: Ping
+      ping:
+      register: result
+
+    - name: Report
+      debug:
+        msg: "{{ inventory_hostname }}: {{ 'OK' if result.ping is defined else 'UNREACHABLE' }}"

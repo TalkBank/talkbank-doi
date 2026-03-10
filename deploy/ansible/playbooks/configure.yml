@@ -1,0 +1,9 @@
+# Config-only update: deploy server.yaml + fleet.yaml without reinstalling
+#
+# Usage:
+#   ansible-playbook -i inventory.yml playbooks/configure.yml
+---
+- name: Configure batchalign fleet
+  hosts: compute_servers
+  roles:
+    - server

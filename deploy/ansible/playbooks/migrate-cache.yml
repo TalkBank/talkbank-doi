@@ -1,0 +1,23 @@
+# Migrate local SQLite caches to Redis on all fleet machines
+#
+# Usage:
+#   ansible-playbook -i inventory.yml playbooks/migrate-cache.yml
+---
+- name: Migrate caches to Redis
+  hosts: compute_servers
+  gather_facts: false
+  tasks:
+    - name: Run cache migration script
+      command: >
+        ~/.local/bin/batchalign3-python
+        -m scripts.migrate_cache_to_redis
+      args:
+        chdir: "~"
+      environment:
+        REDIS_URL: "redis://{{ redis_host }}:{{ redis_port }}/0"
+      ignore_errors: true
+      register: migrate_result
+
+    - name: Report migration result
+      debug:
+        msg: "{{ inventory_hostname }}: {{ migrate_result.stdout | default('no output') }}"

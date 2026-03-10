@@ -1,0 +1,48 @@
+# Tailscale fleet health report
+#
+# Reports Tailscale version, status, SSH enabled, DNS resolver, uptime, and RAM
+# for every managed host.
+#
+# Usage:
+#   ansible-playbook playbooks/tailscale-health.yml
+#   ansible-playbook playbooks/tailscale-health.yml --limit compute_servers
+---
+- name: Tailscale fleet health report
+  hosts: all
+  gather_facts: true
+  ignore_unreachable: true
+  tasks:
+    - name: Get Tailscale version
+      command: tailscale version
+      register: ts_version
+      changed_when: false
+      ignore_errors: true
+
+    - name: Get Tailscale self status
+      shell: tailscale status --self 2>/dev/null | head -1
+      register: ts_status
+      changed_when: false
+      ignore_errors: true
+
+    - name: Check if Tailscale SSH is enabled
+      shell: tailscale debug prefs 2>/dev/null | grep -o '"RunSSH":[a-z]*'
+      register: ts_ssh
+      changed_when: false
+      ignore_errors: true
+
+    - name: Check DNS resolver for ts.net
+      stat:
+        path: /etc/resolver/ts.net
+      register: dns_fix
+      ignore_errors: true
+
+    - name: Report health summary
+      debug:
+        msg: |
+          ── {{ inventory_hostname }} ──
+          Tailscale version: {{ ts_version.stdout_lines[0] | default('UNAVAILABLE') }}
+          Status:   {{ ts_status.stdout | default('UNAVAILABLE') }}
+          SSH:      {{ ts_ssh.stdout | default('UNAVAILABLE') }}
+          DNS fix:  {{ 'present' if (dns_fix.stat.exists | default(false)) else 'MISSING' }}
+          Uptime:   {{ ansible_uptime_seconds | default(0) | int // 86400 }}d {{ (ansible_uptime_seconds | default(0) | int % 86400) // 3600 }}h
+          RAM:      {{ ansible_memtotal_mb | default('unknown') }} MB
