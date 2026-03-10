@@ -8,4 +8,4 @@ TODO see [ssl.md].
 
 TODO app signing Leonid
 
-Fdr1932#
+[REDACTED — credential removed during 2026-03-10 cleanup]
