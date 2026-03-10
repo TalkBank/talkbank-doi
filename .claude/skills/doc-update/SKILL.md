@@ -7,63 +7,54 @@ allowed-tools: Bash, Read, Write, Edit, Glob, Grep, Agent
 
 # Update Documentation After Code Changes
 
-Identify and update all documentation affected by a code change. `$ARGUMENTS` should describe what changed (e.g., "added new CLAN command 'newcmd'" or "changed LSP binary discovery").
+Identify and update all documentation affected by a code change. `$ARGUMENTS` should describe what changed (e.g., "added new CLAN command 'newcmd'" or "changed worker protocol").
 
 ## Step 1: Identify Affected Docs
 
 Based on what changed, determine which documentation needs updating.
 
-### Change in talkbank-chat (core parser/model/validation)
+### Change in talkbank-tools (parser/model/validation/CLAN)
 
 Check and potentially update:
-- [ ] `talkbank-chat/book/src/` — architecture pages, user guide
-- [ ] `talkbank-chat/CLAUDE.md` — if build commands, test counts, or architecture changed
-- [ ] `talkbank-chat/crates/*/CLAUDE.md` — if crate API changed
-- [ ] `talkbank-chat/docs/errors/` — run `make test-gen` if error codes changed
-- [ ] `batchalign3/CLAUDE.md` — if shared crate interface changed
-- [ ] `talkbank-chatter/CLAUDE.md` — if it affects LSP
+- [ ] `talkbank-tools/book/src/` — architecture pages, user guide
+- [ ] `talkbank-tools/CLAUDE.md` — if build commands, test counts, or architecture changed
+- [ ] `talkbank-tools/grammar/CLAUDE.md` — if grammar patterns changed
+- [ ] `talkbank-tools/spec/CLAUDE.md` — if spec tooling changed
+- [ ] `talkbank-tools/vscode/CLAUDE.md` — if it affects VS Code extension
+- [ ] `talkbank-tools/docs/errors/` — run `make test-gen` if error codes changed
+- [ ] `batchalign3/CLAUDE.md` — if shared crate interface changed (path deps)
 
-### Change in talkbank-chatter (CLI/LSP/VS Code)
+### Change in talkbank-tools/vscode (VS Code extension)
 
 Check and potentially update:
-- [ ] `talkbank-chatter/vscode/README.md` — marketplace description
-- [ ] `talkbank-chatter/vscode/GUIDE.md` — user guide
-- [ ] `talkbank-chatter/vscode/DEVELOPER.md` — developer guide, module map
-- [ ] `talkbank-chatter/vscode/CLAN-FEATURES.md` — feature parity
-- [ ] `talkbank-chatter/CLAUDE.md` — wired commands, architecture
-- [ ] `talkbank-chatter/crates/talkbank-lsp/ARCHITECTURE.md` — LSP architecture
-- [ ] `talkbank-chatter/vscode/package.json` — description field if features changed
+- [ ] `talkbank-tools/vscode/README.md` — marketplace description
+- [ ] `talkbank-tools/vscode/GUIDE.md` — user guide
+- [ ] `talkbank-tools/vscode/DEVELOPER.md` — developer guide, module map
+- [ ] `talkbank-tools/vscode/CLAN-FEATURES.md` — feature parity
+- [ ] `talkbank-tools/vscode/CLAUDE.md` — wired commands, architecture
 
-### Change in batchalign3 (pipeline/server)
+### Change in talkbank-tools/grammar
+
+Check and potentially update:
+- [ ] `talkbank-tools/grammar/CLAUDE.md` — design patterns, verification sequence
+- [ ] `talkbank-tools/book/src/` — grammar architecture pages
+
+### Change in batchalign3 (pipeline/server/worker)
 
 Check and potentially update:
 - [ ] `batchalign3/book/src/` — relevant book pages
-- [ ] `batchalign3/CLAUDE.md` — test counts, architecture summary
-- [ ] `batchalign3/rust-next/CLAUDE.md` — if Rust server changed
-- [ ] `batchalign3/book/src/architecture/server-known-issues.md` — if fixing a known issue
-- [ ] `batchalign3/book/src/architecture/chat-ownership-boundary.md` — if changing CHAT ownership boundary
+- [ ] `batchalign3/CLAUDE.md` — test counts, architecture summary, worker protocol
 
-### Change in talkbank-clan (analysis commands)
+### Change in batchalign3/frontend (React dashboard)
 
 Check and potentially update:
-- [ ] `talkbank-clan/README.md` — command list
-- [ ] `talkbank-clan/CHANGELOG.md` — version history
-- [ ] `talkbank-chatter/CLAUDE.md` — wired command counts
-- [ ] `talkbank-chatter/vscode/GUIDE.md` — analysis commands section
-- [ ] `talkbank-chatter/vscode/README.md` — command count in description
-
-### Change in tree-sitter-talkbank (grammar)
-
-Check and potentially update:
-- [ ] `tree-sitter-talkbank/README.md`
-- [ ] `tree-sitter-talkbank/CHANGELOG.md`
-- [ ] `talkbank-chat/book/src/architecture/` — grammar pages
+- [ ] `batchalign3/book/src/` — dashboard-related pages
 
 ### Infrastructure / ops change
 
 Check and potentially update:
-- [ ] `talkbank-private/batchalign/docs/` — fleet docs, deploy docs
-- [ ] `talkbank-private/batchalign/ansible/README.md`
+- [ ] `docs/` — internal docs in talkbank-dev
+- [ ] `deploy/` — deploy scripts and READMEs
 - [ ] `batchalign3/book/src/developer/` — deployment guide
 
 ## Step 2: Read Each Affected Doc
@@ -86,7 +77,7 @@ For each doc:
 ## Step 4: Check for Stale Information
 
 While updating, look for other stale content in the same file:
-- Old file paths (e.g., `rust/vscode/` → `vscode/`)
+- Old repo names (talkbank-chat, talkbank-chatter, talkbank-clan as separate repos)
 - Wrong test counts
 - Features listed as "unimplemented" that are now done
 - Dead links to moved/renamed files
@@ -94,14 +85,9 @@ While updating, look for other stale content in the same file:
 ## Step 5: Verify
 
 ```bash
-# Check all markdown links resolve (basic check)
-grep -rn '\[.*\](.*\.md)' <updated_files> | while read line; do
-  file=$(echo "$line" | sed 's/.*(\(.*\.md\)).*/\1/')
-  # Check if relative link target exists
-done
-
 # If mdBook page was updated
-cd /Users/chen/talkbank/<repo>/book && mdbook build 2>&1 | grep -i "error"
+cd /Users/chen/talkbank/talkbank-tools/book && mdbook build 2>&1 | grep -i "error"
+cd /Users/chen/talkbank/batchalign3/book && mdbook build 2>&1 | grep -i "error"
 ```
 
 ## Step 6: Report

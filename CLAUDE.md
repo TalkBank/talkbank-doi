@@ -134,6 +134,26 @@ cargo run --release -p talkbank-cli -- validate ../data/ --roundtrip --force  # 
 cargo run --release -p talkbank-cli -- validate ../data/ --skip-alignment     # Faster
 ```
 
+## Servers We Can Access
+
+| Host | Access | OS | Role |
+|------|--------|----|------|
+| `net.talkbank.org` | `ssh macw@net` | macOS | Internal (CMU only): local media drives, batchalign server |
+
+`net` is deliberately running `batchalign-next` (Python-only rewrite), installed via `uv tool` at `/Users/macw/.local/bin/batchalign-next`. Will be upgraded to `batchalign3` (Rust) once it's ready. The React dashboard SPA is not deployed there yet.
+
+## Currently Deployed Batchalign Versions
+
+| Path | What | Notes |
+|------|------|-------|
+| `~/batchalign2-master/` | Current production batchalign2 | Legacy; external/PyPI users |
+| `~/batchalign-next/` | Python-only batchalign rewrite (forked from batchalign2) | What net and all internal users run today; different architecture from batchalign3 |
+| `batchalign3/` (in this workspace) | Rust-primary rewrite | Not yet released; replaces both of the above |
+
+**Critical baseline commit:** `84ad500b` (2026-01-09) in batchalign2 — the Python optimization push (lazy imports, parallelism, Hirschberg DP, Stanza caching) that is the anchor point for the entire batchalign2→batchalign3 migration. Documented in `batchalign3/book/src/migration/index.md`. A secondary comparison point is `e8f8bfad` (2026-02-09) on batchalign2 master.
+
+Until batchalign3 is released, bug reports and hotfixes may target `~/batchalign-next/` or `~/batchalign2-master/`.
+
 ## Migration Status
 
 **GitLab → GitHub:** 16 data repos on git.talkbank.org planned for migration. See `staging/docs/migration-plan.md` and `docs/inventory.md`.

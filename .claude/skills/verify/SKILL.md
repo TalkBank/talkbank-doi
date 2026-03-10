@@ -11,11 +11,11 @@ Run the appropriate verification commands based on what changed. If `$ARGUMENTS`
 
 ## Step 1: Detect What Changed
 
-If no arguments given, run `git status` and `git diff --name-only` in each repo to detect modifications:
+If no arguments given, scan both repos for uncommitted changes:
 
 ```bash
 cd /Users/chen/talkbank
-for repo in tree-sitter-talkbank talkbank-chat talkbank-chatter talkbank-clan batchalign3; do
+for repo in talkbank-tools batchalign3; do
   if [ -d "$repo/.git" ]; then
     changes=$(cd "$repo" && git diff --name-only HEAD 2>/dev/null | head -5)
     if [ -n "$changes" ]; then
@@ -26,61 +26,85 @@ for repo in tree-sitter-talkbank talkbank-chat talkbank-chatter talkbank-clan ba
 done
 ```
 
-If arguments are given (e.g., `/verify talkbank-chat`), only verify that repo.
+If arguments are given (e.g., `/verify talkbank-tools`), only verify that repo.
 
 ## Step 2: Run Verification Commands
 
 For each repo with changes, run these commands **in order**. Report results clearly with pass/fail for each step.
 
-### tree-sitter-talkbank
-```bash
-cd /Users/chen/talkbank/tree-sitter-talkbank
-tree-sitter generate
-tree-sitter test
-```
-Then verify reference corpus equivalence:
-```bash
-cd /Users/chen/talkbank/talkbank-chat
-cargo test -p talkbank-parser-tests
-```
+### talkbank-tools
 
-### talkbank-chat
 ```bash
-cd /Users/chen/talkbank/talkbank-chat
+cd /Users/chen/talkbank/talkbank-tools
 make verify
 ```
+
 This runs gates G0–G10 (fmt, clippy, nextest, doctests, parser-tests, reference corpus, etc.).
 
-### talkbank-chatter
+If only grammar changed:
 ```bash
-cd /Users/chen/talkbank/talkbank-chatter
-cargo clippy --all-targets -- -D warnings 2>&1 | head -50
-cargo nextest run
-cd vscode && npm run compile && npm run lint
-```
-Note: If clippy `--all-targets` fails on pre-existing warnings in `talkbank-cli`, narrow to the crate that changed:
-```bash
-cargo clippy -p talkbank-lsp -- -D warnings
+cd /Users/chen/talkbank/talkbank-tools/grammar
+tree-sitter generate
+tree-sitter test
+cd /Users/chen/talkbank/talkbank-tools
+cargo nextest run -p talkbank-parser
+cargo nextest run -p talkbank-parser-tests
 ```
 
-### talkbank-clan
+If only VS Code extension changed:
 ```bash
-cd /Users/chen/talkbank/talkbank-clan
-cargo clippy --all-targets -- -D warnings
-cargo nextest run
+cd /Users/chen/talkbank/talkbank-tools/vscode
+npm run compile && npm run lint && npm test
+```
+
+If only spec changed:
+```bash
+cd /Users/chen/talkbank/talkbank-tools
+make test-gen
+make verify
 ```
 
 ### batchalign3
+
+Python tests:
 ```bash
 cd /Users/chen/talkbank/batchalign3
-uv run pytest --ignore=_private -x -q
-cargo test --manifest-path rust/Cargo.toml
+uv run pytest batchalign --disable-pytest-warnings -k 'not test_whisper_fa_pipeline' -x -q
 ```
-If `rust-next/` was changed:
+
+Rust tests (PyO3 + workspace):
 ```bash
-cd /Users/chen/talkbank/batchalign3/rust-next
+cd /Users/chen/talkbank/batchalign3
+cargo test --manifest-path pyo3/Cargo.toml
+cargo test --workspace
+```
+
+Type checking:
+```bash
+cd /Users/chen/talkbank/batchalign3
+uv run mypy --strict batchalign/errors.py batchalign/pipeline_api.py batchalign/providers/__init__.py batchalign/worker/_types.py
+```
+
+If Rust CLI/server changed:
+```bash
+cd /Users/chen/talkbank/batchalign3
 cargo clippy --all-targets -- -D warnings
-cargo nextest run
+```
+
+If frontend changed:
+```bash
+cd /Users/chen/talkbank/batchalign3
+scripts/check_dashboard_api_drift.sh
+cd frontend && npm run build
+```
+
+### Cross-repo verification
+
+If `talkbank-tools` crates changed that `batchalign3` depends on:
+```bash
+cd /Users/chen/talkbank/batchalign3
+cargo test --manifest-path pyo3/Cargo.toml
+cargo test --workspace
 ```
 
 ## Step 3: Report Summary

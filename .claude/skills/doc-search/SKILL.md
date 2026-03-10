@@ -1,6 +1,6 @@
 ---
 name: doc-search
-description: Search across all TalkBank project documentation — mdBooks, READMEs, CLAUDE.md files, specs, ops docs, and private docs. Use when the user asks "where is the doc for X" or "what does the docs say about Y".
+description: Search across all TalkBank project documentation — mdBooks, READMEs, CLAUDE.md files, specs, error docs, and internal docs. Use when the user asks "where is the doc for X" or "what does the docs say about Y".
 disable-model-invocation: true
 allowed-tools: Bash, Read, Glob, Grep, Agent
 ---
@@ -15,89 +15,84 @@ Find documentation across the entire TalkBank workspace. `$ARGUMENTS` is the sea
 
 | Book | Path | Audience |
 |------|------|----------|
-| TalkBank Tooling | `/Users/chen/talkbank/talkbank-chat/book/src/` | CHAT format, parsers, validation |
-| Batchalign | `/Users/chen/talkbank/batchalign3/book/src/` | Pipeline, server, deployment |
+| TalkBank Tooling | `talkbank-tools/book/src/` | CHAT format, parsers, validation, CLAN |
+| Batchalign | `batchalign3/book/src/` | Pipeline, server, deployment |
 
 To see what's in each book:
 ```bash
-cat /Users/chen/talkbank/talkbank-chat/book/src/SUMMARY.md
+cat /Users/chen/talkbank/talkbank-tools/book/src/SUMMARY.md
 cat /Users/chen/talkbank/batchalign3/book/src/SUMMARY.md
 ```
 
 ### VS Code Extension Docs
-- User guide: `/Users/chen/talkbank/talkbank-chatter/vscode/GUIDE.md`
-- Developer guide: `/Users/chen/talkbank/talkbank-chatter/vscode/DEVELOPER.md`
-- Feature parity: `/Users/chen/talkbank/talkbank-chatter/vscode/CLAN-FEATURES.md`
-- Marketplace README: `/Users/chen/talkbank/talkbank-chatter/vscode/README.md`
-- Quick start: `/Users/chen/talkbank/talkbank-chatter/vscode/QUICK_START.md`
-- Setup: `/Users/chen/talkbank/talkbank-chatter/vscode/SETUP.md`
-- Implementation: `/Users/chen/talkbank/talkbank-chatter/vscode/IMPLEMENTATION_GUIDE.md`
-
-### LSP / CLI Docs
-- LSP architecture: `/Users/chen/talkbank/talkbank-chatter/crates/talkbank-lsp/ARCHITECTURE.md`
-- LSP debugging: `/Users/chen/talkbank/talkbank-chatter/crates/talkbank-lsp/DEBUGGING.md`
-- CLI docs: `/Users/chen/talkbank/talkbank-chatter/docs/cli/README.md`
-- LSP docs: `/Users/chen/talkbank/talkbank-chatter/docs/lsp/README.md`
+- User guide: `talkbank-tools/vscode/GUIDE.md`
+- Developer guide: `talkbank-tools/vscode/DEVELOPER.md`
+- Feature parity: `talkbank-tools/vscode/CLAN-FEATURES.md`
+- Marketplace README: `talkbank-tools/vscode/README.md`
 
 ### Error Code Reference (auto-generated from specs)
-- Index: `/Users/chen/talkbank/talkbank-chat/docs/errors/index.md`
-- Per-code: `/Users/chen/talkbank/talkbank-chat/docs/errors/E*.md` (~189 files)
-- Source specs: `/Users/chen/talkbank/talkbank-chat/spec/errors/` (~193 files)
+- Index: `talkbank-tools/docs/errors/index.md`
+- Per-code: `talkbank-tools/docs/errors/E*.md` (~206 files)
+- Source specs: `talkbank-tools/spec/errors/` (~214 files)
 
 ### CLAUDE.md Files (AI context / architecture)
 ```bash
-find /Users/chen/talkbank -name "CLAUDE.md" -not -path "*/node_modules/*" -not -path "*/.git/*" 2>/dev/null
+find /Users/chen/talkbank -name "CLAUDE.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/target/*" 2>/dev/null
 ```
 
-### Operations & Infrastructure (private)
-- Fleet management: `/Users/chen/talkbank/talkbank-private/batchalign/docs/fleet-management-plan.md`
-- Fleet inventory: `/Users/chen/talkbank/talkbank-private/batchalign/docs/fleet-inventory.md`
-- Tailscale: `/Users/chen/talkbank/talkbank-private/batchalign/docs/tailscale-cli-migration.md`
-- SSH keys: `/Users/chen/talkbank/talkbank-private/batchalign/docs/ssh-key-migration.md`
-- Postmortems: `/Users/chen/talkbank/talkbank-private/batchalign/docs/postmortem-*.md`
-- Incident reports: `/Users/chen/talkbank/talkbank-private/batchalign/docs/net-*.md`
-- Known issues: `/Users/chen/talkbank/batchalign3/book/src/architecture/server-known-issues.md`
-- Master doc index: `/Users/chen/talkbank/talkbank-private/docs/DOCS_MAP.md`
+Key CLAUDE.md files:
+- `talkbank-tools/CLAUDE.md` — grammar, parsers, validation, CLAN, CLI, LSP
+- `talkbank-tools/grammar/CLAUDE.md` — tree-sitter grammar specifics
+- `talkbank-tools/spec/CLAUDE.md` — spec authoring guide
+- `talkbank-tools/vscode/CLAUDE.md` — VS Code extension
+- `batchalign3/CLAUDE.md` — Rust server, Python workers, pipeline
 
-### CLAN Analysis Docs
-- `/Users/chen/talkbank/talkbank-clan/README.md`
-- `/Users/chen/talkbank/talkbank-clan/docs/CLAN-IMPROVEMENTS.md`
-- `/Users/chen/talkbank/talkbank-clan/docs/clan-replacement-analysis.md`
+### Internal Docs (talkbank-dev, not public)
+- Analysis reports: `analysis/`
+- Deploy scripts: `deploy/`
+- Internal docs: `docs/`
+- Known issues baselines: `known-issues/`
+- Internal scripts: `scripts/internal/`
 
-### Grammar Docs
-- `/Users/chen/talkbank/tree-sitter-talkbank/README.md`
-- `/Users/chen/talkbank/tree-sitter-talkbank/CHAT_ANCHORS.md`
-- `/Users/chen/talkbank/tree-sitter-talkbank/CONTRIBUTING.md`
+### Spec Files
+- Construct specs: `talkbank-tools/spec/constructs/` (~104 files)
+- Error specs: `talkbank-tools/spec/errors/` (~214 files)
+- Symbol registry: `talkbank-tools/spec/symbols/symbol_registry.json`
 
 ## Search Strategy
 
 ### 1. Full-text search across all docs
 ```bash
-grep -rn "<query>" /Users/chen/talkbank/talkbank-chat/book/src/ /Users/chen/talkbank/batchalign3/book/src/ /Users/chen/talkbank/talkbank-chatter/vscode/*.md /Users/chen/talkbank/talkbank-chatter/docs/ /Users/chen/talkbank/talkbank-chatter/crates/*/ARCHITECTURE.md /Users/chen/talkbank/talkbank-chatter/crates/*/DEBUGGING.md /Users/chen/talkbank/talkbank-private/batchalign/docs/ --include="*.md" | head -30
+grep -rn "<query>" /Users/chen/talkbank/talkbank-tools/book/src/ /Users/chen/talkbank/batchalign3/book/src/ /Users/chen/talkbank/talkbank-tools/vscode/*.md /Users/chen/talkbank/talkbank-tools/docs/errors/ --include="*.md" | head -30
 ```
 
 ### 2. Search CLAUDE.md files specifically
 ```bash
-find /Users/chen/talkbank -name "CLAUDE.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -exec grep -ln "<query>" {} \;
+find /Users/chen/talkbank -name "CLAUDE.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/target/*" -exec grep -ln "<query>" {} \;
 ```
 
 ### 3. Search error codes
 ```bash
 # By code
-cat /Users/chen/talkbank/talkbank-chat/docs/errors/E<NNN>.md
+cat /Users/chen/talkbank/talkbank-tools/docs/errors/E<NNN>.md
 
 # By keyword
-grep -rn "<keyword>" /Users/chen/talkbank/talkbank-chat/docs/errors/ --include="*.md" | head -20
+grep -rn "<keyword>" /Users/chen/talkbank/talkbank-tools/docs/errors/ --include="*.md" | head -20
 ```
 
 ### 4. Search specs
 ```bash
-grep -rn "<query>" /Users/chen/talkbank/talkbank-chat/spec/ --include="*.md" | head -20
+grep -rn "<query>" /Users/chen/talkbank/talkbank-tools/spec/ --include="*.md" | head -20
 ```
 
 ### 5. Search README files
 ```bash
-find /Users/chen/talkbank -name "README.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -exec grep -ln "<query>" {} \;
+find /Users/chen/talkbank -name "README.md" -not -path "*/node_modules/*" -not -path "*/.git/*" -not -path "*/target/*" -exec grep -ln "<query>" {} \;
+```
+
+### 6. Search internal docs
+```bash
+grep -rn "<query>" /Users/chen/talkbank/docs/ /Users/chen/talkbank/analysis/ --include="*.md" | head -20
 ```
 
 ## Report

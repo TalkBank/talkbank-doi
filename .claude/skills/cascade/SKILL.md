@@ -7,7 +7,7 @@ allowed-tools: Bash, Read, Glob, Grep
 
 # Cross-Repo Impact Analysis
 
-Determine what downstream repos and crates are affected by a change, and run the necessary verification. If `$ARGUMENTS` specifies a crate or file, analyze that. Otherwise, detect changes automatically.
+Determine what downstream crates and repos are affected by a change, and run the necessary verification. If `$ARGUMENTS` specifies a crate or file, analyze that. Otherwise, detect changes automatically.
 
 ## Step 1: Identify What Changed
 
@@ -17,7 +17,7 @@ Otherwise, scan for uncommitted changes:
 
 ```bash
 cd /Users/chen/talkbank
-for repo in tree-sitter-talkbank talkbank-chat talkbank-chatter talkbank-clan batchalign3; do
+for repo in talkbank-tools batchalign3; do
   if [ -d "$repo/.git" ]; then
     changes=$(cd "$repo" && git diff --name-only HEAD 2>/dev/null)
     if [ -n "$changes" ]; then
@@ -30,44 +30,58 @@ done
 
 ## Step 2: Map the Dependency Graph
 
-Use this dependency map to determine impact:
+### talkbank-tools crate dependencies
 
-### Core Crates (talkbank-chat)
+```
+talkbank-derive → talkbank-model → talkbank-parser
+                                  → talkbank-direct-parser
+                                  → talkbank-transform → talkbank-clan
+                                                        → talkbank-cli (chatter)
+                                                        → talkbank-lsp
+                                  → talkbank-parser-tests
+```
 
-| Changed Crate | Downstream in talkbank-chat | Downstream Repos |
-|---------------|---------------------------|-------------------|
-| `talkbank-errors` | ALL crates | ALL repos |
-| `talkbank-model` | transform, parser-api, tree-sitter-parser, direct-parser, highlight, json, pipeline | talkbank-chatter, talkbank-clan, batchalign3 |
-| `talkbank-parser-api` | tree-sitter-parser, direct-parser, transform | talkbank-chatter, batchalign3 |
-| `talkbank-tree-sitter-parser` | transform | talkbank-chatter |
-| `talkbank-direct-parser` | transform | batchalign3 |
-| `talkbank-transform` | cli, lsp | talkbank-chatter, batchalign3 |
-| `talkbank-highlight` | lsp | talkbank-chatter |
-| `talkbank-json` | (standalone) | — |
-| `talkbank-derive` | model | (indirect: all) |
+| Changed Crate | Downstream in talkbank-tools | Also affects batchalign3? |
+|---------------|------------------------------|---------------------------|
+| `talkbank-derive` | ALL crates (via talkbank-model) | Yes (path deps) |
+| `talkbank-model` | parser, direct-parser, transform, clan, cli, lsp, parser-tests | Yes (path deps) |
+| `talkbank-parser` | transform, cli, lsp, parser-tests | Yes (via batchalign-chat-ops) |
+| `talkbank-direct-parser` | transform | Yes (via batchalign-chat-ops) |
+| `talkbank-transform` | clan, cli, lsp | Yes (via batchalign-chat-ops, pyo3) |
+| `talkbank-clan` | cli, lsp | No |
+| `talkbank-cli` | (terminal) | No |
+| `talkbank-lsp` | (terminal) | No |
 
-### Grammar (tree-sitter-talkbank)
+### batchalign3 crate dependencies
+
+batchalign3 has path dependencies into `../../talkbank-tools/crates/`:
+
+```
+batchalign-chat-ops → talkbank-model, talkbank-parser, talkbank-direct-parser, talkbank-transform
+batchalign-app      → batchalign-chat-ops
+batchalign-cli      → batchalign-app
+pyo3 (batchalign_core) → talkbank-model, talkbank-parser, talkbank-transform, batchalign-chat-ops
+```
+
+| Changed Crate | Downstream in batchalign3 |
+|---------------|--------------------------|
+| `batchalign-chat-ops` | batchalign-app, batchalign-cli, pyo3 |
+| `batchalign-app` | batchalign-cli |
+| `batchalign-cli` | (terminal) |
+| `pyo3` | Python `batchalign_core` extension |
+| Python `batchalign/` | Nothing (picked up by workers automatically) |
+
+### Grammar changes
 
 | Changed | Must Verify |
 |---------|------------|
-| `grammar.js` | tree-sitter tests → talkbank-tree-sitter-parser → parser-tests (73 files) → talkbank-chatter |
+| `grammar/grammar.js` | `tree-sitter generate` → `tree-sitter test` → talkbank-parser → parser-tests (74 files) → batchalign3 pyo3 |
 
-### Analysis (talkbank-clan)
-
-| Changed | Must Verify |
-|---------|------------|
-| Any command | talkbank-clan tests → talkbank-chatter LSP (if wired) |
-| `AnalysisCommand` trait | ALL commands + talkbank-chatter LSP |
-
-### batchalign3
+### Spec changes
 
 | Changed | Must Verify |
 |---------|------------|
-| `batchalign-chat-ops` | batchalign-server, batchalign-cli, rust-next integration tests |
-| `batchalign-cache` | batchalign-server |
-| `batchalign-server` | integration tests, CLI |
-| Python worker | `uv run pytest tests/serve/` |
-| `rust/` (PyO3) | `cargo test --manifest-path rust/Cargo.toml` + `uv run pytest` |
+| `spec/constructs/` or `spec/errors/` | `make test-gen` → `make verify` |
 
 ## Step 3: Generate Verification Plan
 
@@ -76,14 +90,13 @@ Based on the impact analysis, generate the exact commands needed. Group by repo 
 Example output for a `talkbank-model` change:
 
 ```
-Impact: talkbank-model is the pivot crate — affects ALL downstream repos.
+Impact: talkbank-model is the core data crate — affects ALL downstream.
 
 Verification plan:
-1. talkbank-chat:     make verify
-2. talkbank-clan:     cargo nextest run
-3. talkbank-chatter:  cargo nextest run && cd vscode && npm run compile
-4. batchalign3:       cargo test --manifest-path rust/Cargo.toml
-5. batchalign3:       uv run pytest --ignore=_private -x -q
+1. talkbank-tools:  make verify
+2. batchalign3:     cargo test --manifest-path pyo3/Cargo.toml
+3. batchalign3:     cargo test --workspace
+4. batchalign3:     uv run pytest batchalign -x -q
 ```
 
 ## Step 4: Run Verification
@@ -92,19 +105,19 @@ Run the generated verification plan. Report results as a table:
 
 | Step | Repo | Command | Result |
 |------|------|---------|--------|
-| 1 | talkbank-chat | make verify | PASS/FAIL |
-| 2 | talkbank-clan | cargo nextest run | PASS/FAIL |
+| 1 | talkbank-tools | make verify | PASS/FAIL |
+| 2 | batchalign3 | cargo test (pyo3) | PASS/FAIL |
 | ... | ... | ... | ... |
 
 If a step fails, stop and report the failure with enough context to diagnose.
 
 ## Step 5: Special Cases
 
-### Spec changes (`talkbank-chat/spec/`)
+### Spec changes (`talkbank-tools/spec/`)
 Must run `make test-gen` BEFORE `make verify`. The generated tests drive verification.
 
-### Grammar changes (`tree-sitter-talkbank/grammar.js`)
+### Grammar changes (`talkbank-tools/grammar/grammar.js`)
 Must run `tree-sitter generate` first. Reference corpus must pass 100%.
 
 ### Cargo.toml changes (dependency versions)
-Run `cargo update` in affected workspaces, then full test suite.
+Run `cargo check` in affected workspaces to regenerate Cargo.lock, then full test suite.

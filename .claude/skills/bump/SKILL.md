@@ -1,36 +1,29 @@
 ---
 name: bump
-description: Bump versions across TalkBank repos with cross-repo coordination. Handles workspace inheritance, multi-source sync (Cargo.toml + package.json), and downstream path dependency version fields. Use when bumping versions.
+description: Bump versions across TalkBank repos with cross-repo coordination. Handles workspace inheritance and multi-source sync (Cargo.toml + pyproject.toml + package.json). Use when bumping versions.
 disable-model-invocation: true
 allowed-tools: Bash, Read, Write, Edit, Glob, Grep
 ---
 
 # Version Bump with Cross-Repo Coordination
 
-Bump version numbers across one or more TalkBank repos. `$ARGUMENTS` should specify the repo and version (e.g., `/bump talkbank-chat 0.2.0` or `/bump all 0.2.0`).
+Bump version numbers across one or more TalkBank repos. `$ARGUMENTS` should specify the repo and version (e.g., `/bump talkbank-tools 0.2.0` or `/bump all 0.2.0`).
 
 ## Version Source Map
 
 | Repo | Primary Source | Inheritors | Secondary Sources |
 |------|---------------|------------|-------------------|
-| **talkbank-chat** | `Cargo.toml` `[workspace.package] version` | 14 crates via `version.workspace = true` | Workspace dep version fields (lines ~120-129) |
-| **talkbank-chatter** | `Cargo.toml` `[workspace.package] version` | 4 crates | `vscode/package.json` `"version"` |
-| **talkbank-clan** | `Cargo.toml` `[package] version` | (standalone) | — |
-| **tree-sitter-talkbank** | `Cargo.toml` `[package] version` | — | `package.json` `"version"` (must match!) |
-| **batchalign3** | `pyproject.toml` `version` | — | `rust-next/pyproject.toml`, `rust-next/crates/batchalign-bin/Cargo.toml` (all 3 must match) |
+| **talkbank-tools** | `Cargo.toml` `[workspace.package] version` | 10 crates via `version.workspace = true` | `vscode/package.json` `"version"`, `grammar/package.json` `"version"` |
+| **batchalign3** | `pyproject.toml` `version` | — | `Cargo.toml` `[workspace.package] version` (Rust workspace), `crates/batchalign-cli/Cargo.toml` (CLI binary version) |
 
 ## Step 1: Read Current Versions
 
 ```bash
-echo "=== talkbank-chat ===" && grep -A1 '\[workspace.package\]' /Users/chen/talkbank/talkbank-chat/Cargo.toml | grep version
-echo "=== talkbank-chatter ===" && grep -A1 '\[workspace.package\]' /Users/chen/talkbank/talkbank-chatter/Cargo.toml | grep version
-echo "=== talkbank-clan ===" && head -5 /Users/chen/talkbank/talkbank-clan/Cargo.toml | grep version
-echo "=== tree-sitter-talkbank (Cargo) ===" && head -5 /Users/chen/talkbank/tree-sitter-talkbank/Cargo.toml | grep version
-echo "=== tree-sitter-talkbank (npm) ===" && grep '"version"' /Users/chen/talkbank/tree-sitter-talkbank/package.json | head -1
-echo "=== talkbank-chatter vscode ===" && grep '"version"' /Users/chen/talkbank/talkbank-chatter/vscode/package.json | head -1
-echo "=== batchalign3 ===" && grep '^version' /Users/chen/talkbank/batchalign3/pyproject.toml | head -1
-echo "=== batchalign3-cli (pyproject) ===" && grep '^version' /Users/chen/talkbank/batchalign3/rust-next/pyproject.toml | head -1
-echo "=== batchalign3-cli (Cargo) ===" && grep '^version' /Users/chen/talkbank/batchalign3/rust-next/crates/batchalign-bin/Cargo.toml | head -1
+echo "=== talkbank-tools (Cargo) ===" && grep -A1 '\[workspace.package\]' /Users/chen/talkbank/talkbank-tools/Cargo.toml | grep version
+echo "=== talkbank-tools (VS Code) ===" && grep '"version"' /Users/chen/talkbank/talkbank-tools/vscode/package.json | head -1
+echo "=== talkbank-tools (grammar npm) ===" && grep '"version"' /Users/chen/talkbank/talkbank-tools/grammar/package.json | head -1
+echo "=== batchalign3 (pyproject) ===" && grep '^version' /Users/chen/talkbank/batchalign3/pyproject.toml | head -1
+echo "=== batchalign3 (Cargo workspace) ===" && grep -A1 '\[workspace.package\]' /Users/chen/talkbank/batchalign3/Cargo.toml | grep version
 ```
 
 ## Step 2: Determine Bump Scope
@@ -38,28 +31,11 @@ echo "=== batchalign3-cli (Cargo) ===" && grep '^version' /Users/chen/talkbank/b
 ### Single repo bump
 If bumping just one repo, only update that repo's version sources.
 
-### talkbank-chat bump (cascading)
-When talkbank-chat bumps, the `version` field in downstream path dependencies may need updating:
+### talkbank-tools bump (cascading)
+When talkbank-tools bumps, batchalign3 has path dependencies into talkbank-tools crates. The `version` fields in path deps are ignored locally but matter for crates.io. Check:
 
-**talkbank-chatter `Cargo.toml`** workspace dependencies section:
-```toml
-talkbank-errors = { path = "../talkbank-chat/crates/talkbank-errors", version = "0.1.0" }
-talkbank-model = { path = "../talkbank-chat/crates/talkbank-model", version = "0.1.0" }
-# ... other talkbank-chat crates
-```
-
-These `version` fields are ignored for local builds (path deps always use the local code), but they matter if crates are ever published to crates.io. Update them to match the new talkbank-chat version.
-
-**talkbank-clan `Cargo.toml`** dependencies:
-```toml
-talkbank-errors = { path = "../talkbank-chat/crates/talkbank-errors" }
-# (no version field — less strict, but consider adding for consistency)
-```
-
-**batchalign3 `rust/crates/batchalign-core/Cargo.toml`** and **`rust-next/`** crates:
-```toml
-talkbank-model = { path = "../../../../talkbank-chat/crates/talkbank-model" }
-# (path deps, no version field typically)
+```bash
+grep -n 'version.*=.*"0\.' /Users/chen/talkbank/batchalign3/crates/*/Cargo.toml /Users/chen/talkbank/batchalign3/pyo3/Cargo.toml 2>/dev/null | grep talkbank
 ```
 
 ### Coordinated bump (all repos)
@@ -67,35 +43,19 @@ Bump all repos to the same version for a major coordinated release.
 
 ## Step 3: Execute the Bump
 
-For each repo being bumped:
+### talkbank-tools
+Edit root `Cargo.toml` `[workspace.package] version`. All member crates inherit automatically.
 
-### Workspace repos (talkbank-chat, talkbank-chatter)
-Only edit the root `Cargo.toml` `[workspace.package] version` line. All member crates inherit automatically.
+Also update:
+- `vscode/package.json` version
+- `grammar/package.json` version (if they should stay in sync)
 
-Also update the version fields in `[workspace.dependencies]` for any workspace member cross-references.
-
-### Standalone repos (talkbank-clan)
-Edit `Cargo.toml` `[package] version` directly.
-
-### Dual-source repos (tree-sitter-talkbank)
-Edit BOTH:
-- `Cargo.toml` `[package] version`
-- `package.json` `"version"`
-
-Verify they match:
-```bash
-cargo_v=$(grep '^version' /Users/chen/talkbank/tree-sitter-talkbank/Cargo.toml | head -1 | sed 's/.*"\(.*\)"/\1/')
-npm_v=$(grep '"version"' /Users/chen/talkbank/tree-sitter-talkbank/package.json | head -1 | sed 's/.*"\(.*\)".*/\1/')
-[ "$cargo_v" = "$npm_v" ] && echo "MATCH: $cargo_v" || echo "MISMATCH: Cargo=$cargo_v npm=$npm_v"
-```
-
-### Triple-source repos (batchalign3)
-Edit ALL THREE:
+### batchalign3
+Edit ALL (must match):
 - `pyproject.toml` `version`
-- `rust-next/pyproject.toml` `version`
-- `rust-next/crates/batchalign-bin/Cargo.toml` `version`
+- `Cargo.toml` `[workspace.package] version`
 
-Verify:
+Verify sync:
 ```bash
 cd /Users/chen/talkbank/batchalign3 && uv run python scripts/check_cli_version_sync.py
 ```
@@ -104,7 +64,8 @@ cd /Users/chen/talkbank/batchalign3 && uv run python scripts/check_cli_version_s
 
 ```bash
 # For each repo with Cargo.toml changes
-cd /Users/chen/talkbank/<repo> && cargo check 2>/dev/null
+cd /Users/chen/talkbank/talkbank-tools && cargo check 2>/dev/null
+cd /Users/chen/talkbank/batchalign3 && cargo check 2>/dev/null
 ```
 
 This regenerates `Cargo.lock` with the new versions.
@@ -112,10 +73,8 @@ This regenerates `Cargo.lock` with the new versions.
 ## Step 5: Verify
 
 ```bash
-# Quick compile check across repos
-cd /Users/chen/talkbank/talkbank-chat && cargo check --all-targets
-cd /Users/chen/talkbank/talkbank-chatter && cargo check --all-targets
-cd /Users/chen/talkbank/talkbank-clan && cargo check --all-targets
+cd /Users/chen/talkbank/talkbank-tools && cargo check --workspace --all-targets
+cd /Users/chen/talkbank/batchalign3 && cargo check --workspace --all-targets
 ```
 
 ## Step 6: Report
