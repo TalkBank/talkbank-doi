@@ -2,8 +2,8 @@
 
 NOTIFY_EMAIL="macw@andrew.cmu.edu,fmc@andrew.cmu.edu"
 ACME_ENDPOINT_URL="https://acme.sectigo.com/v2/InCommonRSAOV"
-ACME_KEY_ID="ptuSgGTcJy6EopzZJ_OqTw"
-ACME_HMAC_KEY="J_mju70oNNdFUf1-966vfWwmcBlzd-FEU-4zZ-9QV8WmVhnx5arq-1Of2FMMmb-kf6FwLQ35gm0tzINMmDZN1Q"
+ACME_KEY_ID="[REDACTED — see ~/.talkbank-secrets/acme-certbot.env]"
+ACME_HMAC_KEY="[REDACTED — see ~/.talkbank-secrets/acme-certbot.env]"
 KEY_TYPE="ecdsa"
 
 # Had to remove --non-interactive because wanted domains listed.

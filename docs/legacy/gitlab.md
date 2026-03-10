@@ -72,7 +72,7 @@ Set my email.
 
 ``` shellsession
 chen
-_uWRiyy5KhxsnzwoxMLz
+[REDACTED — credential removed during 2026-03-10 cleanup]
 ```
 
 TODO
@@ -125,7 +125,7 @@ $ ssh -T git@gitlab.talkbank.org
 
 ``` shellsession
 talkbank
-iHBNzx75oyi-izLspbMA
+[REDACTED — credential removed during 2026-03-10 cleanup]
 ```
 
 ## Deploy keys
@@ -137,7 +137,7 @@ read-write
 Public deploy key? Was not useful enough, so deleted.
 
 ``` shellsession
-curl --header "PRIVATE-TOKEN: _uWRiyy5KhxsnzwoxMLz" "https://gitlab.talkbank.org:8929/api/v4/deploy_keys"
+curl --header "PRIVATE-TOKEN: [REDACTED]" "https://gitlab.talkbank.org:8929/api/v4/deploy_keys"
 # Result: id 2
 ```
 
@@ -152,7 +152,7 @@ For all talkbank projects. Not sure whether to use.
 
 ``` shellsession
 gitlab+deploy-token-1
-JbD6K4Xiosy7SeD5HmBK
+[REDACTED — credential removed during 2026-03-10 cleanup]
 ```
 
 ## Create repos from command line
@@ -168,7 +168,7 @@ TODO not working
 First, create with chen namespace.
 
 ``` shellsession
-curl --header "PRIVATE-TOKEN: _uWRiyy5KhxsnzwoxMLz" \
+curl --header "PRIVATE-TOKEN: [REDACTED]" \
 --data-urlencode 'name=junk' \
 -XPOST "https://gitlab.talkbank.org:8929/api/v4/projects"
 ```
@@ -176,7 +176,7 @@ curl --header "PRIVATE-TOKEN: _uWRiyy5KhxsnzwoxMLz" \
 Then transfer namespace using project ID.
 
 ``` shellsession
-curl --request PUT --header "PRIVATE-TOKEN: _uWRiyy5KhxsnzwoxMLz" "https://gitlab.talkbank.org:8929/api/v4/projects/8/transfer?namespace=talkbank"
+curl --request PUT --header "PRIVATE-TOKEN: [REDACTED]" "https://gitlab.talkbank.org:8929/api/v4/projects/8/transfer?namespace=talkbank"
 ```
 
 ## Initial import
