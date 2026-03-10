@@ -21,7 +21,7 @@ The original 8-repo structure has been consolidated to 2 active repos:
 Archived (read-only): `tree-sitter-talkbank`, `talkbank-chat`, `talkbank-chatter`,
 `talkbank-clan`, `batchalign-hk-plugin`
 
-Supporting (private, stays private): `talkbank-private` (deploy scripts, internal docs, ops)
+Supporting (private): `talkbank-dev` workspace (deploy scripts, internal docs, ops)
 
 ### Dependency Graph
 
@@ -98,7 +98,7 @@ All items complete:
 | talkbank-tools | 64 | 23 | **0** | 89 |
 | batchalign3 | 76 | 24 | **0** | 104 |
 
-Detailed trackers: `talkbank-private/docs/release-doc-audit/matrices/`
+Detailed trackers: `docs/release-doc-audit/matrices/`
 
 ---
 
@@ -112,7 +112,7 @@ stay **private** — no public exposure yet.
 - [ ] Create `TalkBank/talkbank-tools` on GitHub (**private**)
 - [ ] Push main branch
 - [ ] Verify CI passes (`make verify` — gates G0–G10, ~2300 tests)
-- [ ] Confirm `corpus/reference/` 73-file suite is included
+- [ ] Confirm `corpus/reference/` 74-file suite is included
 - [ ] Add team members as collaborators
 
 ### 1b. Push batchalign3 (private)
