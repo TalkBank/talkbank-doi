@@ -16,7 +16,7 @@ The original 8-repo structure has been consolidated to 2 active repos:
 | Repo | Purpose | Ships |
 |------|---------|-------|
 | `talkbank-tools` | Unified: grammar, spec, 10 Rust crates, corpus, VS Code extension | `chatter` CLI, `talkbank-lsp-server`, VS Code extension |
-| `batchalign3` | NLP pipeline: Rust server + Python ML workers | `batchalign3` (PyPI), `batchalign3-cli` (PyPI) |
+| `batchalign3` | NLP pipeline: Rust server + Python ML workers | `batchalign3` (PyPI) |
 
 Archived (read-only): `tree-sitter-talkbank`, `talkbank-chat`, `talkbank-chatter`,
 `talkbank-clan`, `batchalign-hk-plugin`
@@ -36,7 +36,7 @@ talkbank-tools (self-contained)
 batchalign3
     3 Rust crates + pyo3/ bridge + Python inference
     CI: clones talkbank-tools for Rust path deps (uses TALKBANK_TOOLS_TOKEN)
-    Release: batchalign3 (PyPI wheel) + batchalign3-cli (PyPI binary)
+    Release: batchalign3 (PyPI wheel — CLI + Python runtime)
 ```
 
 **Key insight**: talkbank-tools is fully self-contained. batchalign3 depends
@@ -50,18 +50,18 @@ on it for path dependencies. So talkbank-tools must be on GitHub first.
 | Repository URL | `github.com/TalkBank/talkbank-tools` | `github.com/TalkBank/batchalign3` |
 | License | BSD-3-Clause | BSD-3-Clause |
 | Release trigger | Git tag `v*` | Git tag `v*` |
-| Binaries | `chatter`, `talkbank-lsp-server` | `batchalign3-cli` |
-| Packages | (GitHub Release only) | `batchalign3` (py≥3.12), `batchalign3-cli` (py≥3.11) |
+| Binaries | `chatter`, `talkbank-lsp-server` | `batchalign3` console command |
+| Packages | (GitHub Release only) | `batchalign3` (py≥3.12) |
 
 ### Platform matrix
 
-| Platform | talkbank-tools | batchalign3 | batchalign3-cli |
-|----------|---------------|-------------|-----------------|
-| macOS ARM (aarch64-apple-darwin) | GitHub Release | PyPI wheel | PyPI wheel |
-| macOS Intel (x86_64-apple-darwin) | GitHub Release | PyPI wheel | PyPI wheel |
-| Linux x86_64 (manylinux 2_28) | GitHub Release | PyPI wheel | PyPI wheel |
-| Linux ARM (aarch64, manylinux 2_28) | — | PyPI wheel | PyPI wheel |
-| Windows (x86_64-pc-windows-msvc) | GitHub Release | PyPI wheel | PyPI wheel |
+| Platform | talkbank-tools | batchalign3 |
+|----------|---------------|-------------|
+| macOS ARM (aarch64-apple-darwin) | GitHub Release | PyPI wheel |
+| macOS Intel (x86_64-apple-darwin) | GitHub Release | PyPI wheel |
+| Linux x86_64 (manylinux 2_28) | GitHub Release | PyPI wheel |
+| Linux ARM (aarch64, manylinux 2_28) | — | PyPI wheel |
+| Windows (x86_64-pc-windows-msvc) | GitHub Release | PyPI wheel |
 
 ---
 
@@ -191,9 +191,8 @@ batchalign3 stays private until the team is confident it's ready.
 
 ## Phase 4: Publish batchalign3 on PyPI
 
-Two PyPI packages, matching the old `batchalign` (0.x) page style:
-- `batchalign3` — Python package with Rust extension (ASR, alignment, morphosyntax)
-- `batchalign3-cli` — standalone Rust binary (server/client, no ML models)
+One PyPI package:
+- `batchalign3` — Python package with Rust extension + CLI console command (ASR, alignment, morphosyntax)
 
 ### Old batchalign PyPI page (reference)
 
@@ -223,20 +222,16 @@ Current `pyproject.toml` is close but needs review:
 - [ ] Set up OIDC trusted publishing for `batchalign3`:
   GitHub org `TalkBank`, repo `batchalign3`, workflow `release.yml`,
   environment `pypi`
-- [ ] Set up OIDC trusted publishing for `batchalign3-cli`:
-  same repo, workflow `release-cli.yml`, environment `pypi`
-- [ ] Register package names on PyPI (first publish claims them)
+- [ ] Register package name on PyPI (first publish claims it)
 
 ### 4c. Test end-to-end release
 
 - [ ] Tag `v1.0.0`
-- [ ] Verify both workflows trigger and succeed:
+- [ ] Verify `release.yml` triggers and succeeds:
   - `release.yml` → `batchalign3` wheels (5 platforms) on PyPI + sdist
-  - `release-cli.yml` → `batchalign3-cli` wheels (5 platforms) on PyPI
 - [ ] Test installation on each platform:
   ```bash
-  uv pip install batchalign3           # Python package with Rust extension
-  uv tool install batchalign3-cli      # Standalone CLI binary
+  uv tool install batchalign3
   batchalign3 --version
   ```
 - [ ] Verify the CLI binary can dispatch to Python workers
@@ -308,7 +303,7 @@ Phase 1:  Private repos on TalkBank org — team starts using
           1c: Team onboarding + feedback
 Phase 2:  talkbank-tools public + chatter GitHub Release
 Phase 3:  batchalign3 public (when team agrees it's ready)
-Phase 4:  PyPI publishing (batchalign3 + batchalign3-cli)
+Phase 4:  PyPI publishing (batchalign3)
 Phase 5:  VS Code marketplace
 Phase 6:  crates.io (when there's demand)
 ```
@@ -321,7 +316,7 @@ team has used batchalign3 privately and confirmed readiness.
 
 ## CI Authentication for Private Repos
 
-batchalign3's CI (`test.yml`, `release.yml`, `release-cli.yml`) clones
+batchalign3's CI (`test.yml`, `release.yml`) clones
 talkbank-tools as a sibling dependency. While both repos are private,
 this requires authentication:
 

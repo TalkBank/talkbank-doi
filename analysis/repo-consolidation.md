@@ -128,9 +128,7 @@ Grammar (grammar.js → parser.c). Published to npm.
 | **`chatter` CLI** | GitHub releases, homebrew, cargo install, (maybe PyPI) | `chatter validate`, `chatter clan`, `chatter lsp`, normalize, json, watch, lint |
 | **VS Code extension** | VS Code Marketplace | One-click editor integration (bundles `chatter lsp`) |
 | **`tree-sitter-talkbank`** | npm, crates.io | CHAT grammar for any tree-sitter editor |
-| **`batchalign3`** | PyPI | ASR, forced alignment, morphosyntax pipeline |
-| **`batchalign3-cli`** | PyPI | Standalone pipeline server binary |
-| **`batchalign-hk-plugin`** | PyPI | HK deployment plugin |
+| **`batchalign3`** | PyPI | ASR, forced alignment, morphosyntax pipeline + CLI |
 
 ### Audiences
 

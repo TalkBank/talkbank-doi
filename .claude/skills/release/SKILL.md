@@ -16,7 +16,7 @@ Guide the release process for one or more TalkBank repos. `$ARGUMENTS` should sp
 | **talkbank-tools** | `chatter` CLI binary, `talkbank-lsp-server` binary | GitHub Releases (cross-platform binaries) |
 | **talkbank-tools** | VS Code extension `.vsix` | VS Code Marketplace (future) |
 | **batchalign3** | `batchalign3` Python wheel (with Rust extension) | PyPI (5-platform manylinux/macOS/Windows) |
-| **batchalign3** | `batchalign3-cli` standalone binary | PyPI (maturin `bindings = "bin"`) |
+| **batchalign3** | `batchalign3` console command (via `[project.scripts]`) | Part of the `batchalign3` PyPI wheel |
 
 ## Pre-Release Checklist
 
@@ -76,8 +76,7 @@ cd /Users/chen/talkbank/batchalign3 && git log --oneline $(git describe --tags -
    git push origin v<VERSION>
    ```
 4. GitHub Actions `release.yml` builds 5-platform wheels via maturin-action and publishes to PyPI (OIDC trusted publishing)
-5. GitHub Actions `release-cli.yml` builds CLI binaries for GitHub Releases
-6. Verify: `pip install batchalign3==<VERSION>` and check `https://pypi.org/project/batchalign3/`
+5. Verify: `uv tool install batchalign3==<VERSION>` and check `https://pypi.org/project/batchalign3/`
 
 ## Post-Release
 

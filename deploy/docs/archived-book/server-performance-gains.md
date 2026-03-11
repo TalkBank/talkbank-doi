@@ -99,4 +99,4 @@ The savings are purely in eliminating repeated startup cost and reducing memory 
 | Peak model RAM | 20-40 GB | ~6 GB |
 | Runs on 16 GB Mac client? | Barely | Yes (no models needed) |
 | Multiple users share models? | No | Yes |
-| Setup per client machine | Full install + models | `uv tool install batchalign3-cli` |
+| Setup per client machine | Full install + models | `uv tool install batchalign3` |
