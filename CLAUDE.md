@@ -168,11 +168,12 @@ All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run 
 
 | Repo / Path | What | Notes |
 |------|------|-------|
-| `~/batchalign-next/` | batchalign-next source repo (Python) | Pure Python; `uv build --wheel` produces the wheel |
-| `batchalign3/` (in this workspace) | Rust-primary rewrite source | Also builds batchalign-core (Rust PyO3) at `pyo3/` |
+| `~/batchalign-next/` | batchalign-next source repo (Python) | `uv build --wheel` produces the wheel |
+| `~/talkbank-utils/` | talkbank-utils source repo (Rust + grammar) | Old clone of talkbank-tools; **batchalign-next builds batchalign-core from `~/talkbank-utils/rust/crates/batchalign-core/`** |
+| `batchalign3/` (in this workspace) | Rust-primary rewrite source | Also builds batchalign-core at `pyo3/` |
 | `~/batchalign2-master/` | Legacy batchalign2 | External/PyPI users only |
 
-On fleet machines, batchalign-next is installed via `uv tool install` (binary at `~/.local/bin/batchalign-next`). The deploy scripts build a batchalign-next wheel from `~/batchalign-next/` and a batchalign-core wheel from `batchalign3/pyo3/`, then deploy both together.
+**batchalign-next deploy builds two wheels:** the Python wheel from `~/batchalign-next/` and the batchalign-core Rust wheel from `~/talkbank-utils/rust/crates/batchalign-core/` (via maturin). Both are installed together on fleet machines via `uv tool install`.
 
 **Critical baseline commit:** `84ad500b` (2026-01-09) in batchalign2 — the Python optimization push (lazy imports, parallelism, Hirschberg DP, Stanza caching) that is the anchor point for the entire batchalign2→batchalign3 migration. Documented in `batchalign3/book/src/migration/index.md`. A secondary comparison point is `e8f8bfad` (2026-02-09) on batchalign2 master.
 

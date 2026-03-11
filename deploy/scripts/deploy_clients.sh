@@ -16,10 +16,9 @@ PYTHON_VERSION="3.12"
 SSH_USER="macw"
 ALL_HOSTS=(bilbo brian davida frodo andrew lilly sue vaishnavi)
 
-WORKSPACE_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 BA_NEXT_REPO="$HOME/batchalign-next"
-BA3_REPO="$WORKSPACE_ROOT/batchalign3"
-CORE_CARGO="$BA3_REPO/pyo3/Cargo.toml"
+CORE_REPO="$HOME/talkbank-utils/rust"
+CORE_CARGO="$CORE_REPO/crates/batchalign-core/Cargo.toml"
 
 DRY_RUN=false
 NO_BUILD=false
@@ -56,7 +55,7 @@ if ! $NO_BUILD; then
         uv python install "$PYTHON_VERSION"
         PYTHON_BIN="$(uv python find "$PYTHON_VERSION")"
     fi
-    (cd "$BA3_REPO" && maturin build --release -m "$CORE_CARGO" -i "$PYTHON_BIN" 2>&1 | tail -3)
+    (cd "$CORE_REPO" && maturin build --release -m "$CORE_CARGO" -i "$PYTHON_BIN" 2>&1 | tail -3)
 
     echo ""
 fi
@@ -66,7 +65,7 @@ fi
 BA_NEXT_WHEEL="$(ls -t "$BA_NEXT_REPO"/dist/batchalign_next-*-py3-none-any.whl 2>/dev/null | head -1)"
 
 CP_TAG="cp${PYTHON_VERSION//./}"
-BA_CORE_WHEEL="$(ls -t "$BA3_REPO"/pyo3/target/wheels/batchalign3-*-${CP_TAG}-${CP_TAG}-macosx_*.whl 2>/dev/null | head -1)"
+BA_CORE_WHEEL="$(ls -t "$HOME"/talkbank-utils/target/wheels/batchalign_core-*-${CP_TAG}-${CP_TAG}-macosx_*.whl 2>/dev/null | head -1)"
 
 for whl in "$BA_NEXT_WHEEL" "$BA_CORE_WHEEL"; do
     if [[ -z "$whl" || ! -f "$whl" ]]; then
@@ -115,7 +114,6 @@ for host in "${HOSTS[@]}"; do
     # Remove old installations (including 3.14t and sidecar remnants)
     echo "  Removing old installations..."
     ssh "$SSH_USER@$host" "
-        uv tool uninstall batchalign3 2>/dev/null || true
         uv tool uninstall batchalign-next 2>/dev/null || true
         uv tool uninstall batchalign 2>/dev/null || true
         uv tool uninstall batchalignhk 2>/dev/null || true
