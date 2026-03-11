@@ -473,6 +473,7 @@ Fixes MagicDNS for all protocols (SSH, VNC, HTTP, etc.).
 | snorri | 100.68.24.109 |
 | swan | 100.122.40.75 |
 | fromm | 100.74.24.120 |
+| benedict | 100.101.23.28 |
 
 **Note:** IPs change when a machine re-registers (logout + re-auth). Update
 the SSH config IP mappings on all machines if this happens.

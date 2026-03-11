@@ -60,6 +60,7 @@ macOS, user `macw`. Not batchalign servers.
 | snorri | 100.68.24.109 | macOS | Home, M2 Mac mini, 8 GB |
 | swan | 100.122.40.75 | macOS | Home, 2017 iMac (Intel), 32 GB |
 | yoga | 100.102.163.27 | macOS | Home, Intel |
+| benedict | 100.101.23.28 | Ubuntu 24.04 | Home, 8 GB RAM, 4 cores |
 | franklin-ipad-pro | 100.75.180.66 | iOS | Offline 35d |
 | franklin16e | 100.126.171.119 | iOS | |
 

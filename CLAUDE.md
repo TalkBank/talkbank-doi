@@ -134,25 +134,53 @@ cargo run --release -p talkbank-cli -- validate ../data/ --roundtrip --force  # 
 cargo run --release -p talkbank-cli -- validate ../data/ --skip-alignment     # Faster
 ```
 
-## Servers We Can Access
+## Deployment
+
+### Deploy Scripts
+
+All deploy scripts live in `deploy/scripts/`. Read these scripts before deploying — they are the source of truth for how deployment works.
+
+| Script | What | Target |
+|--------|------|--------|
+| `deploy/scripts/deploy_server.sh` | Deploy batchalign-next to server (net) | `bash deploy/scripts/deploy_server.sh` |
+| `deploy/scripts/deploy_clients.sh` | Deploy batchalign-next to client machines | `bash deploy/scripts/deploy_clients.sh` |
+| `deploy/scripts/deploy_batchalign3_server.sh` | Deploy batchalign3 (Rust) to server | `bash deploy/scripts/deploy_batchalign3_server.sh` |
+| `deploy/scripts/deploy_batchalign3_clients.sh` | Deploy batchalign3 (Rust) to clients | `bash deploy/scripts/deploy_batchalign3_clients.sh` |
+
+All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run with `--help` for full usage.
+
+### Fleet Machines
+
+| Host | Role | Access |
+|------|------|--------|
+| `net` | Server (production) | `ssh macw@net` |
+| `bilbo`, `brian`, `davida`, `frodo`, `andrew`, `lilly`, `sue`, `vaishnavi` | Clients | `ssh macw@<host>` |
+
+### Servers We Can Access
 
 | Host | Access | OS | Role |
 |------|--------|----|------|
-| `net.talkbank.org` | `ssh macw@net` | macOS | Internal (CMU only): local media drives, batchalign server |
+| `net.talkbank.org` | `ssh macw@net` | macOS (Mac Studio, M3 Ultra, 256 GB) | Internal (CMU only): local media drives, batchalign server |
 
-`net` is deliberately running `batchalign-next` (Python-only rewrite), installed via `uv tool` at `/Users/macw/.local/bin/batchalign-next`. Will be upgraded to `batchalign3` (Rust) once it's ready. The React dashboard SPA is not deployed there yet.
+`net` runs `batchalign-next` on port 8000 (Python 3.12). Being upgraded to `batchalign3` (Rust) on port 8001 (coexistence), then port 8000 (takeover).
 
-## Currently Deployed Batchalign Versions
+### Batchalign Repos and Deployed Versions
 
-| Path | What | Notes |
+| Repo / Path | What | Notes |
 |------|------|-------|
-| `~/batchalign2-master/` | Current production batchalign2 | Legacy; external/PyPI users |
-| `~/batchalign-next/` | Python-only batchalign rewrite (forked from batchalign2) | What net and all internal users run today; different architecture from batchalign3 |
-| `batchalign3/` (in this workspace) | Rust-primary rewrite | Not yet released; replaces both of the above |
+| `~/batchalign-next/` | batchalign-next source repo (Python) | Pure Python; `uv build --wheel` produces the wheel |
+| `batchalign3/` (in this workspace) | Rust-primary rewrite source | Also builds batchalign-core (Rust PyO3) at `pyo3/` |
+| `~/batchalign2-master/` | Legacy batchalign2 | External/PyPI users only |
+
+On fleet machines, batchalign-next is installed via `uv tool install` (binary at `~/.local/bin/batchalign-next`). The deploy scripts build a batchalign-next wheel from `~/batchalign-next/` and a batchalign-core wheel from `batchalign3/pyo3/`, then deploy both together.
 
 **Critical baseline commit:** `84ad500b` (2026-01-09) in batchalign2 — the Python optimization push (lazy imports, parallelism, Hirschberg DP, Stanza caching) that is the anchor point for the entire batchalign2→batchalign3 migration. Documented in `batchalign3/book/src/migration/index.md`. A secondary comparison point is `e8f8bfad` (2026-02-09) on batchalign2 master.
 
-Until batchalign3 is released, bug reports and hotfixes may target `~/batchalign-next/` or `~/batchalign2-master/`.
+Until batchalign3 is released, bug reports and hotfixes may target batchalign-next on the fleet machines.
+
+### Postmortems
+
+Incident reports live in `docs/postmortems/`. Check these before deploying to understand past failures.
 
 ## Migration Status
 

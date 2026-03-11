@@ -1,28 +1,27 @@
 #!/usr/bin/env bash
-# Deploy batchalign3[serve] to server machines via SSH.
+# Deploy batchalign-next[serve] to server machines via SSH.
 #
 # By default deploys to Net only (production). Can deploy to any/all machines.
-# Installs main tool under Python 3.14t (free-threaded) and creates a Python 3.12
-# sidecar venv at ~/.batchalign3/sidecar/.venv/ for transcribe support.
+# Installs under Python 3.12 with all extras (including whisper for transcribe).
 #
 # Usage:
-#   bash scripts/deploy_server.sh                # build + deploy to Net
-#   bash scripts/deploy_server.sh bilbo brian     # deploy to specific hosts
-#   bash scripts/deploy_server.sh --all           # deploy to all fleet machines
-#   bash scripts/deploy_server.sh --dry-run       # build wheels, show what would deploy
-#   bash scripts/deploy_server.sh --no-build      # skip wheel build (use existing)
+#   bash deploy/scripts/deploy_server.sh                # build + deploy to Net
+#   bash deploy/scripts/deploy_server.sh bilbo brian     # deploy to specific hosts
+#   bash deploy/scripts/deploy_server.sh --all           # deploy to all fleet machines
+#   bash deploy/scripts/deploy_server.sh --dry-run       # build wheels, show what would deploy
+#   bash deploy/scripts/deploy_server.sh --no-build      # skip wheel build (use existing)
 
 set -euo pipefail
 
-PYTHON_VERSION="3.14t"
-SIDECAR_PYTHON="3.12"
+PYTHON_VERSION="3.12"
 SSH_USER="macw"
 DEFAULT_HOST="net"
 ALL_FLEET_HOSTS=(net bilbo brian davida frodo andrew lilly sue vaishnavi)
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-CORE_REPO="$REPO_ROOT/rust"
-CORE_CARGO="$CORE_REPO/crates/batchalign-core/Cargo.toml"
+WORKSPACE_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+BA_NEXT_REPO="$HOME/batchalign-next"
+BA3_REPO="$WORKSPACE_ROOT/batchalign3"
+CORE_CARGO="$BA3_REPO/pyo3/Cargo.toml"
 
 DRY_RUN=false
 NO_BUILD=false
@@ -36,7 +35,7 @@ while [[ $# -gt 0 ]]; do
         --no-build)     NO_BUILD=true; shift ;;
         --all)          DEPLOY_ALL=true; shift ;;
         --help|-h)
-            echo "Usage: bash scripts/deploy_server.sh [OPTIONS] [HOST...]"
+            echo "Usage: bash deploy/scripts/deploy_server.sh [OPTIONS] [HOST...]"
             echo ""
             echo "Options:"
             echo "  --all        Deploy to all fleet machines (${ALL_FLEET_HOSTS[*]})"
@@ -58,80 +57,57 @@ elif [[ ${#HOSTS[@]} -eq 0 ]]; then
     HOSTS=("$DEFAULT_HOST")
 fi
 
-# --- RAM-based worker tuning per host ---
-# Returns recommended max_concurrent_jobs for a given RAM size (GB)
-ram_to_workers() {
-    local ram_gb=$1
-    if   (( ram_gb >= 200 )); then echo 8
-    elif (( ram_gb >= 100 )); then echo 4
-    elif (( ram_gb >=  48 )); then echo 2
-    else echo 1
-    fi
-}
-
 # --- Build wheels ---
 
 if ! $NO_BUILD; then
     echo "=== Building wheels ==="
 
-    # 1. Pure Python wheel (version-agnostic)
-    echo "  Building batchalign3 wheel..."
-    (cd "$REPO_ROOT" && uv build --wheel --quiet)
+    # 1. Pure Python wheel (batchalign-next)
+    echo "  Building batchalign-next wheel..."
+    (cd "$BA_NEXT_REPO" && uv build --wheel --quiet)
 
-    # 2. Rust core for 3.14t (main)
+    # 2. Rust core wheel (batchalign-core from batchalign3 repo)
     echo "  Building batchalign-core wheel (Python $PYTHON_VERSION)..."
-    PYTHON_314T="$(uv python find "$PYTHON_VERSION" 2>/dev/null || true)"
-    if [[ -z "$PYTHON_314T" ]]; then
+    PYTHON_BIN="$(uv python find "$PYTHON_VERSION" 2>/dev/null || true)"
+    if [[ -z "$PYTHON_BIN" ]]; then
         echo "  Installing Python $PYTHON_VERSION..."
         uv python install "$PYTHON_VERSION"
-        PYTHON_314T="$(uv python find "$PYTHON_VERSION")"
+        PYTHON_BIN="$(uv python find "$PYTHON_VERSION")"
     fi
-    (cd "$CORE_REPO" && maturin build --release -m "$CORE_CARGO" -i "$PYTHON_314T" 2>&1 | tail -3)
-
-    # 3. Rust core for 3.12 (sidecar)
-    echo "  Building batchalign-core wheel (Python $SIDECAR_PYTHON, sidecar)..."
-    (cd "$CORE_REPO" && maturin build --release -m "$CORE_CARGO" -i "python$SIDECAR_PYTHON" 2>&1 | tail -3)
+    (cd "$BA3_REPO" && maturin build --release -m "$CORE_CARGO" -i "$PYTHON_BIN" 2>&1 | tail -3)
 
     echo ""
 fi
 
 # --- Discover wheel paths (glob for latest) ---
 
-BA_NEXT_WHEEL="$(ls -t "$REPO_ROOT"/dist/batchalign3-*-py3-none-any.whl 2>/dev/null | head -1)"
+BA_NEXT_WHEEL="$(ls -t "$BA_NEXT_REPO"/dist/batchalign_next-*-py3-none-any.whl 2>/dev/null | head -1)"
 
-# cp314t wheel (main) — derive tag: "3.14t" → "cp314"
-CP_TAG="cp${PYTHON_VERSION//[^0-9]/}"
-BA_CORE_314T_WHEEL="$(ls -t "$CORE_REPO"/target/wheels/batchalign_core-*-${CP_TAG}*-macosx_*.whl 2>/dev/null | head -1)"
+CP_TAG="cp${PYTHON_VERSION//./}"
+BA_CORE_WHEEL="$(ls -t "$BA3_REPO"/pyo3/target/wheels/batchalign3-*-${CP_TAG}-${CP_TAG}-macosx_*.whl 2>/dev/null | head -1)"
 
-# cp312 wheel (sidecar)
-CP_312="cp${SIDECAR_PYTHON//./}"
-BA_CORE_312_WHEEL="$(ls -t "$CORE_REPO"/target/wheels/batchalign_core-*-${CP_312}-${CP_312}-macosx_*.whl 2>/dev/null | head -1)"
-
-for whl in "$BA_NEXT_WHEEL" "$BA_CORE_314T_WHEEL" "$BA_CORE_312_WHEEL"; do
+for whl in "$BA_NEXT_WHEEL" "$BA_CORE_WHEEL"; do
     if [[ -z "$whl" || ! -f "$whl" ]]; then
         echo "ERROR: Wheel not found."
-        echo "  batchalign3:       $BA_NEXT_WHEEL"
-        echo "  batchalign-core 3.14t: $BA_CORE_314T_WHEEL"
-        echo "  batchalign-core 3.12:  $BA_CORE_312_WHEEL"
+        echo "  batchalign-next:   $BA_NEXT_WHEEL"
+        echo "  batchalign-core:   $BA_CORE_WHEEL"
         echo "Run without --no-build to build fresh wheels."
         exit 1
     fi
 done
 
 BA_NEXT_NAME="$(basename "$BA_NEXT_WHEEL")"
-BA_CORE_314T_NAME="$(basename "$BA_CORE_314T_WHEEL")"
-BA_CORE_312_NAME="$(basename "$BA_CORE_312_WHEEL")"
+BA_CORE_NAME="$(basename "$BA_CORE_WHEEL")"
 
-echo "Deploying batchalign3[serve] to: ${HOSTS[*]}"
-echo "  batchalign3:       $BA_NEXT_NAME"
-echo "  batchalign-core 3.14t: $BA_CORE_314T_NAME  (main)"
-echo "  batchalign-core 3.12:  $BA_CORE_312_NAME  (sidecar)"
+echo "Deploying batchalign-next[serve] to: ${HOSTS[*]}"
+echo "  batchalign-next:   $BA_NEXT_NAME"
+echo "  batchalign-core:   $BA_CORE_NAME  (Python $PYTHON_VERSION)"
 echo ""
 
 if $DRY_RUN; then
     echo "=== DRY RUN ==="
     for host in "${HOSTS[@]}"; do
-        echo "  [$host] Would scp 3 wheels, install main (3.14t), create sidecar (3.12), restart server"
+        echo "  [$host] Would scp 2 wheels, install (Python $PYTHON_VERSION), restart server"
     done
     exit 0
 fi
@@ -152,51 +128,51 @@ for host in "${HOSTS[@]}"; do
         continue
     fi
 
-    # Copy all three wheels
+    # Copy wheels
     echo "  Copying wheels..."
-    scp -q "$BA_NEXT_WHEEL" "$BA_CORE_314T_WHEEL" "$BA_CORE_312_WHEEL" "$SSH_USER@$host:/tmp/"
+    scp -q "$BA_NEXT_WHEEL" "$BA_CORE_WHEEL" "$SSH_USER@$host:/tmp/"
 
-    # Stop the server before installing — use multiple kill strategies to
-    # ensure no old processes survive (stale PID files, unresponsive SIGTERM, etc.)
+    # Stop the server before installing
     echo "  Stopping server..."
     ssh "$SSH_USER@$host" '
+        batchalign-next serve stop 2>/dev/null || true
         batchalign3 serve stop 2>/dev/null || true
         sleep 1
-        # Nuclear option: kill anything still running batchalign3 serve
+        pkill -9 -f "batchalign-next serve" 2>/dev/null || true
         pkill -9 -f "batchalign3 serve" 2>/dev/null || true
         sleep 1
-        # Verify nothing survived
-        if pgrep -f "batchalign3 serve" >/dev/null 2>&1; then
-            echo "  WARNING: processes still alive after pkill -9"
-            pgrep -f "batchalign3 serve" | xargs kill -9 2>/dev/null || true
-            sleep 1
-        fi
     '
 
-    # Remove old installations
-    echo "  Removing old uv tool installations..."
+    # Remove old installations (including 3.14t and sidecar remnants)
+    echo "  Removing old installations..."
     ssh "$SSH_USER@$host" "
         uv tool uninstall batchalign3 2>/dev/null || true
+        uv tool uninstall batchalign-next 2>/dev/null || true
         uv tool uninstall batchalign 2>/dev/null || true
         uv tool uninstall batchalignhk 2>/dev/null || true
+        rm -rf ~/.batchalign3/sidecar/ 2>/dev/null || true
+        rm -f ~/.batchalign3/sidecar-daemon.json ~/.batchalign3/sidecar-daemon.log 2>/dev/null || true
     " 2>&1 | grep -v "is not installed" || true
 
-    # --- Phase 1: Main tool (Python 3.14t) ---
+    # Install (Python 3.12)
     echo "  Ensuring Python $PYTHON_VERSION on $host..."
     ssh "$SSH_USER@$host" "uv python install $PYTHON_VERSION 2>/dev/null || true"
 
-    echo "  Installing batchalign3 (Python $PYTHON_VERSION)..."
+    echo "  Installing batchalign-next (Python $PYTHON_VERSION)..."
     ssh "$SSH_USER@$host" "
         uv tool install --python $PYTHON_VERSION --force-reinstall \
             /tmp/$BA_NEXT_NAME \
-            --with /tmp/$BA_CORE_314T_NAME 2>&1
+            --with /tmp/$BA_CORE_NAME \
+            --with openai-whisper \
+            --with 'numba>=0.61.0' \
+            --with 'llvmlite>=0.44.0' 2>&1
     " | tail -5
 
-    # Verify main installation
-    echo "  Verifying main installation..."
+    # Verify installation
+    echo "  Verifying installation..."
     version=$(ssh "$SSH_USER@$host" \
-        'batchalign3 --help >/dev/null 2>&1 && \
-         ~/.local/share/uv/tools/batchalign3/bin/python -c "
+        'batchalign-next --help >/dev/null 2>&1 && \
+         ~/.local/share/uv/tools/batchalign-next/bin/python -c "
 from batchalign.pipelines.context import ProcessingContext
 print(\"ok\")
 " 2>&1' || echo "FAILED")
@@ -206,37 +182,12 @@ print(\"ok\")
         FAILED_HOSTS+=("$host")
         continue
     fi
-    echo "  OK: Main installation verified"
-
-    # --- Phase 2: Sidecar venv (Python 3.12, ASR extras) ---
-    echo "  Setting up transcribe sidecar (Python $SIDECAR_PYTHON)..."
-    ssh "$SSH_USER@$host" "uv python install $SIDECAR_PYTHON 2>/dev/null || true"
-    ssh "$SSH_USER@$host" "
-        uv venv ~/.batchalign3/sidecar/.venv --python $SIDECAR_PYTHON 2>/dev/null || true
-        uv pip install --python ~/.batchalign3/sidecar/.venv/bin/python \
-            /tmp/$BA_NEXT_NAME /tmp/$BA_CORE_312_NAME \
-            openai-whisper 'numba>=0.61.0' 'llvmlite>=0.44.0' 2>&1
-    " | tail -5
-
-    # Verify sidecar
-    echo "  Verifying sidecar..."
-    sidecar_ok=$(ssh "$SSH_USER@$host" '
-        ~/.batchalign3/sidecar/.venv/bin/python -c "
-import whisper
-print(\"sidecar:ok\")
-" 2>&1' || echo "FAILED")
-
-    if [[ "$sidecar_ok" != *"sidecar:ok"* ]]; then
-        echo "  WARNING: Sidecar verification failed: $sidecar_ok"
-        echo "  (Continuing — transcribe will be unavailable on this host)"
-    else
-        echo "  OK: Sidecar verified"
-    fi
+    echo "  OK: Installation verified"
 
     # Generate server.yaml if it doesn't exist
     echo "  Checking server.yaml..."
     ssh "$SSH_USER@$host" '
-        CONFIG_DIR="$HOME/.batchalign3"
+        CONFIG_DIR="$HOME/.batchalign-next"
         CONFIG="$CONFIG_DIR/server.yaml"
         if [ ! -f "$CONFIG" ]; then
             mkdir -p "$CONFIG_DIR"
@@ -255,25 +206,9 @@ YAML
         fi
     '
 
-    # Fleet config: only deploy fleet.yaml when --fleet flag is passed.
-    # Without fleet.yaml, the dashboard and CLI operate in single-server mode.
-    # TODO: Enable fleet deployment once all machines run batchalign3 serve.
-    # echo "  Deploying fleet.yaml..."
-
-    # Start the server with GIL mode based on core count.
-    # Large machines (24+ cores): GIL=1 — ProcessPool gives true parallelism;
-    # PyTorch internal threading contends under ThreadPool.
-    # Small machines (<24 cores): GIL=0 — ThreadPool avoids over-subscription.
+    # Start the server
     echo "  Starting server..."
-    ssh "$SSH_USER@$host" '
-        cores=$(sysctl -n hw.ncpu 2>/dev/null || nproc 2>/dev/null || echo 4)
-        if [ "$cores" -ge 24 ]; then
-            GIL_VAL=1
-        else
-            GIL_VAL=0
-        fi
-        PYTHON_GIL=$GIL_VAL batchalign3 serve start
-    '
+    ssh "$SSH_USER@$host" 'batchalign-next serve start'
 
     # Verify server health (retry up to 3 minutes — warmup loads models)
     echo "  Checking server health (warmup may take a few minutes)..."
@@ -292,19 +227,15 @@ YAML
         printf "  Waiting... (%ds/%ds)\r" "$elapsed" "$HEALTH_TIMEOUT"
     done
 
-    # Report free-threading status
-    ft=$(echo "$health" | python3 -c "import sys,json; print(json.load(sys.stdin).get('free_threaded','unknown'))" 2>/dev/null || echo "unknown")
-    echo "  Free-threaded: $ft"
-
     if ! echo "$health" | grep -q '"status":"ok"'; then
         echo "  WARNING: Server health check failed on $host after ${HEALTH_TIMEOUT}s"
-        echo "  Check logs: ssh $SSH_USER@$host 'tail -50 ~/.batchalign3/server.log'"
+        echo "  Check logs: ssh $SSH_USER@$host 'tail -50 ~/.batchalign-next/server.log'"
         FAILED_HOSTS+=("$host")
         continue
     fi
 
     # Clean up
-    ssh "$SSH_USER@$host" "rm -f /tmp/batchalign_*.whl" 2>/dev/null || true
+    ssh "$SSH_USER@$host" "rm -f /tmp/batchalign_*.whl /tmp/batchalign3-*.whl" 2>/dev/null || true
 
     OK_HOSTS+=("$host")
 done
