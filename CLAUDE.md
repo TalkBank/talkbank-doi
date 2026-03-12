@@ -162,9 +162,11 @@ All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run 
 
 | Host | Access | OS | Role |
 |------|--------|----|------|
-| `net.talkbank.org` | `ssh macw@net` | macOS (Mac Studio, M3 Ultra, 256 GB) | Internal (CMU only): local media drives, batchalign server |
+| `net.talkbank.org` | `ssh macw@net` or `ssh macw@talkbank` | Ubuntu 26.04 (Mac Studio, M3 Ultra, 256 GB) | Internal (CMU only): local media drives, batchalign server, web (nginx) |
 
 `net` runs `batchalign-next` on port 8000 (Python 3.12). Being upgraded to `batchalign3` (Rust) on port 8001 (coexistence), then port 8000 (takeover).
+
+**Full server reference:** `docs/net-talkbank-server.md` — services (nginx, fcgiwrap, CGI, Tailscale, batchalign), OS upgrade checklist, and comparison with homebank.
 
 ### Batchalign Repos and Deployed Versions
 
@@ -227,3 +229,4 @@ Full project inventory: `docs/inventory.md`
 
 ---
 Last Updated: 2026-03-12
+
