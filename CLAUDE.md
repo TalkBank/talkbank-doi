@@ -149,6 +149,8 @@ All deploy scripts live in `deploy/scripts/`. Read these scripts before deployin
 
 All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run with `--help` for full usage.
 
+**Fleet install policy:** batchalign3 deploy scripts always install with `[hk]` extras (HK/Cantonese engines: Tencent, Aliyun, FunASR, Cantonese FA). All fleet machines get the full engine set.
+
 ### Fleet Machines
 
 | Host | Role | Access |
@@ -189,6 +191,27 @@ Incident reports live in `docs/postmortems/`. Check these before deploying to un
 
 **Legacy docs:** 84 files from ~/Dropbox/documentation/ transferred to `docs/legacy/`. Being reviewed for accuracy — see `docs/legacy/README.md` for status of each.
 
+## Documentation Conventions
+
+**Date every document you touch.** All markdown docs across the workspace must include a date header. Use this frontmatter block at the top of every doc (after the `#` title):
+
+```
+**Status:** Current | Historical | Reference | Draft
+**Last updated:** YYYY-MM-DD
+```
+
+- **Current** — actively maintained, reflects reality
+- **Historical** — preserved for context, no longer reflects current state
+- **Reference** — stable reference material (signing guides, build notes, inventories)
+- **Draft** — work in progress
+
+**Rules:**
+- When you create a new doc, add the date header.
+- When you edit an existing doc, update `Last updated` to today. If the doc has no date header, add one.
+- Use ISO 8601 dates only (`2026-03-12`), never prose dates (`February 15, 2026`).
+- Do NOT do a bulk sweep to stamp dates on docs you haven't verified — that creates false confidence. Only date docs you've actually read and confirmed are accurate.
+- Postmortems use the date-in-filename convention (`YYYY-MM-DD-description.md`) and don't need a separate date header.
+
 ## Per-Repo Guidance
 
 Coding standards live in each repo's CLAUDE.md:
@@ -203,4 +226,4 @@ Coding standards live in each repo's CLAUDE.md:
 Full project inventory: `docs/inventory.md`
 
 ---
-Last Updated: 2026-03-10
+Last Updated: 2026-03-12

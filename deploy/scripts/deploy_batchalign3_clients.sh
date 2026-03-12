@@ -99,10 +99,10 @@ for host in "${HOSTS[@]}"; do
         pkill -9 -f "batchalign3 serve" 2>/dev/null || true
     ' 2>/dev/null || true
 
-    echo "  Installing..."
+    echo "  Installing (with HK engines)..."
     ssh "$SSH_USER@$host" "
         uv tool uninstall batchalign3 2>/dev/null || true
-        uv tool install --python 3.12 --force-reinstall /tmp/$WHEEL_NAME 2>&1
+        uv tool install --python 3.12 --force-reinstall '/tmp/${WHEEL_NAME}[hk]' 2>&1
     " | tail -3
 
     # server.yaml with port 8001 (auto-daemon coexistence)

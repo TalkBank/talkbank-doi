@@ -165,4 +165,16 @@ The following ephemeral files were deleted on 2026-02-23:
 
 ---
 
-*Last Updated: 2026-03-09*
+## Cross-Cutting Documentation (this workspace)
+
+| Path | Contents |
+|------|----------|
+| `docs/code-signing-and-distribution.md` | Apple codesigning, notarization, Windows signing, Linux distribution — covers all projects |
+| `docs/macos-tcc-permissions.md` | TCC permissions for fleet Macs — fixing silent SSH script failures, MDM setup |
+| `docs/inventory.md` | Complete project inventory (all repos, all platforms) |
+| `docs/build-notes/` | Phon/PhonTalk build instructions |
+| `docs/postmortems/` | Incident reports |
+
+---
+
+*Last Updated: 2026-03-12*
