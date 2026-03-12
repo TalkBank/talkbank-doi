@@ -13,8 +13,8 @@
 
 set -euo pipefail
 
-SSH_USER="macw"
-ALL_HOSTS=(bilbo brian davida frodo andrew lilly sue vaishnavi)
+DEFAULT_SSH_USER="macw"
+ALL_HOSTS=(bilbo brian davida frodo andrew lilly sue vaishnavi chen@ming)
 PORT=8001  # Coexistence: batchalign-next keeps 8000
 
 WORKSPACE_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -81,8 +81,17 @@ fi
 SUCCESSES=0
 FAILURES=0
 
-for host in "${HOSTS[@]}"; do
-    echo "=== $host ==="
+for entry in "${HOSTS[@]}"; do
+    # Support user@host entries (e.g. chen@ming); fall back to DEFAULT_SSH_USER
+    if [[ "$entry" == *@* ]]; then
+        SSH_USER="${entry%%@*}"
+        host="${entry#*@}"
+    else
+        SSH_USER="$DEFAULT_SSH_USER"
+        host="$entry"
+    fi
+
+    echo "=== $SSH_USER@$host ==="
 
     if ! ssh -o ConnectTimeout=5 "$SSH_USER@$host" true 2>/dev/null; then
         echo "  SKIP: cannot connect"
