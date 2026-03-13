@@ -9,11 +9,12 @@ of the conversation without media bullets. This document reconstructs the proble
 identifies the root cause, and evaluates whether subsequent DP algorithm improvements
 have addressed it.
 
-**Verdict:** Our DP redesign (deterministic matching, word_id mapping, window fallback)
-does not help for this class of problem. The failure mode is architectural — a
-monotonic aligner fundamentally cannot handle transcripts whose text order diverges
-significantly from audio temporal order, which is inherent in CHAT files with dense
-overlapping speech (`&*` markers).
+**Verdict:** The current global-DP UTR design fixes the separate 407-style
+token-starvation failure class, but it does not help for this class of problem.
+The failure mode here is architectural — a monotonic aligner fundamentally
+cannot handle transcripts whose text order diverges significantly from audio
+temporal order, which is inherent in CHAT files with dense overlapping speech
+(`&*` markers).
 
 ---
 
@@ -266,38 +267,27 @@ in using proportional estimates. But:
 
 ---
 
-## Evaluation: Have Our DP Changes Helped?
+## Evaluation: Does the current UTR design help?
 
 ### What we changed
 
-The DP redesign (documented in `dynamic-programming.md`) made these improvements to
-the UTR remapping path:
+The current UTR design is different from the one this report originally analyzed:
 
-1. **Stable `word_id` mapping** — words that survive editing keep their ASR timestamps
-   via identity matching, no DP needed
-2. **Window-constrained monotonic fallback** — when existing bullets provide windows,
-   matching is constrained to nearby positions rather than global search
-3. **Global monotonic fallback** — deterministic matching replaces DP for the
-   remaining cases
-4. **Removed DP from UTR, FA remapping, and retokenize paths** — only WER evaluation
-   and intrinsic model DP (Whisper DTW, Wave2Vec CTC) remain
+1. **UTR now uses a single global Hirschberg DP alignment** across all document
+   words and all ASR tokens.
+2. **That global alignment fixes the separate token-starvation class** where a
+   local/windowed matcher consumed tokens too early and left later utterances
+   unmatched.
+3. **FA remapping and retokenize still avoid broad runtime DP remaps** and stay
+   deterministic where explicit structure is available.
 
-### Measured improvements on synthetic stress tests
-
-```
-timed-word coverage:  0.636 → 0.958
-boundary coverage:    0.923 → 0.981
-word timing L1 MAE:   19.3 ms → 2.5 ms
-boundary L1 MAE:      48.5 ms → 4.6 ms
-```
-
-### Why these improvements don't help here
+### Why the current UTR design still does not help here
 
 | Improvement | Relevance to 2265_T4 |
 |------------|---------------------|
 | `word_id` mapping | Word IDs are assigned during ASR. Davida's hand-editing created new utterances and reorganized words — the fresh ASR produces entirely new word IDs that don't correspond to the edited transcript's structure. No identity matches possible. |
 | Window-constrained fallback | Requires existing bullets as anchors. The input file has no bullets (they were stripped during editing). Falls through to global fallback. |
-| Global monotonic fallback | Same fundamental limitation as the old DP: cannot handle word-order mismatches from `&*` interleaving. Deterministic matching is more predictable but equally unable to cross. |
+| Global monotonic DP | Better than local matching for token-starvation, but still cannot handle word-order mismatches from `&*` interleaving. A monotonic full-document aligner still cannot represent crossing matches. |
 | Monotonicity enforcement | Already active — it's part of why so many bullets are *missing*. The enforcement correctly strips bad bullets, but the effect is that the untimed blocks remain untimed. |
 
 ### The fundamental architectural limitation
@@ -314,8 +304,9 @@ temporal order.** This divergence is inherent in CHAT files with overlapping spe
   skip the interleaved words or lose sync
 
 This is **Known DP Failure Mode #1** ("Crossing alignments / rapid overlaps") from
-`dynamic-programming.md`. The redesign improved modes #2–4 but did not and cannot
-address mode #1 within a monotonic framework.
+`dynamic-programming.md`. Restoring global DP addressed the separate
+token-starvation failure mode, but it does not and cannot address this overlap
+failure mode within a monotonic framework.
 
 ---
 
