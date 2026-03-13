@@ -118,7 +118,7 @@ Runs on port 8000. See `deploy/scripts/deploy_server.sh`.
 
 ### batchalign3 (Rust NLP pipeline)
 
-Runs on port 8001 (coexistence). See `deploy/scripts/deploy_batchalign3_server.sh`.
+Runs on port 8001 (coexistence). See `deploy/scripts/deploy_batchalign3.sh --server`.
 
 ## OS Upgrade Checklist
 

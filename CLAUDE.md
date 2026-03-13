@@ -144,8 +144,7 @@ All deploy scripts live in `deploy/scripts/`. Read these scripts before deployin
 |--------|------|--------|
 | `deploy/scripts/deploy_server.sh` | Deploy batchalign-next to server (net) | `bash deploy/scripts/deploy_server.sh` |
 | `deploy/scripts/deploy_clients.sh` | Deploy batchalign-next to client machines | `bash deploy/scripts/deploy_clients.sh` |
-| `deploy/scripts/deploy_batchalign3_server.sh` | Deploy batchalign3 (Rust) to server | `bash deploy/scripts/deploy_batchalign3_server.sh` |
-| `deploy/scripts/deploy_batchalign3_clients.sh` | Deploy batchalign3 (Rust) to clients | `bash deploy/scripts/deploy_batchalign3_clients.sh` |
+| `deploy/scripts/deploy_batchalign3.sh` | Deploy batchalign3 (Rust) to any fleet machines | `bash deploy/scripts/deploy_batchalign3.sh` (all), `--server`, `--clients` |
 
 All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run with `--help` for full usage.
 
