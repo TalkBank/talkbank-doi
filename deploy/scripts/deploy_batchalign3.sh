@@ -67,8 +67,9 @@ fi
 # --- Build wheel (once) ---
 
 if ! $NO_BUILD; then
-    echo "=== Building wheel ==="
-    (cd "$BA3_REPO" && uv build --wheel --out-dir dist/ 2>&1 | tail -3)
+    # Dashboard is embedded in the binary at compile time, so build it first
+    echo "=== Building dashboard + wheel ==="
+    (cd "$BA3_REPO" && make build-dashboard && uv build --wheel --out-dir dist/ 2>&1 | tail -3)
     echo ""
 fi
 
@@ -104,25 +105,24 @@ fi
 FAILED=()
 OK=()
 
-deploy_host() {
+resolve_ssh() {
+    local entry="$1"
+    if [[ "$entry" == *@* ]]; then
+        echo "${entry%%@*}" "${entry#*@}"
+    else
+        echo "$DEFAULT_SSH_USER" "$entry"
+    fi
+}
+
+# Install wheel on a single host (no daemon start, no health check).
+install_host() {
     local entry="$1"
     local ssh_user host
-
-    if [[ "$entry" == *@* ]]; then
-        ssh_user="${entry%%@*}"
-        host="${entry#*@}"
-    else
-        ssh_user="$DEFAULT_SSH_USER"
-        host="$entry"
-    fi
+    read -r ssh_user host <<< "$(resolve_ssh "$entry")"
 
     local is_server=false
-    if [[ "$host" == "$SERVER_HOST" ]]; then
-        is_server=true
-    fi
-
-    local role_label
-    if $is_server; then role_label="[server]"; else role_label="[client]"; fi
+    [[ "$host" == "$SERVER_HOST" ]] && is_server=true
+    local role_label; $is_server && role_label="[server]" || role_label="[client]"
 
     echo ""
     echo "=== $ssh_user@$host $role_label ==="
@@ -156,7 +156,7 @@ deploy_host() {
         return 1
     fi
 
-    # Write server.yaml — server gets warmup/ttl settings, clients get minimal config
+    # Write server.yaml
     if $is_server; then
         ssh "$ssh_user@$host" "
             mkdir -p \$HOME/.batchalign3
@@ -198,43 +198,105 @@ YAML
         "
     fi
 
-    # Server: start daemon and health-check
-    if $is_server; then
-        echo "  Starting server..."
-        ssh "$ssh_user@$host" 'batchalign3 serve start'
-
-        echo "  Waiting for health..."
-        local elapsed=0
-        local health=""
-        while [ "$elapsed" -lt 180 ]; do
-            sleep 5
-            elapsed=$((elapsed + 5))
-            health=$(ssh "$ssh_user@$host" "curl -s http://localhost:$PORT/health 2>/dev/null" || echo '{}')
-            if echo "$health" | grep -q '"status":"ok"'; then
-                echo "  OK: healthy after ${elapsed}s"
-                break
-            fi
-            printf "    %ds/180s...\r" "$elapsed"
-        done
-
-        if ! echo "$health" | grep -q '"status":"ok"'; then
-            echo "  WARNING: health check timed out"
-            echo "  Logs: ssh $ssh_user@$host 'tail -50 ~/.batchalign3/server.log'"
-            return 1
-        fi
-    fi
-
     ssh "$ssh_user@$host" "rm -f /tmp/$WHEEL_NAME" 2>/dev/null || true
     return 0
 }
 
+# Wait for the server daemon to become healthy (daemon already started in Phase 1).
+health_check_server() {
+    local entry="$1"
+    local ssh_user host
+    read -r ssh_user host <<< "$(resolve_ssh "$entry")"
+
+    echo ""
+    echo "=== $ssh_user@$host [server health check] ==="
+    echo "  Waiting for health..."
+    local elapsed=0
+    local health=""
+    while [ "$elapsed" -lt 180 ]; do
+        sleep 5
+        elapsed=$((elapsed + 5))
+        health=$(ssh "$ssh_user@$host" "curl -s http://localhost:$PORT/health 2>/dev/null" || echo '{}')
+        if echo "$health" | grep -q '"status":"ok"'; then
+            echo "  OK: healthy after ${elapsed}s"
+            return 0
+        fi
+        printf "    %ds/180s...\r" "$elapsed"
+    done
+
+    echo "  WARNING: health check timed out"
+    echo "  Logs: ssh $ssh_user@$host 'tail -50 ~/.batchalign3/server.log'"
+    return 1
+}
+
+# --- Phase 1: Install server (if in target list) ---
+# Start daemon immediately so it warms up while clients deploy.
+
+SERVER_ENTRY=""
+CLIENT_ENTRIES=()
 for entry in "${HOSTS[@]}"; do
-    if deploy_host "$entry"; then
+    host="${entry#*@}"
+    if [[ "$host" == "$SERVER_HOST" ]]; then
+        SERVER_ENTRY="$entry"
+    else
+        CLIENT_ENTRIES+=("$entry")
+    fi
+done
+
+if [[ -n "$SERVER_ENTRY" ]]; then
+    if install_host "$SERVER_ENTRY"; then
+        OK+=("$SERVER_ENTRY")
+        # Start daemon now — it warms up while clients install in parallel
+        echo ""
+        echo "  Starting server daemon (warming up while clients deploy)..."
+        read -r ssh_user host <<< "$(resolve_ssh "$SERVER_ENTRY")"
+        ssh "$ssh_user@$host" 'batchalign3 serve start'
+    else
+        FAILED+=("$SERVER_ENTRY")
+    fi
+fi
+
+# --- Phase 2: Install all clients in parallel ---
+
+CLIENT_PIDS=()
+CLIENT_LOGS=()
+
+for entry in "${CLIENT_ENTRIES[@]}"; do
+    logfile=$(mktemp)
+    CLIENT_LOGS+=("$logfile")
+    (
+        if install_host "$entry"; then
+            echo "OK" > "$logfile.status"
+        else
+            echo "FAILED" > "$logfile.status"
+        fi
+    ) > "$logfile" 2>&1 &
+    CLIENT_PIDS+=($!)
+done
+
+# Wait for all clients and collect results
+for i in "${!CLIENT_PIDS[@]}"; do
+    wait "${CLIENT_PIDS[$i]}" 2>/dev/null || true
+    cat "${CLIENT_LOGS[$i]}"
+    entry="${CLIENT_ENTRIES[$i]}"
+    status_file="${CLIENT_LOGS[$i]}.status"
+    if [[ -f "$status_file" ]] && grep -q "OK" "$status_file"; then
         OK+=("$entry")
     else
         FAILED+=("$entry")
     fi
+    rm -f "${CLIENT_LOGS[$i]}" "$status_file"
 done
+
+# --- Phase 3: Health-check server (it has been warming up this whole time) ---
+
+if [[ -n "$SERVER_ENTRY" ]] && printf '%s\n' "${OK[@]}" | grep -qx "$SERVER_ENTRY"; then
+    if ! health_check_server "$SERVER_ENTRY"; then
+        # Move from OK to FAILED
+        OK=("${OK[@]/$SERVER_ENTRY/}")
+        FAILED+=("$SERVER_ENTRY")
+    fi
+fi
 
 echo ""
 echo "==============================="
