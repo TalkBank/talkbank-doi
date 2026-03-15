@@ -92,6 +92,18 @@ than a new custom framework:
 `verify-release-gates` chains both and is the top-level local release-readiness
 entrypoint.
 
+### Current release posture (2026-03-15)
+
+- Finish doc cleanup and release-prep work before pushing anything to the
+  TalkBank org.
+- Keep `batchalign3` PyPI publication **on hold for now**. Metadata, workflow,
+  and trusted-publishing prep should stay current, but no release tag or PyPI
+  publish step should happen yet.
+- Treat Apple code signing + notarization as a public-release requirement for
+  direct macOS downloads of `chatter` and `talkbank-lsp-server`. The current
+  `talkbank-tools` release workflow emits macOS `.tar.gz` archives, so it needs
+  a notarizable `.zip` or `.dmg` path before the first public CLI release.
+
 ---
 
 ## Phase 0: Pre-flight (completed 2026-03-09)
@@ -181,15 +193,23 @@ talkbank-tools is self-contained — low risk to make public first.
 
 ### 2b. Ship first chatter release
 
-The `release.yml` workflow is already configured (4 platforms + Windows):
+The `release.yml` workflow is already configured for multi-platform archives,
+but macOS signing/notarization is not wired yet:
 
+- [ ] Export the Apple Developer ID Application certificate as a portable `.p12`
+- [ ] Create an App Store Connect API key for notarization
+- [ ] Change the macOS release packaging from `.tar.gz` to a notarizable `.zip`
+  or `.dmg`
+- [ ] Add macOS codesign + notarization for both `chatter` and
+  `talkbank-lsp-server`
 - [ ] Verify `Cargo.toml` workspace version (`0.1.0`)
 - [ ] Create and push `v0.1.0` tag
 - [ ] Verify `release.yml` succeeds:
   - Builds on 5 platforms (macOS ARM, macOS Intel, Linux, Windows)
   - Creates GitHub Release with `chatter` + `talkbank-lsp-server` archives
   - Tag version matches workspace Cargo.toml (validated in workflow)
-- [ ] Download and test each archive on available platforms
+- [ ] Download and test each archive on available platforms, including a clean
+  macOS machine for Gatekeeper/notarization behavior
 
 ### 2c. Announce
 
@@ -218,10 +238,14 @@ batchalign3 stays private until the team is confident it's ready.
 
 ---
 
-## Phase 4: Publish batchalign3 on PyPI
+## Phase 4: Publish batchalign3 on PyPI (on hold — prep only for now)
 
 One PyPI package:
 - `batchalign3` — Python package with Rust extension + CLI console command (ASR, alignment, morphosyntax)
+
+Current posture: keep the release metadata, GitHub Actions workflow, and
+trusted-publishing setup ready, but do **not** tag or publish to PyPI until the
+hold is lifted after the private/public release hardening work.
 
 ### Old batchalign PyPI page (reference)
 
@@ -248,12 +272,13 @@ Current `pyproject.toml` is close but needs review:
 ### 4b. Configure PyPI trusted publishing
 
 - [ ] Create PyPI account (or use existing)
+- [ ] Keep `release.yml` manual-only (`workflow_dispatch`) until the hold is lifted
 - [ ] Set up OIDC trusted publishing for `batchalign3`:
   GitHub org `TalkBank`, repo `batchalign3`, workflow `release.yml`,
   environment `pypi`
 - [ ] Register package name on PyPI (first publish claims it)
 
-### 4c. Test end-to-end release
+### 4c. Test end-to-end release (when the hold is lifted)
 
 - [ ] Tag `v1.0.0`
 - [ ] Verify `release.yml` triggers and succeeds:
@@ -283,11 +308,12 @@ The VS Code extension lives at `talkbank-tools/vscode/`.
 
 ---
 
-## Phase 6: Package registry publishing (optional, lower priority)
+## Phase 6: Package registry publishing (eventual, after first public releases)
 
 Publishing to crates.io enables third-party Rust consumers to depend on
-TalkBank crates without cloning repos. **Not required** for chatter or
-batchalign3 distribution — those ship as pre-built binaries.
+TalkBank crates without cloning repos. We do want this eventually, but it is
+not on the critical path for the first public `chatter` / `talkbank-lsp-server`
+binary releases or the first `batchalign3` package release.
 
 ### 6a. Publish talkbank-tools crates to crates.io
 
@@ -334,12 +360,14 @@ Phase 2:  talkbank-tools public + chatter GitHub Release
 Phase 3:  batchalign3 public (when team agrees it's ready)
 Phase 4:  PyPI publishing (batchalign3)
 Phase 5:  VS Code marketplace
-Phase 6:  crates.io (when there's demand)
+Phase 6:  crates.io (eventual, after the first public releases settle)
 ```
 
 Phase 1 can happen immediately. Phase 2 can follow quickly since
 talkbank-tools is self-contained and low risk. Phases 3–4 happen after
-team has used batchalign3 privately and confirmed readiness.
+team has used batchalign3 privately and confirmed readiness. Phase 6 remains a
+real target, but it should follow the initial binary/wheel release work rather
+than block it.
 
 ---
 
@@ -370,6 +398,7 @@ the token becomes optional but harmless to keep.
 | CI breaks when repos move to TalkBank org | talkbank-tools CI is self-contained; batchalign3 uses `TALKBANK_TOOLS_TOKEN` |
 | Private cross-repo clone auth | Fine-grained PAT stored as repo secret |
 | Multi-platform batchalign3 wheel | 5-platform matrix (incl. Windows) in release.yml |
+| Unsigned macOS CLI downloads trigger Gatekeeper friction | Add Developer ID signing + notarization and ship notarizable macOS `.zip`/`.dmg` artifacts before public CLI release |
 | Private paths in CLAUDE.md/docs | Audited — clean (Phase 0) |
 | Path deps break in CI | `../talkbank-tools/crates/` resolves after shallow clone |
 | Windows compatibility | Windows target in all release matrices; PowerShell-compatible clone commands |

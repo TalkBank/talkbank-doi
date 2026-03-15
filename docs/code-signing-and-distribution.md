@@ -1,7 +1,7 @@
 # Code Signing, Notarization, and Distribution
 
 **Status:** Reference
-**Last updated:** 2026-03-12
+**Last updated:** 2026-03-15
 
 This document covers code signing and distribution for all TalkBank projects that ship binaries to end users. Our users are primarily academic researchers (psychology, linguistics, law) who are not technical — they need installers that "just work" without Gatekeeper warnings or manual security exceptions.
 
@@ -10,9 +10,23 @@ This document covers code signing and distribution for all TalkBank projects tha
 | Project | Binary type | Platforms | Current state |
 |---------|------------|-----------|---------------|
 | **java-chatter-stable** | Java `.app` via `jpackage` + DMG | macOS only | Signed + notarized (manual, from dev machine) |
-| **batchalign3** (`batchalign3-cli`) | Rust binary via maturin | macOS, Linux, Windows | Not signed yet |
-| **talkbank-tools** (`talkbank-cli`) | Rust binary via cargo | macOS, Linux, Windows | Not signed yet |
+| **batchalign3** (`batchalign3`) | Rust binary via maturin | macOS, Linux, Windows | Not signed yet for standalone archive distribution |
+| **talkbank-tools** (`chatter`, `talkbank-lsp-server`) | Rust CLIs via cargo | macOS, Linux, Windows | Not signed yet; current public-release workflow emits macOS `.tar.gz` archives, so notarization is not wired |
 | **batchalign3** (Python wheel) | PyO3 `.so`/`.pyd` + CLI entry point | macOS, Linux, Windows | Not signed (installed via `uv`/`pip`) |
+
+## Release Decision Summary
+
+- **`java-chatter-stable` DMG on macOS:** yes, it needs Apple signing +
+  notarization. That path already exists and is documented below.
+- **`talkbank-tools` public macOS downloads (`chatter`,
+  `talkbank-lsp-server`):** yes, treat Apple signing + notarization as required
+  before the first public GitHub Release. The current macOS `.tar.gz`
+  packaging must become a notarizable `.zip` or `.dmg` first.
+- **`batchalign3` PyPI wheel path:** not a notarization blocker while PyPI is on
+  hold. Keep signing secrets/workflow prep ready, but this is lower urgency than
+  the first public `talkbank-tools` release.
+- **`batchalign3` standalone macOS archives or the revived desktop dashboard:**
+  yes, sign + notarize if we ship them as direct downloads.
 
 ## Apple Developer Account
 
@@ -25,7 +39,7 @@ This document covers code signing and distribution for all TalkBank projects tha
 
 | Certificate | Purpose | Used for |
 |-------------|---------|----------|
-| Developer ID Application | Sign `.app` bundles and standalone binaries | Chatter.app, batchalign3 CLI, talkbank-cli |
+| Developer ID Application | Sign `.app` bundles and standalone binaries | Chatter.app, `chatter`, `talkbank-lsp-server`, `batchalign3` CLI |
 | Developer ID Installer | Sign `.pkg` installers (if we use them) | Optional — DMGs don't need this |
 
 Both are issued under the team account and can be downloaded by any team member.
@@ -72,6 +86,40 @@ xcrun notarytool store-credentials "notarytool-password" \
 This stores credentials in the **login keychain** of whoever ran the command. It works on that machine only — not portable, not CI-friendly, and tied to a specific user account.
 
 Similarly, the Developer ID certificate + private key were imported into the login keychain manually (probably via Xcode or `security import`). The `codesign` tool finds them by matching the CN string against keychain entries.
+
+## Extracting Credentials from the Dev Machine
+
+The Developer ID certificate and `notarytool-password` keychain profile live on one machine (Brian's or whoever originally ran `xcrun notarytool store-credentials`). Before any CI signing can work, those credentials must be exported and stored as GitHub Actions secrets.
+
+**Script:** `deploy/scripts/extract-signing-secrets.sh`
+**Run on:** the machine where `security find-identity -v -p codesigning | grep "Developer ID Application"` returns a result.
+
+```bash
+bash deploy/scripts/extract-signing-secrets.sh
+```
+
+The script:
+- Verifies the Developer ID cert is present
+- Exports the cert + private key as a `.p12` with a generated passphrase
+- Prints the `.p12` as base64 (`APPLE_CERT_P12_BASE64`)
+- Extracts the Apple ID and app-specific password from the `notarytool-password` keychain item
+- Prints all values for pasting into GitHub Actions secrets
+- Cleans up the temp `.p12` file
+
+### Manual step: App Store Connect API key
+
+The API key (recommended for CI notarization — avoids Apple ID + app-specific password in CI) cannot be created programmatically. It requires browser access with Account Holder role:
+
+1. Go to https://appstoreconnect.apple.com/access/integrations/api
+2. Click **+**, name it "TalkBank CI", role: Developer
+3. Download the `.p8` file — **only downloadable once**
+4. Note the Key ID (10-char string) and Issuer ID (UUID shown at the top)
+5. Store `.p8` contents as `APPLE_API_KEY_P8`, key ID as `APPLE_API_KEY_ID`, issuer UUID as `APPLE_API_ISSUER`
+
+### Where to store the output
+
+- **1Password** — primary store for all extracted values
+- **GitHub Actions secrets** — Settings → Secrets and variables → Actions → New repository secret, in both `talkbank-tools` and `batchalign3`
 
 ## How to Fix: Portable, CI-Ready Signing
 
@@ -267,9 +315,9 @@ Summary of what each project needs per platform:
 
 | Project | macOS | Windows | Linux | Primary install method |
 |---------|-------|---------|-------|----------------------|
-| **batchalign3** (CLI) | codesign + notarize | signtool/Azure | GPG-signed tarball | `uv tool install batchalign3` (PyPI) |
+| **batchalign3** (CLI) | codesign + notarize for standalone downloads | signtool/Azure | GPG-signed tarball | `uv tool install batchalign3` (planned PyPI path) |
 | **batchalign3** (wheel) | Not strictly needed | Sign `.pyd` | Not needed | `uv pip install batchalign3` |
-| **talkbank-cli** | codesign + notarize | signtool/Azure | GPG-signed tarball | Homebrew tap or standalone download |
+| **talkbank-tools CLIs** (`chatter`, `talkbank-lsp-server`) | codesign + notarize | signtool/Azure | GPG-signed tarball | Homebrew tap or standalone download |
 | **java-chatter** | codesign + notarize (current) | jpackage + signtool | N/A | DMG download |
 
 ## Priority and Next Steps
@@ -278,20 +326,22 @@ Summary of what each project needs per platform:
 
 1. **Export the Developer ID certificate as .p12** from the current machine's keychain and store securely (1Password or equivalent)
 2. **Create an App Store Connect API key** for notarization (replaces the keychain profile dependency)
-3. **Add macOS signing to the batchalign3 release workflow** — sign the Rust binary before packaging into wheels/archives
-4. **Test the signed binary** on a clean Mac (one that has never run the unsigned version)
+3. **Change `talkbank-tools/.github/workflows/release.yml` macOS packaging** from `.tar.gz` to a notarizable `.zip` or `.dmg`
+4. **Add macOS signing + notarization to the `talkbank-tools` public CLI release flow** for `chatter` and `talkbank-lsp-server`
+5. **Decide whether we want standalone macOS `batchalign3` archives before PyPI resumes**; if yes, give them the same codesign + notarize path
+6. **Test the signed artifacts** on a clean Mac (one that has never run the unsigned version)
 
 ### Short-term
 
-5. **Set up Windows code signing** — evaluate Azure Trusted Signing vs traditional OV cert
-6. **Add signing to CI** for both macOS and Windows release builds
-7. **GPG key for Linux releases** — create a TalkBank project GPG key, publish the public key
+7. **Set up Windows code signing** — evaluate Azure Trusted Signing vs traditional OV cert
+8. **Add signing to CI** for both macOS and Windows release builds
+9. **GPG key for Linux releases** — create a TalkBank project GPG key, publish the public key
 
 ### Nice-to-have
 
-8. **Homebrew tap** for `talkbank-cli` and `batchalign3`
-9. **`.deb`/`.rpm` packages** if researchers report trouble with standalone binaries
-10. **Automated release workflow** that builds + signs + notarizes + publishes for all platforms
+10. **Homebrew tap** for `chatter` / `talkbank-lsp-server` and `batchalign3`
+11. **`.deb`/`.rpm` packages** if researchers report trouble with standalone binaries
+12. **Automated release workflow** that builds + signs + notarizes + publishes for all platforms
 
 ## Reference: Codesign Flags
 
