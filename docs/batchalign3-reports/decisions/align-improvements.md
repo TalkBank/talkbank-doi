@@ -1,5 +1,18 @@
 # Batchalign2 — Align Branch Improvements Report
 
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This is a February 2026 internal branch report from the `align` wave. It is
+useful as historical evidence for what changed, but it is not the current
+source of truth for install, runtime, or deployment guidance. Use these current
+docs instead:
+
+- `batchalign3/book/src/user-guide/installation.md`
+- `batchalign3/book/src/developer/building.md`
+- `batchalign3/book/src/user-guide/server-mode.md`
+- `batchalign3/book/src/developer/python-versioning.md`
+
 **Project:** Batchalign2 (TalkBank Language Sample Analysis)
 **Branch:** `align` (from `master`)
 **Date:** 2026-02-14

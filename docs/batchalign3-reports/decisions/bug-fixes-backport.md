@@ -1,5 +1,16 @@
 # Bug Fixes and Backport Assessment
 
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This is a February 2026 branch/backport assessment. It is preserved for
+historical engineering context, not as current release guidance. For current
+runtime and build guidance, use:
+
+- `batchalign3/book/src/user-guide/installation.md`
+- `batchalign3/book/src/developer/building.md`
+- `batchalign3/book/src/developer/python-versioning.md`
+
 **Date:** 2026-02-17
 **Branch:** align (239 commits ahead of master)
 **Backport branch:** `backport-core-fixes` (7 commits, based on master)

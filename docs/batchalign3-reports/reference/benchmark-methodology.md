@@ -1,8 +1,21 @@
 # Benchmark Methodology: Finding Maximum Throughput
 
-**Date:** February 15, 2026
-**Purpose:** Measure files/minute throughput to demonstrate Rust vs Python capacity on production hardware
-**Hardware tested:** development machine (64GB, 16 cores M4 Max), the production server (256GB, 28 cores M3 Ultra)
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This February 2026 benchmarking plan is preserved as a historical throughput
+methodology note. The branch names, local paths, and environment assumptions
+below are not current install/build guidance. For current setup instructions,
+use:
+
+- `batchalign3/book/src/user-guide/installation.md`
+- `batchalign3/book/src/developer/building.md`
+- `batchalign3/book/src/developer/python-versioning.md`
+
+**Historical purpose:** Measure files/minute throughput to demonstrate Rust vs
+Python capacity on production hardware.
+**Historical hardware tested:** development machine (64GB, 16 cores M4 Max),
+the production server (256GB, 28 cores M3 Ultra)
 
 ---
 

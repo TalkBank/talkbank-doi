@@ -1,8 +1,19 @@
 # Throughput Benchmarks — February 2026
 
-Cache-free measurements with `--override-cache`. All scenarios use
-Python 3.14t (free-threaded build) with the batchalign3 server.
-Master CLI uses Python 3.12.
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This report captures the February 2026 free-threaded Python 3.14t experiment
+wave. It is preserved for benchmark history, not current deployment guidance.
+Current `batchalign3` runtime guidance uses Python 3.12; see:
+
+- `batchalign3/book/src/developer/python-versioning.md`
+- `batchalign3/book/src/user-guide/installation.md`
+- `docs/net-talkbank-server.md`
+
+Cache-free measurements with `--override-cache`. These scenarios used Python
+3.14t (free-threaded build) with the `batchalign3` server at the time of the
+experiment. The master CLI used Python 3.12.
 
 ## Executive Summary
 

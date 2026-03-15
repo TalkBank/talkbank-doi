@@ -1,5 +1,17 @@
 # Benchmark Results: Rust vs Python Throughput
 
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This file is an unfinished February 2026 throughput snapshot, preserved for
+historical reference. The measured numbers and environment assumptions below are
+not current release or deployment guidance. For current build/runtime policy,
+use:
+
+- `batchalign3/book/src/developer/building.md`
+- `batchalign3/book/src/developer/python-versioning.md`
+- `docs/net-talkbank-server.md`
+
 **Date:** February 15, 2026
 **Hardware:** development machine (64GB RAM, Apple M4 Max, 16 cores)
 **Goal:** Demonstrate files/minute throughput advantage for boss approval

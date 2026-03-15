@@ -1,5 +1,17 @@
 # TalkBank Batchalign: Current Situation and Path Forward
 
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This document captures a February 2026 transition snapshot. It is useful as
+historical context, but it should not be treated as the current source of truth
+for release, runtime, or deployment guidance. Use these current docs instead:
+
+- `batchalign3/book/src/user-guide/installation.md`
+- `batchalign3/book/src/developer/building.md`
+- `batchalign3/book/src/user-guide/server-mode.md`
+- `batchalign3/book/src/developer/python-versioning.md`
+
 **Date:** 2026-02-17
 
 ---

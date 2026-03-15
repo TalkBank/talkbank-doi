@@ -1,17 +1,29 @@
 # Rust Implementation Coverage vs BA2-usage.pdf
 
-**Date:** February 15, 2026
-**Scope:** Compare Rust implementation (batchalign3) against documented features in BA2-usage.pdf
-**Source:** BA2-usage.pdf (3 pages, user guide for Python master)
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This February 2026 note is preserved as a point-in-time comparison against
+`BA2-usage.pdf`. The install, deployment, and runtime examples below are not
+the current source of truth. For current guidance, use:
+
+- `batchalign3/book/src/user-guide/installation.md`
+- `batchalign3/book/src/developer/building.md`
+- `batchalign3/book/src/user-guide/server-mode.md`
+- `batchalign3/book/src/developer/python-versioning.md`
+
+**Historical scope:** Compare Rust implementation (`batchalign3`) against
+documented features in `BA2-usage.pdf`.
+**Historical source:** `BA2-usage.pdf` (3 pages, user guide for Python master)
 
 ---
 
 ## Executive Summary
 
-**Coverage:** **100% of documented features** implemented in Rust
-**Compatibility:** **100% command-line compatible** with Python master
-**Enhancements:** **Additional features** beyond Python master (server mode, structured logging)
-**Status:** **READY FOR PRODUCTION**
+**Historical coverage conclusion:** **100% of documented features** implemented in Rust
+**Historical compatibility conclusion:** **100% command-line compatible** with Python master
+**Historical enhancement claim:** **Additional features** beyond Python master (server mode, structured logging)
+**Historical status at the time:** **READY FOR PRODUCTION**
 
 ---
 

@@ -1,5 +1,16 @@
 # Throughput Analysis: Rust vs Python Worker Scaling
 
+**Status:** Historical
+**Last updated:** 2026-03-15
+
+This is a February 2026 worker-scaling snapshot preserved for historical
+reference. The throughput numbers and environment assumptions below are not
+current release or deployment guidance. For current build/runtime policy, use:
+
+- `batchalign3/book/src/developer/building.md`
+- `batchalign3/book/src/developer/python-versioning.md`
+- `docs/net-talkbank-server.md`
+
 **Date:** February 15, 2026
 **Hardware:** development machine (64GB RAM, Apple M1 Max)
 **Test:** morphotag on align_large dataset (18 CHAT files)
