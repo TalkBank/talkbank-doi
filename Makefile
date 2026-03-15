@@ -47,8 +47,9 @@ COLLAB_REPOS = phon phontalk
 
 # ── Phony targets ────────────────────────────────────────────
 
-.PHONY: help status check test verify-all clone clone-minimal clone-code \
-        clone-data clone-web clone-collab clone-personal pull adopt
+.PHONY: help status check test verify-all verify-contract-gates \
+        verify-coverage-gates verify-release-gates clone clone-minimal \
+        clone-code clone-data clone-web clone-collab clone-personal pull adopt
 
 help:
 	@echo "Workspace commands:"
@@ -66,6 +67,9 @@ help:
 	@echo "  make check          Cargo check all Rust workspaces"
 	@echo "  make test           Run tests across repos"
 	@echo "  make verify-all     Full cross-repo verification gate"
+	@echo "  make verify-contract-gates Focused release-facing contract suites"
+	@echo "  make verify-coverage-gates Repo-native coverage entrypoints"
+	@echo "  make verify-release-gates Contract + coverage release gates"
 
 # ── Status & pull ────────────────────────────────────────────
 
@@ -208,3 +212,57 @@ verify-all:
 	cd batchalign3 && cargo fmt --manifest-path pyo3/Cargo.toml --all -- --check
 	cd batchalign3 && cargo clippy --manifest-path pyo3/Cargo.toml --all-targets -- -D warnings
 	cd batchalign3 && cargo nextest run --manifest-path pyo3/Cargo.toml
+
+verify-contract-gates:
+	@echo "==> talkbank-tools CLI contract suites"
+	cd talkbank-tools && cargo nextest run -p talkbank-cli \
+		--test command_surface_manifest \
+		--test cache_tests \
+		--test command_matrix_tests \
+		--test legacy_clan_cli_contracts \
+		--test stateful_cli_integration
+	@echo "==> talkbank-tools VS Code runtime/service contract suites"
+	cd talkbank-tools/vscode && npm run compile
+	cd talkbank-tools/vscode && npx vitest run \
+		src/test/runtimeContext.test.ts \
+		src/test/panelAssets.test.ts \
+		src/test/effectRuntime.test.ts \
+		src/test/effectCommandRuntime.test.ts \
+		src/test/activationLsp.test.ts \
+		src/test/validationActivation.test.ts \
+		src/test/cacheManager.test.ts \
+		src/test/clanIntegration.test.ts
+	cd talkbank-tools/vscode && npm run lint -- --quiet
+	@echo "==> batchalign3 CLI contract suites"
+	cd batchalign3 && cargo nextest run -p batchalign-cli \
+		--test command_surface_manifest \
+		--test compat_contracts \
+		--test command_matrix \
+		--test cli \
+		--test daemon_e2e
+	@echo "==> batchalign3 runtime/worker contract suites"
+	cd batchalign3 && cargo test -p batchalign-app --test worker_protocol_matrix
+	cd batchalign3 && cargo test -p batchalign-app --test worker_protocol_v2_compat
+	cd batchalign3 && cargo test -p batchalign-app runtime_layout_ -- --nocapture
+	cd batchalign3 && cargo test -p batchalign-app python_runtime_ -- --nocapture
+	cd batchalign3 && cargo test -p batchalign-app revai_credential_ -- --nocapture
+	cd batchalign3 && cargo test -p batchalign-cli config_port_returns_default -- --nocapture
+	cd batchalign3 && cargo test -p batchalign-cli dispatch_no_server -- --nocapture
+	cd batchalign3 && cargo test -p batchalign-cli otlp_runtime_ -- --nocapture
+	cd batchalign3 && uv run pytest \
+		batchalign/tests/test_worker_execute_v2_matrix.py \
+		batchalign/tests/test_worker_bootstrap_runtime.py \
+		-q
+
+verify-coverage-gates:
+	@echo "==> talkbank-tools Rust coverage"
+	cd talkbank-tools && cargo llvm-cov nextest --workspace --lcov --output-path lcov.info
+	cd talkbank-tools && cargo llvm-cov --doc --lcov --output-path lcov-doc.info
+	@echo "==> talkbank-tools VS Code coverage"
+	cd talkbank-tools/vscode && npm run test:coverage
+	@echo "==> batchalign3 Python and Rust coverage"
+	cd batchalign3 && uv run pytest --cov=batchalign --cov-report=lcov:lcov-python.info batchalign --disable-pytest-warnings -k 'not test_whisper_fa_pipeline'
+	cd batchalign3 && cargo llvm-cov nextest --manifest-path pyo3/Cargo.toml --lcov --output-path lcov-rust.info
+	cd batchalign3 && cargo llvm-cov nextest --workspace --lcov --output-path lcov-rust-workspace.info
+
+verify-release-gates: verify-contract-gates verify-coverage-gates

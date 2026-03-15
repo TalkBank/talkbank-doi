@@ -1,5 +1,8 @@
 # TalkBank Release Plan
 
+**Status:** Current
+**Last updated:** 2026-03-15
+
 Phased plan for making TalkBank toolchain available. Starts with **private
 GitHub repos** for team use, then public release, then PyPI.
 
@@ -62,6 +65,32 @@ on it for path dependencies. So talkbank-tools must be on GitHub first.
 | Linux x86_64 (manylinux 2_28) | GitHub Release | PyPI wheel |
 | Linux ARM (aarch64, manylinux 2_28) | — | PyPI wheel |
 | Windows (x86_64-pc-windows-msvc) | GitHub Release | PyPI wheel |
+
+### Release-readiness workspace gates
+
+Run these from the workspace root before public release:
+
+- `make verify-contract-gates`
+- `make verify-coverage-gates`
+- `make verify-release-gates`
+
+`verify-contract-gates` is the focused release-facing gate. It runs the new
+contract suites across both repos:
+
+- `talkbank-tools` CLI manifests, legacy CLAN compatibility, stateful CLI
+  integration, and VS Code runtime/service seams
+- `batchalign3` CLI manifests, legacy batchalign2 compatibility, command
+  matrices, runtime-environment seams, and worker-protocol matrices
+
+`verify-coverage-gates` uses the repos' existing coverage entrypoints rather
+than a new custom framework:
+
+- `talkbank-tools` Rust `cargo llvm-cov` coverage plus VS Code `npm run test:coverage`
+- `batchalign3` Python `pytest --cov` plus Rust `cargo llvm-cov` coverage for
+  both the workspace and `pyo3/`
+
+`verify-release-gates` chains both and is the top-level local release-readiness
+entrypoint.
 
 ---
 
