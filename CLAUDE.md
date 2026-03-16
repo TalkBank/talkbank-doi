@@ -51,7 +51,8 @@ talkbank-dev/                         # This repo (private, tracked in git)
 ├── talkbank-ipa-fragments/           # IPA fragment extraction (Java)
 │
 │ # Legacy CLAN
-├── OSX-CLAN/                         # CLAN C/C++ source (Leonid)
+├── OSX-CLAN/                         # CLAN C/C++ source, macOS (Leonid)
+├── Windows-CLAN/                     # CLAN C/C++ source, Windows (Leonid, VS 2013, MFC, unsigned)
 ├── clan-info/                        # CLAN supporting materials
 │
 │ # Collaborator repos

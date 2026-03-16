@@ -46,21 +46,16 @@ E704: PAR (0_3500, 3500_6000) — no self-overlap.  INV (2000_2500, 5500_6800) �
 
 ### What `&*` Was Solving
 
-The `&*` encoding was not required by CHAT format constraints.  It was a
-workaround for batchalign 1/2's alignment limitations:
+The origin of the `&*` convention is unclear.  It was **not** a workaround
+for batchalign2's alignment limitations — ba2 at the Jan 9 baseline
+(commit `84ad500b`) handled overlapping bullets without complaint: no
+monotonicity enforcement, no overlap check, no validation gate.  The FA
+pipeline grouped overlapping cross-speaker utterances into the same window
+and aligned all words against the combined audio.
 
-1. **Old batchalign couldn't handle multi-speaker audio.**  It needed each
-   utterance to be a non-overlapping audio window.  Encoding short
-   interruptions as `&*INV:mhm` inside the main speaker's utterance avoided
-   creating a separate utterance that would need its own audio window.
-
-2. **Old monotonicity enforcement was stricter than necessary.**  Earlier
-   versions may have enforced that `end_ms` of utterance N ≤ `start_ms` of
-   utterance N+1 (no temporal gap overlap at all), rather than the current
-   E701 which only requires non-decreasing start times.
-
-3. **The `&*` encoding became a convention** that transcribers learned, even
-   though the format never required it for validation purposes.
+The convention may have originated from CLAN's CHECK command (which warns
+about timing issues), from transcription practice guidelines, or from an
+earlier tool.  See `overlap-markers-assessment.md` for the full analysis.
 
 ### Where `&*` Causes Problems
 
@@ -70,12 +65,15 @@ The `&*` encoding is:
   "owns" an overlap and embed the other speaker's words inside that
   utterance.  This is an arbitrary choice that doesn't reflect the audio.
 
-- **Hostile to alignment.**  The embedded `&*` words appear in the wrong
-  position in the reference sequence for UTR matching, causing desync.
+- **Not hostile to alignment** (contrary to earlier claims in this
+  session).  The content walker skips `OtherSpokenEvent`, so `&*` words
+  are invisible to the DP reference sequence.  See the detailed
+  assessment in `overlap-markers-assessment.md`.
 
 - **Lossy.**  The exact overlap boundary (when the second speaker starts
   relative to the first) is not encoded — the `&*` words are just placed
-  at an approximate position in the text.
+  at an approximate position in the text.  The backchannel gets no timing
+  and no `%wor` entry.
 
 - **Unreadable for dense overlap.**  Three `&*` markers in a single
   utterance (as in the 2265_T4 post-mortem) is barely comprehensible.
