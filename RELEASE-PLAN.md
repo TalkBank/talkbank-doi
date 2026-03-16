@@ -1,7 +1,7 @@
 # TalkBank Release Plan
 
 **Status:** Current
-**Last updated:** 2026-03-15
+**Last updated:** 2026-03-16
 
 Phased plan for making TalkBank toolchain available. Starts with **private
 GitHub repos** for team use, then public release, then PyPI.
@@ -92,7 +92,7 @@ than a new custom framework:
 `verify-release-gates` chains both and is the top-level local release-readiness
 entrypoint.
 
-### Current release posture (2026-03-15)
+### Current release posture (2026-03-16)
 
 - Finish doc cleanup and release-prep work before pushing anything to the
   TalkBank org.
@@ -103,6 +103,14 @@ entrypoint.
   direct macOS downloads of `chatter` and `talkbank-lsp-server`. The current
   `talkbank-tools` release workflow emits macOS `.tar.gz` archives, so it needs
   a notarizable `.zip` or `.dmg` path before the first public CLI release.
+- `batchalign3` now has a much stronger Python signoff posture than the earlier
+  stale coverage snapshot implied:
+  - broad non-integration Python coverage is currently `90%` across
+    `batchalign/`
+  - the full thin Python inference adapter surface (`batchalign/inference/`
+    plus `batchalign/inference/hk/`) is now `100%` in focused runs
+  - the remaining lower-coverage Python areas are outside the model-adapter
+    boundary and should be treated as separate runtime/bootstrap follow-up work
 
 ---
 
