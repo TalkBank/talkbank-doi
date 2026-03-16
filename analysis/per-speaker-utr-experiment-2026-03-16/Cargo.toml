@@ -1,0 +1,10 @@
+[package]
+name = "utr-experiment"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[dependencies]
+talkbank-model = { path = "../../talkbank-tools/crates/talkbank-model" }
+talkbank-parser = { path = "../../talkbank-tools/crates/talkbank-parser" }
+clap = { version = "4", features = ["derive"] }
