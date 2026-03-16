@@ -1,7 +1,7 @@
 # Domain 3 Audit: Architecture & Maintainability
 
-**Status:** Draft
-**Last updated:** 2026-03-12
+**Status:** Current
+**Last updated:** 2026-03-16
 
 ## 1. Executive Summary
 
@@ -10,6 +10,33 @@ This document serves as the Domain 3 (Architecture & Maintainability) audit for 
 Our investigation reveals a fundamentally solid but highly coupled architecture. The separation of parsing (`talkbank-parser`), modeling/validation (`talkbank-model`), and coordination (`talkbank-transform`) within `talkbank-tools` demonstrates excellent abstraction logic and concurrency awareness (e.g., thread-local parser pools). However, as we cross the boundary into `batchalign3`, particularly across the `PyO3` interface and the worker subprocess dispatch system, we observe significant coupling, brittle state management, and potential single points of failure in the serialization protocols. 
 
 The core of this report nitpicks these boundaries—specifically the JSON-over-stdio IPC and the opaque `ParsedChat` handle—providing actionable recommendations to decouple the machine-learning pipeline from the core AST, mitigate state drift, and harden the system for long-term maintainability.
+
+---
+
+## 1.1 Reconciliation Update (2026-03-16)
+
+The body below preserves the original audit text. This section records the
+current disposition after the final sweep.
+
+- **Fixed in this sweep:**
+  - same-key worker bootstrap is now serialized, so burst loads no longer fan
+    out into simultaneous heavy Python startup for the same
+    `(target, lang, engine_overrides)` bucket
+  - the stdio worker boundary is harder to poison: bounded stray stdout noise is
+    tolerated, protocol-shaped malformed JSON still hard-fails, and Worker
+    Protocol V2 result DTOs now reject non-finite / reversed timing data
+  - `ParsedChat` callback mutations and morphosyntax cache injection now use
+    clone-on-write staging, so failures do not partially mutate the long-lived
+    AST handle
+- **Partially addressed / intentionally deferred:**
+  - the full replacement of newline-delimited stdio JSON is still deferred to
+    the Worker Protocol V2 transport migration rather than being landed as a
+    late-sweep rewrite
+  - broad PyO3 thinning is still desirable, but the remaining work should
+    continue as targeted logic extraction into normal Rust crates instead of a
+    wide bridge rewrite under release pressure
+  - the deeper `talkbank-tools` validation/cache architecture suggestions below
+    were not part of this final release-hardening pass
 
 ---
 

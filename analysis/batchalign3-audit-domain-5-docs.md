@@ -1,10 +1,35 @@
 # Batchalign3 Documentation Audit - Domain 5: Parity vs Implementation
 
-**Status:** Draft
+**Status:** Current
 **Last updated:** 2026-03-16
 
 ## 1. Overview
 This audit examines the parity between `batchalign3` code implementation and its documentation (specifically `batchalign3/book` and docstrings). The investigation focuses on identifying stale, inaccurate, misleading, or missing details, particularly concerning the architectural migration from `batchalign2` and the handling of CLI plumbing, NLP special cases, and testing.
+
+## 1.1 Reconciliation Update (2026-03-16)
+
+The findings below preserve the original audit text. This note records what was
+actually corrected during the sweep.
+
+- **Fixed in this sweep:**
+  - `book/src/architecture/error-handling.md` now describes the Rust-owned
+    validation gate more accurately, and related forced-alignment docs no longer
+    imply that invalid output is gated only by a Python exception wrapper
+  - `book/src/architecture/cli-option-wiring.md` now clearly documents the
+    extracted-but-not-consumed `wor_tier` fields as intentional
+    forward-compatibility scaffolding
+  - `book/src/reference/morphosyntax.md`,
+    `book/src/architecture/python-rust-interface.md`, and
+    `book/src/reference/mwt-handling.md` now reflect Rust-owned orchestration
+    and no longer rely on the older `_stanza_batch_callback.py` framing
+  - the `talkbank-tools` docs / VS Code surface were already updated earlier in
+    the sweep to reflect `chatter lsp` as the only supported LSP entrypoint
+- **Current interpretation:**
+  - remaining references to a “direct Python pipeline” now refer to the
+    compatibility facade / PyO3 surface, not to Python owning the production
+    control plane
+  - migration/history documents may still mention older Python-owned phases on
+    purpose; those are historical references, not active architecture claims
 
 ## 2. Findings: Architectural Migration Docs vs Implementation
 

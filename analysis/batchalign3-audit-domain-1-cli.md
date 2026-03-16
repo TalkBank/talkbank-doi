@@ -1,6 +1,6 @@
 # Batchalign3 & TalkBank Tools CLI Plumbing Audit (Domain 1)
 
-**Status:** Draft
+**Status:** Current
 **Last updated:** 2026-03-16
 
 ## 1. Executive Summary & Context
@@ -12,6 +12,33 @@ As detailed in `batchalign3/book/src/migration/index.md`, the migration from `ba
 
 **Summary of Findings:**
 Overall, the architectural pivot to centralize parameter resolution via strongly-typed options (`CommandOptions`) in Rust is well executed. The boundaries between Rust control-plane, Python ML workers, and Rust-based post-processing are logically separated. However, we found a few structural nitpicks, silently handled serialization failures, and architectural oddities—especially concerning how non-English processing (like Cantonese) bridges the Rust-Python boundary.
+
+---
+
+## Reconciliation Update (2026-03-16)
+
+The body below preserves the original audit text. Use this section as the
+current disposition after the final sweep.
+
+- **Fixed in this sweep:**
+  - invalid `--engine-overrides` JSON no longer degrades to an empty map; it now
+    hard-fails at the CLI boundary
+  - ASR / FA engine selection now crosses the CLI → dispatch → runner path as
+    typed engine wrappers rather than loose raw strings
+  - boolean flag conflict handling is clap-enforced, so the concern about silent
+    precedence is now stale for the supported command surface
+- **Confirmed as already true or already bounded:**
+  - Cantonese normalization is already centered in Rust chat-op code rather than
+    being left to Python-only string postprocessing
+  - the `chatter lsp` cutover is complete, and the VS Code executable fallback
+    now also handles the Windows `chatter.exe` default path correctly
+- **Still deferred / follow-up territory:**
+  - a generalized Rust `LanguageNormalizer` registry is still a reasonable
+    future cleanup, but the remaining explicit `lang == "yue"` branching is now
+    bounded and not a release blocker
+  - `--wor` on `transcribe` / `benchmark` remains intentionally
+    extracted-but-unconsumed and is now documented as forward-compatibility
+    scaffolding rather than a silently dropped bug
 
 ---
 

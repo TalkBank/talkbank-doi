@@ -1,5 +1,7 @@
 # Domain 4 Audit: Testing & Coverage Deficiencies
-**Date:** 2026-03-15
+
+**Status:** Current
+**Last updated:** 2026-03-16
 **Target:** `batchalign3`, `talkbank-tools`
 **Audit Domain:** 4 (Testing & Coverage Deficiencies)
 
@@ -17,6 +19,37 @@ We identified three critical anti-patterns:
 3. **Superficial Contract Matrices:** The integration tests comparing the current pipeline to the Jan 9 baseline confirm that legacy CLI flags parse correctly, but they explicitly deprioritize the actual deep equivalence tests needed to guarantee behavioral parity.
 
 This report spans an exhaustive analysis of specific test files, pointing to exact lines of code where testing debt has accumulated, and concludes with a prioritized, actionable roadmap to fortify the test suites.
+
+---
+
+## Reconciliation Update (2026-03-16)
+
+The findings below preserve the original audit narrative. This section is the
+current disposition after the release-hardening sweep.
+
+- **Fixed or materially improved in this sweep:**
+  - `batchalign3` now has focused full-coverage test passes for the thin Python
+    inference layer, including HK adapters, plus richer worker V2 tests for
+    malformed host output, non-finite metrics, reversed timing ranges, Unicode
+    `special_forms`, and runtime-failure classification
+  - Jan 9 `transcribe_s` semantics were explicitly audited against the baseline
+    commit and then locked down with CLI, dispatch, runtime, and e2e coverage
+  - `talkbank-tools` gained stronger CLI integration assertions and invalid-file
+    stdout/stderr contract tests instead of relying only on success/failure
+    shape
+  - PyO3 `ParsedChat` rollback behavior is now covered directly: callback,
+    progress-hook, and cache-injection failures are tested to ensure they do not
+    partially mutate the AST
+- **Stale / incorrect claims:**
+  - the blanket statement that `talkbank-tools` lacks fuzz/property testing is
+    false; the repo already has both `cargo-fuzz` targets and live `proptest`
+    usage
+- **Still open / intentionally deferred:**
+  - a full byte-for-byte Jan 9 round-trip equivalence suite remains follow-up
+    work; the current sweep focused on the highest-risk semantic and boundary
+    behaviors first
+  - not every shallow `is_ok()` assertion in `talkbank-tools` was eliminated in
+    one pass, though the highest-value parser / CLI seams were upgraded
 
 ---
 

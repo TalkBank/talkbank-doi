@@ -16,6 +16,32 @@ In accordance with TalkBank workspace policies, all parity claims and regression
 - **HK / Cantonese Claims:** Evaluated against the `BatchalignHK` Jan 9 baseline (`84ad500b...`) using the legacy `batchalignhk` command runner.
 - **Secondary Reference:** The later released BA2 point (`e8f8bfad...`) on Feb 9 is referenced strictly for master-branch trailing behaviors.
 
+## 2.1 Reconciliation Update (2026-03-16)
+
+The findings below preserve the original audit narrative. This note records the
+current repo truth after the final sweep.
+
+- **Fixed in this sweep:**
+  - the blunt `iso3[:2]` fallback described below was replaced with explicit
+    mapping plus pass-through behavior, so unknown ISO-639-3 codes are no longer
+    silently truncated
+  - the thin Python inference surface, including HK adapters, now has focused
+    full-coverage test passes; Cantonese / HK routing, dependency errors, and
+    special handlers are exercised directly rather than only by happy-path smoke
+    tests
+- **Confirmed as already true:**
+  - Cantonese normalization / tokenization ownership is already Rust-centered
+    through `batchalign_core.normalize_cantonese()` and
+    `batchalign_core.cantonese_char_tokens()`
+  - Japanese override behavior is already materially safer than the Jan 9
+    baseline because the rules live in typed Rust mapping code rather than
+    fragile Python string surgery
+- **Still deferred / follow-up territory:**
+  - externalizing `lang_ja.rs` override rules into data files may still be worth
+    doing, but it is a maintainability improvement rather than a release blocker
+  - legacy `batchalignhk` user migration is operational / packaging follow-up,
+    not a core correctness gap in the current repos
+
 ## 3. Language Detection and Stanza Loading
 
 ### 3.1 Fallback Mechanisms in Language Loading
