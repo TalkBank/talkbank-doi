@@ -256,8 +256,8 @@ verify-contract-gates:
 
 verify-coverage-gates:
 	@echo "==> talkbank-tools Rust coverage"
-	cd talkbank-tools && cargo llvm-cov nextest --workspace --lcov --output-path lcov.info
-	cd talkbank-tools && cargo llvm-cov --doc --lcov --output-path lcov-doc.info
+	cd talkbank-tools && cargo +nightly llvm-cov nextest --workspace --lcov --output-path lcov.info
+	cd talkbank-tools && cargo +nightly llvm-cov --doc --lcov --output-path lcov-doc.info
 	@echo "==> talkbank-tools VS Code coverage"
 	cd talkbank-tools/vscode && npm run test:coverage
 	@echo "==> batchalign3 Python and Rust coverage"
