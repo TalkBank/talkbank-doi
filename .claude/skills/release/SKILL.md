@@ -13,7 +13,7 @@ Guide the release process for one or more TalkBank repos. `$ARGUMENTS` should sp
 
 | Repo | Artifacts | Distribution |
 |------|-----------|--------------|
-| **talkbank-tools** | `chatter` CLI binary, `talkbank-lsp-server` binary | GitHub Releases (cross-platform binaries) |
+| **talkbank-tools** | `chatter` CLI binary (including `chatter lsp`) | GitHub Releases (cross-platform binaries) |
 | **talkbank-tools** | VS Code extension `.vsix` | VS Code Marketplace (future) |
 | **batchalign3** | `batchalign3` Python wheel (with Rust extension) | PyPI (5-platform manylinux/macOS/Windows) |
 | **batchalign3** | `batchalign3` console command (via `[project.scripts]`) | Part of the `batchalign3` PyPI wheel |

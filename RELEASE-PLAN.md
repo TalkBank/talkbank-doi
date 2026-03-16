@@ -18,7 +18,7 @@ The original 8-repo structure has been consolidated to 2 active repos:
 
 | Repo | Purpose | Ships |
 |------|---------|-------|
-| `talkbank-tools` | Unified: grammar, spec, 10 Rust crates, corpus, VS Code extension | `chatter` CLI, `talkbank-lsp-server`, VS Code extension |
+| `talkbank-tools` | Unified: grammar, spec, 10 Rust crates, corpus, VS Code extension | `chatter` CLI (including `chatter lsp`), VS Code extension |
 | `batchalign3` | NLP pipeline: Rust server + Python ML workers | `batchalign3` (PyPI) |
 
 Archived (read-only): `tree-sitter-talkbank`, `talkbank-chat`, `talkbank-chatter`,
@@ -32,7 +32,7 @@ Supporting (private): `talkbank-dev` workspace (deploy scripts, internal docs, o
 talkbank-tools (self-contained)
     10 crates, grammar, spec, corpus, VS Code
     CI: no sibling clones needed
-    Release: 5-platform GitHub Release (chatter + lsp-server)
+    Release: 5-platform GitHub Release (`chatter`, which also hosts `chatter lsp`)
         │
         │  path dependencies (../../talkbank-tools/crates/)
         ▼
@@ -53,7 +53,7 @@ on it for path dependencies. So talkbank-tools must be on GitHub first.
 | Repository URL | `github.com/TalkBank/talkbank-tools` | `github.com/TalkBank/batchalign3` |
 | License | BSD-3-Clause | BSD-3-Clause |
 | Release trigger | Git tag `v*` | Git tag `v*` |
-| Binaries | `chatter`, `talkbank-lsp-server` | `batchalign3` console command |
+| Binaries | `chatter` (including `chatter lsp`) | `batchalign3` console command |
 | Packages | (GitHub Release only) | `batchalign3` (py≥3.12) |
 
 ### Platform matrix
@@ -100,9 +100,10 @@ entrypoint.
   and trusted-publishing prep should stay current, but no release tag or PyPI
   publish step should happen yet.
 - Treat Apple code signing + notarization as a public-release requirement for
-  direct macOS downloads of `chatter` and `talkbank-lsp-server`. The current
-  `talkbank-tools` release workflow emits macOS `.tar.gz` archives, so it needs
-  a notarizable `.zip` or `.dmg` path before the first public CLI release.
+  direct macOS downloads of `chatter` (including the `chatter lsp` surface).
+  The current `talkbank-tools` release workflow emits macOS `.tar.gz` archives,
+  so it needs a notarizable `.zip` or `.dmg` path before the first public CLI
+  release.
 - `batchalign3` now has a much stronger Python signoff posture than the earlier
   stale coverage snapshot implied:
   - broad non-integration Python coverage is currently `90%` across
@@ -208,13 +209,13 @@ but macOS signing/notarization is not wired yet:
 - [ ] Create an App Store Connect API key for notarization
 - [ ] Change the macOS release packaging from `.tar.gz` to a notarizable `.zip`
   or `.dmg`
-- [ ] Add macOS codesign + notarization for both `chatter` and
-  `talkbank-lsp-server`
+- [ ] Add macOS codesign + notarization for `chatter` (which also ships the
+  `chatter lsp` entrypoint)
 - [ ] Verify `Cargo.toml` workspace version (`0.1.0`)
 - [ ] Create and push `v0.1.0` tag
 - [ ] Verify `release.yml` succeeds:
   - Builds on 5 platforms (macOS ARM, macOS Intel, Linux, Windows)
-  - Creates GitHub Release with `chatter` + `talkbank-lsp-server` archives
+  - Creates GitHub Release with `chatter` archives for each supported platform
   - Tag version matches workspace Cargo.toml (validated in workflow)
 - [ ] Download and test each archive on available platforms, including a clean
   macOS machine for Gatekeeper/notarization behavior
@@ -311,7 +312,8 @@ Current `pyproject.toml` is close but needs review:
 The VS Code extension lives at `talkbank-tools/vscode/`.
 
 - [ ] Publish to VS Code Marketplace
-- [ ] Bundle or document how to install `talkbank-lsp-server` binary
+- [ ] Bundle or document how to install `chatter` for the VS Code extension's
+  `chatter lsp` entrypoint
 - [ ] Set up CI for marketplace publishing on tag push
 
 ---
@@ -320,8 +322,8 @@ The VS Code extension lives at `talkbank-tools/vscode/`.
 
 Publishing to crates.io enables third-party Rust consumers to depend on
 TalkBank crates without cloning repos. We do want this eventually, but it is
-not on the critical path for the first public `chatter` / `talkbank-lsp-server`
-binary releases or the first `batchalign3` package release.
+not on the critical path for the first public `chatter` CLI release or the
+first `batchalign3` package release.
 
 ### 6a. Publish talkbank-tools crates to crates.io
 
