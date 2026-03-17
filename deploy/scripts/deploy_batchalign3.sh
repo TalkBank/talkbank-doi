@@ -18,7 +18,7 @@ set -euo pipefail
 
 DEFAULT_SSH_USER="macw"
 SERVER_HOST="net"
-CLIENT_HOSTS=(bilbo brian davida frodo andrew lilly sue vaishnavi chen@ming)
+CLIENT_HOSTS=(study bilbo brian davida frodo andrew lilly sue vaishnavi chen@ming)
 ALL_HOSTS=("$SERVER_HOST" "${CLIENT_HOSTS[@]}")
 PORT=8001  # Coexistence: batchalign-next keeps 8000
 
