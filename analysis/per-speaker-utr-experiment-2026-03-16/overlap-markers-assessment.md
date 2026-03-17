@@ -503,3 +503,314 @@ let researchers analyze backchannel frequency without migrating files.
 recommends separate utterances, existing corpora use `&*` and will
 continue to.  The grammar, parser, model (`OtherSpokenEvent`), and
 content walker behavior should not change.
+
+## `+<` Lazy Overlap Linker: Audit and Status
+
+### Usage is massive (not deprecated)
+
+Contrary to earlier assumption, `+<` is heavily used across all corpora:
+
+| Corpus | Files | Utterances with `+<` |
+|--------|-------|---------------------|
+| childes-data | 10,596 | 194,720 |
+| phon-data | 614 | 50,892 |
+| biling-data | 248 | 37,727 |
+| aphasia-data | 1,241 | 15,720 |
+| tbi-data | 251 | 7,469 |
+| ca-data | 242 | 6,606 |
+| dementia-data | 1,536 | 4,745 |
+| asd-data | 234 | 3,950 |
+| rhd-data | 172 | 1,693 |
+| class-data | 65 | 1,197 |
+| slabank-data | 153 | 947 |
+| homebank-data | 67 | 576 |
+| fluency-data | 194 | 339 |
+| psychosis-data | 13 | 14 |
+| **Total** | | **~327,000** |
+
+Of these, roughly 131,000 (40%) already have timing bullets.
+
+### Are the `+<` bullets actually correct?
+
+Of the 327,000 `+<` utterances, about 107,000 (33%) have both their own
+bullet and a bullet on the previous utterance, allowing us to check
+whether the timing reflects actual temporal overlap.
+
+**Results across all timed `+<` utterances:**
+
+| Corpus | Timed `+<` | True overlap | Abutting (gap=0) | Small gap (≤500ms) | Large gap (>1s) |
+|--------|-----------|-------------|-----------------|-------------------|----------------|
+| biling-data | 36,530 | 25,537 (69%) | 9,084 (25%) | 870 (2%) | 627 (2%) |
+| tbi-data | 3,797 | 2,722 (71%) | — | — | — |
+| aphasia-data | 13,025 | 7,321 (56%) | 3,444 (26%) | 1,312 (10%) | 526 (4%) |
+| dementia-data | 3,733 | 2,144 (57%) | — | — | — |
+| rhd-data | 1,342 | 749 (55%) | — | — | — |
+| childes-data | 45,545 | 17,880 (39%) | 13,182 (29%) | 6,549 (14%) | 5,105 (11%) |
+| ca-data | 4,350 | 483 (11%) | 3,704 (85%) | 98 (2%) | 28 (<1%) |
+| phon-data | 3,517 | 41 (1%) | 3,440 (97%) | 30 (<1%) | 5 (<1%) |
+
+Three distinct patterns:
+
+**1. True temporal overlap (biling-data, tbi-data pattern — 69-71%).**
+The `+<` utterance's start time falls within the previous utterance's
+time range.  These are genuine overlaps with plausible, independently
+assigned timing.  Example from biling-data (166ms overlap):
+
+```
+*VER: cusì che (a)speterò me mare: +... 201222_202185
+*LUC: +< fin a quando la lavora ? 202019_203576
+```
+
+**2. Abutting / clamped (ca-data, phon-data pattern — 85-97% at gap=0).**
+The `+<` utterance starts exactly where the previous one ends.  This
+strongly suggests the bullets were **clamped to prevent overlap** — the
+original timing was overlapping, but something (CLAN's fixbullets, a
+post-processing script, or the original alignment tool) forced the start
+time to equal the previous end time.  Example from ca-data:
+
+```
+*INV: <you were asleep> [//] you slept through ... +/. ...  _920625
+*PAR: +< <I was> [/] I was sleep . 920625_921425
+```
+
+PAR almost certainly started speaking before 920625ms (that's the `+<`
+signal), but the bullet was clamped to the previous utterance's end.
+The `+<` preserves the overlap information that the clamped timing lost.
+
+**3. Mixed (aphasia-data, childes-data — 39-56% true overlap).**  A mix
+of genuinely overlapping timing, clamped timing, and near-misses.  In
+aphasia-data, 83% of the non-overlapping cases have gaps ≤500ms,
+suggesting most are near-overlaps or minor clamping.  In childes-data,
+18% have gaps >1 second, which may represent loose use of `+<` for
+"quick response" rather than strict temporal overlap.
+
+**Conclusion on bullet quality:** The timing on `+<` utterances is a
+mix of genuine, clamped, and approximate.  We cannot assume the bullets
+are authoritative measures of overlap timing.  However, the `+<` linker
+itself is a reliable signal that the transcriber heard overlapping
+speech, regardless of whether the bullet faithfully captures the exact
+overlap boundary.  For the two-pass UTR approach, the `+<` signal is
+what matters — the aligner will assign fresh timing from the audio,
+not rely on existing bullets.
+
+### Batchalign2 ignored `+<` entirely
+
+At the Jan 9, 2026 baseline (commit `84ad500b`):
+
+- `annotation_clean()` in `formats/chat/utils.py` strips all `+`
+  characters (`.replace("+","")`), destroying `+<` along with all other
+  linkers.
+- `morphosyntax/ud.py` explicitly strips `+<` before Stanza:
+  `line_cut.replace("+<", "")`.
+- No code anywhere in ba2 reads `+<` as a signal for alignment, timing,
+  or any other purpose.
+
+### `+<` as an alignment hint
+
+`+<` means "this utterance started before the previous one finished."
+This is exactly the information the aligner needs to handle overlapping
+utterances correctly.  If a `+<` utterance is present, the aligner knows:
+
+1. This utterance's timing overlaps with the previous utterance.
+2. Its words should not be included in the global UTR reference (they'd
+   be out of temporal order relative to the previous utterance's words).
+3. Its timing can be constrained to fall within or near the previous
+   utterance's time range.
+
+The simplest algorithmic improvement would be: **skip `+<` utterances
+during UTR**, then assign them timing in a second pass using the
+surrounding context.  This is ~5 lines of Rust and eliminates the
+repeated-token ambiguity concern for the separate-utterance encoding.
+
+## Davida's Feedback (2026-03-16)
+
+### Why `&*` was used instead of separate utterances
+
+> "We're not doing it now because batchalign couldn't handle it."
+
+This confirms the convention was a workaround for alignment tool
+limitations, though as documented above, ba2 itself had no technical
+prohibition — it simply ignored `&*` content.  The perceived limitation
+may have been from batchalign 1 or from practical experience with poor
+alignment results on overlapping files.
+
+### Multi-backchannel example
+
+```
+*PAR: but I grew up in Princeton New_Jersey &*INV:oh_okay_yeah and
+      &-uh came to graduate school &*INV:mhm at UNC Chapel_Hill
+      &*INV:oh and [//] &-uh in ninety one &*INV:mhm or maybe
+      ninety two . 104745_118254
+```
+
+Under the natural encoding (Option B, PAR unsplit):
+
+```
+*PAR: but I grew up in Princeton New_Jersey and &-uh came to graduate
+      school at UNC Chapel_Hill and [//] &-uh in ninety one or maybe
+      ninety two . 104745_118254
+*INV: +< oh okay yeah .
+*INV: +< mhm .
+*INV: +< oh .
+*INV: +< mhm .
+```
+
+Each backchannel is a separate utterance on INV's tier.  PAR's utterance
+is intact.  The INV utterances have no timing yet — `align` would need
+to assign it.
+
+### Partial overlap example
+
+```
+*PAR: without looking at the pictures ? 98040_99243
+*INV: +< tell me a story that goes with the pictures . 99070_100786
+```
+
+INV starts during PAR (99070 < 99243) but continues after PAR finishes
+(100786 > 99243).  This is valid CHAT — start times are non-decreasing
+(98040 ≤ 99070).  The `+<` marks the overlap for human readers.
+
+## Our Recommendations
+
+### Transcript format: Davida's Option B + `+<`
+
+```
+*PAR: but I grew up in Princeton New_Jersey and &-uh came to graduate
+      school at UNC Chapel_Hill and [//] &-uh in ninety one or maybe
+      ninety two . 104745_118254
+*INV: +< oh okay yeah .
+*INV: +< mhm .
+*INV: +< oh .
+*INV: +< mhm .
+```
+
+Rationale:
+
+- **PAR stays intact.**  The participant's narrative is one utterance.
+  This preserves MLU, utterance counts, and turn structure for analysis.
+
+- **Each backchannel is a separate utterance on its own speaker tier.**
+  Countable, analyzable, can receive its own timing.
+
+- **`+<` marks the overlap.**  This is already massively established
+  (327,000 existing uses).  It costs the transcriber nothing, is
+  immediately readable by humans, and gives the aligner a machine-readable
+  signal that the utterance overlaps with the previous one.
+
+- **Utterances ordered by start time.**  Satisfies E701 naturally.  For
+  the multi-backchannel case, the `+<` utterances go after PAR's
+  utterance in text order (PAR's start time is earliest).
+
+- **`+<` for partial overlaps too.**  When INV starts during PAR but
+  continues past:
+
+  ```
+  *PAR: without looking at the pictures ? 98040_99243
+  *INV: +< tell me a story that goes with the pictures . 99070_100786
+  ```
+
+  Valid CHAT (98040 ≤ 99070).  `+<` documents the overlap.
+
+### `+<` should be recommended, not required
+
+For new transcription, recommend `+<` on all overlapping utterances.
+It helps both humans and the aligner.  But do not reject files without
+it — overlapping timestamps alone are sufficient for the aligner to
+work correctly via the existing global DP path.
+
+For existing files that already have `+<` (327,000 utterances), no
+changes needed.
+
+### Alignment improvement: two-pass UTR using `+<`
+
+The concrete algorithm change we recommend:
+
+**Pass 1 — Main speakers:** Build the global UTR reference from only
+non-`+<` utterances.  These are the main speaker turns, in temporal
+order, with no crossing alignment.  The global Hirschberg DP runs as
+today and assigns utterance-level timing.
+
+**Pass 2 — Overlap utterances:** For each `+<` utterance, its timing
+window is known from context: the previous utterance's bullet range
+(possibly expanded by a small buffer).  FA can align the `+<`
+utterance's words directly against that audio window.  No DP is
+needed — just FA on a constrained segment.
+
+This is better than all of the proposals from earlier in this session:
+
+- **Better than backbone extraction:** That was solving a problem that
+  doesn't exist (`&*` is already invisible to the DP).
+
+- **Better than per-speaker reference partitioning:** That would give
+  each speaker their own DP pass, but INV's backchannel reference
+  ("mhm yeah mhm oh mhm") matched against the full-file ASR still
+  has repeated-token ambiguity.  The `+<` approach avoids DP entirely
+  for backchannels.
+
+- **Better than the full per-speaker UTR proposal:** That required
+  diarization, per-speaker audio extraction, and complex merge logic.
+  The `+<` approach needs none of that — the speaker code and `+<`
+  linker are already in the transcript.
+
+**Scope of the change:** ~20-30 lines in `utr.rs` (filter `+<`
+utterances from `collect_utr_utterance_info`, then a post-pass that
+assigns timing from the previous utterance's bullet).  No new crates,
+no new worker protocol, no diarization.
+
+**Backward compatible:** Files without `+<` use the existing global
+DP path unchanged.  Files with `+<` get better alignment for
+backchannel utterances.
+
+### Both `&*` and separate utterances remain valid
+
+Do not force migration.  Both encodings work:
+
+- `&*` is invisible to the DP (walker skips `OtherSpokenEvent`).
+  Backchannels get no timing.  Fine for existing corpora.
+
+- Separate utterances with `+<` give backchannels their own timing
+  and analysis visibility.  Recommended for new transcription.
+
+Transcribers can adopt the new convention organically.  A migration
+tool is a future option, not a prerequisite.
+
+## Questions for Brian
+
+These need Brian's input.  We include our suggested answers for his
+review.
+
+1. **Should `+<` be required on overlapping utterances?**
+
+   Our suggestion: **Recommended, not required.**  327,000 existing
+   uses show it's established practice.  It helps both human readability
+   and alignment quality.  But files with overlapping timestamps and no
+   `+<` should not be rejected.
+
+2. **For multi-backchannel cases, should each be a separate `+<`
+   utterance?**
+
+   Our suggestion: **Yes.**  Each backchannel is a separate
+   conversational act.  One `+<` utterance per backchannel, each on
+   its own line.  This is the most natural representation and the
+   easiest for analysis tools.
+
+3. **How should ordering work when the overlap speaker continues past
+   the main speaker?**
+
+   Our suggestion: **Order by start time** (satisfies E701).  The
+   overlapping speaker's utterance follows the main speaker's in text
+   order because its start time is later.  `+<` marks the overlap.
+
+4. **Does CLAN need changes?**
+
+   Our assessment: **No.**  CLAN's playback handles overlapping bullets
+   correctly (verified from OSX-CLAN source).  But Brian may know of
+   other CLAN features (analysis commands, the editor) that assume
+   non-overlap.
+
+5. **Should we pursue the two-pass UTR improvement?**
+
+   Our suggestion: **Yes.**  It's a small change (~20-30 lines of Rust)
+   that makes `align` aware of `+<` for the first time.  327,000
+   existing `+<` utterances benefit immediately.  No risk to files
+   without `+<`.
