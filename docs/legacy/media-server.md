@@ -1,4 +1,7 @@
-# Media server
+# Media server (SUPERSEDED)
+
+> **This doc is outdated.** See [`docs/media-server.md`](../media-server.md)
+> for the current reference.
 
 We have a media server `media.talkbank.org` which is part of a
 restricted CMU cloud.

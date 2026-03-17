@@ -9,6 +9,7 @@
 //! - `convert`:  Convert `&*SPK:word` overlap markers to separate `+<` utterances.
 
 mod convert;
+mod decompose;
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -71,6 +72,20 @@ enum Command {
         input: PathBuf,
         /// Output CHAT file.
         output: PathBuf,
+    },
+
+    /// Compare UTR strategies at each pipeline stage (UTR → grouping → FA groups).
+    Decompose {
+        /// Input CHAT file (with timing stripped).
+        input: PathBuf,
+        /// ASR tokens JSON file (from BATCHALIGN_DEBUG_DIR).
+        tokens: PathBuf,
+        /// Total audio duration in milliseconds (from ffprobe).
+        #[arg(long)]
+        audio_ms: Option<u64>,
+        /// Max FA group duration in milliseconds (default: 15000).
+        #[arg(long, default_value_t = 15000)]
+        max_group_ms: u64,
     },
 
     /// Convert &*SPK:word overlap markers to separate +< utterances.
@@ -282,6 +297,29 @@ fn run_strip(input: &PathBuf, output: &PathBuf) {
 }
 
 // ---------------------------------------------------------------------------
+// decompose
+// ---------------------------------------------------------------------------
+
+fn run_decompose(input: &PathBuf, tokens_path: &PathBuf, audio_ms: Option<u64>, max_group_ms: u64) {
+    let chat_text = fs::read_to_string(input).unwrap_or_else(|e| {
+        eprintln!("ERROR: cannot read {}: {e}", input.display());
+        std::process::exit(1);
+    });
+    let tokens_json = fs::read_to_string(tokens_path).unwrap_or_else(|e| {
+        eprintln!("ERROR: cannot read {}: {e}", tokens_path.display());
+        std::process::exit(1);
+    });
+    let tokens: Vec<batchalign_chat_ops::fa::utr::AsrTimingToken> =
+        serde_json::from_str(&tokens_json).unwrap_or_else(|e| {
+            eprintln!("ERROR: invalid tokens JSON: {e}");
+            std::process::exit(1);
+        });
+
+    let (global, two_pass) = decompose::decompose(&chat_text, &tokens, audio_ms, max_group_ms);
+    decompose::print_comparison(&global, &two_pass);
+}
+
+// ---------------------------------------------------------------------------
 // convert
 // ---------------------------------------------------------------------------
 
@@ -314,6 +352,12 @@ fn main() {
         Command::Measure { paths } => run_measure(paths),
         Command::Split { input, output_dir } => run_split(input, output_dir),
         Command::Strip { input, output } => run_strip(input, output),
+        Command::Decompose {
+            input,
+            tokens,
+            audio_ms,
+            max_group_ms,
+        } => run_decompose(input, tokens, *audio_ms, *max_group_ms),
         Command::Convert {
             input,
             output,

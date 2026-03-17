@@ -28,8 +28,9 @@ documentation does is provide
 schema elements, attributes, and types; and
 - clickable HTML links to appropriate places in the HTML versions of
 
-  - the [CHAT manual](https://talkbank.org/manuals/CHAT.html) and
-  - the [MOR manual](https://talkbank.org/manuals/MOR.html).
+  - the [CHAT manual](https://talkbank.org/0info/manuals/CHAT.html).
+  - (The legacy MOR manual has been removed from the TalkBank website;
+    the CLAN MOR format has been discontinued in favor of UD-oriented MOR.)
 
 ### Tutorial and reference manual
 

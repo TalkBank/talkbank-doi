@@ -174,19 +174,41 @@ alignment strategy:
 - Countable as utterances by analysis tools
 - Cleaner transcript readability
 
-### 2. Keep two-pass as default with best-of-both fallback
+### 2. Keep two-pass as default with grouping-aware best-of-both fallback
 
-Two-pass now runs both strategies and keeps whichever timed more
-utterances at the UTR level. This provides:
+Two-pass now runs both strategies and compares FA grouping outcomes
+before choosing which to keep. This two-level comparison provides:
 - Better backchannel placement on English (3-8pp improvement)
-- No UTR-level harm on non-English (fallback selects global when
-  two-pass recovers fewer utterances)
+- **No regression on German** — grouping fallback detects that two-pass
+  creates fewer FA groups (152 vs 162) and falls back to global
 - Zero cost when no `+<` utterances are present
+
+The comparison logic (added 2026-03-17):
+1. Run both strategies on clones of the input
+2. If `GroupingContext` is available (total_audio_ms + max_group_ms from
+   the dispatch layer), call `group_utterances()` on both outputs
+3. **Primary signal:** FA group count. Fewer groups = wider FA windows =
+   worse alignment. If two-pass creates fewer groups, fall back to global.
+4. **Tiebreaker:** When groups are equal, use timed utterance count
+   (prefer two-pass when equal for better backchannel placement).
+
+**Verification results (2026-03-17):**
+
+| File | Lang | Global | Two-pass (old) | Auto (grouping fix) | Status |
+|------|------|--------|---------------|---------------------|--------|
+| german050814 | deu | 1229 | 867 | **1229** | Fixed — fallback triggered |
+| 2265_T4 | eng | 636 | 683 | **683** | Preserved — two-pass kept |
+| fusser12 | cym | 1502 | 1308 | 1305 | Not fixed — see §3 |
+| tbi_n22 | eng | 605 | 605 | **605** | No change |
+| tbi_tb23 | eng | 699 | 700 | **700** | Two-pass kept (+1) |
 
 ### 3. Critical finding: FA sensitivity to UTR output
 
-**The non-English coverage regression (1229→873 on German, 1502→1308
-on Welsh) is NOT caused by UTR.**
+**The German regression (1229→873) was caused by FA group merging and
+is now FIXED by the grouping-aware fallback.**
+
+**The Welsh regression (1502→1308) has a different root cause** that
+the grouping heuristic cannot detect.
 
 Debugging revealed that UTR assigns only ~24-35 utterance-level bullets
 on German. The large coverage difference comes from **downstream FA
@@ -204,21 +226,56 @@ FA alignment → word-level timing per group
 Final coverage → depends on ALL of the above
 ```
 
-Two-pass UTR changes the UTR output, which changes FA grouping, which
-changes final coverage. The UTR best-of-both fallback correctly picks
-the better UTR result, but a better UTR result can still lead to worse
-FA grouping downstream.
+**German (fixed):** Two-pass creates fewer groups (152 vs 162) — wider
+windows → worse FA. The grouping comparison detects this and falls back
+to global. Final coverage: 1229 (matches baseline).
 
-**This means the best-of-both comparison needs to happen at the full
-pipeline output level, not just UTR.** This is a deeper architectural
-issue that requires further investigation.
+**Welsh (not fixed):** Two-pass creates MORE groups (313 vs 284), so
+the grouping comparison correctly keeps two-pass. But the final FA
+result is still worse (1305 vs 1502). This means the Welsh regression
+is caused by different group *boundaries* (not fewer groups), which
+the group-count heuristic can't detect.
+
+**To fully fix Welsh, the comparison needs to happen at the full
+pipeline output level** (run FA with both strategies, keep the better
+output). This is expensive (2x alignment per file) and is tracked as
+a future improvement.
 
 ### 4. Do not force-migrate existing `&*` files
 
 `&*` encoding works correctly with the current aligner. Migration should
 be opt-in and driven by analysis needs.
 
-### 5. Next experiments needed
+### 5. Stage decomposition findings (Experiment A)
+
+**Date:** 2026-03-17 (same session)
+
+Used a new `decompose` tool that runs both UTR strategies on the same
+input + ASR tokens and compares UTR output AND FA grouping without
+running actual FA inference.
+
+**German 050814 (regression case):**
+- Two-pass: 35 UTR bullets, **152 FA groups**
+- Global: 24 UTR bullets, **162 FA groups**
+- Two-pass has **10 fewer groups** → larger audio windows → worse FA
+
+**English 2265_T4 (improvement case):**
+- Two-pass: 647 UTR bullets (21 more on `+<`), **151 FA groups**
+- Global: 626 UTR bullets, **147 FA groups**
+- Two-pass has **4 more groups** → smaller audio windows → better FA
+
+**Root cause confirmed:** Two-pass changes UTR bullet distribution,
+which changes `estimate_untimed_boundaries` anchor points, which changes
+FA group boundaries. On English the effect is beneficial (more precise
+groups). On German the effect is harmful (groups merge into wider
+windows).
+
+**The fix must happen at the FA grouping level**, not UTR. Options:
+1. Make FA grouping robust to small UTR bullet changes
+2. Run full-pipeline best-of-both (expensive but correct)
+3. Clamp group window expansion so it never exceeds the global baseline
+
+### 6. Remaining experiments
 
 The current experiments measured UTR + FA combined output but compared
 strategies only at the UTR level. The next round needs:

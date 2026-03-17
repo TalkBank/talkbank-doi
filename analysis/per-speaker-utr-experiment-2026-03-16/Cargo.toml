@@ -7,4 +7,7 @@ publish = false
 [dependencies]
 talkbank-model = { path = "../../talkbank-tools/crates/talkbank-model" }
 talkbank-parser = { path = "../../talkbank-tools/crates/talkbank-parser" }
+talkbank-direct-parser = { path = "../../talkbank-tools/crates/talkbank-direct-parser" }
+batchalign-chat-ops = { path = "../../batchalign3/crates/batchalign-chat-ops" }
 clap = { version = "4", features = ["derive"] }
+serde_json = "1"

@@ -278,7 +278,7 @@ if token.feats.contains("Reflex=Yes") {
 - %wor tier suffix conventions
 
 **Resources**:
-- CHAT manual: https://talkbank.org/manuals/CHAT.html
+- CHAT manual: https://talkbank.org/0info/manuals/CHAT.html
 - Ask boss/CHILDES team for conventions
 
 ---
