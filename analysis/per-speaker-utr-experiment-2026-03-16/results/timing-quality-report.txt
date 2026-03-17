@@ -1,0 +1,647 @@
+OVERLAP ALIGNMENT EXPERIMENT — TIMING QUALITY ANALYSIS
+Date: 2026-03-17
+
+============================================================
+Timing Quality: global vs two-pass
+============================================================
+
+  2265_T4: 47 +< utterances
+    Both timed:    46
+      Identical:   17
+      Diff ≤500ms: 5
+      Diff >500ms: 24
+      Diff >3s:    8
+    global only:      0
+    two-pass only:      1
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      global: 20/46 (43%)
+      two-pass: 21/46 (46%)
+    Largest differences (>3s):
+      idx 43 PAR: global=115825-116045, two-pass=108865-109085, diff=6960ms, pred=115696-115836
+      idx 128 INV: global=369675-369965, two-pass=363595-363885, diff=6080ms, pred=362345-368325
+      idx 48 INV: global=133683-133763, two-pass=129635-129925, diff=4048ms, pred=128565-133605
+      idx 4 PAR: global=5475-5765, two-pass=1475-1765, diff=4000ms, pred=2215-4925
+      idx 248 PAR: global=709697-710077, two-pass=705865-706245, diff=3832ms, pred=709517-709697
+
+  2420_T3: 81 +< utterances
+    Both timed:    78
+      Identical:   44
+      Diff ≤500ms: 10
+      Diff >500ms: 24
+      Diff >3s:    6
+    global only:      0
+    two-pass only:      1
+    Neither timed: 2
+    Within predecessor window (±500ms):
+      global: 39/78 (50%)
+      two-pass: 50/78 (64%)
+    Largest differences (>3s):
+      idx 425 INV: global=1422045-1422165, two-pass=1417605-1417725, diff=4440ms, pred=1417605-1421765
+      idx 145 INV: global=435857-436278, two-pass=431825-432175, diff=4103ms, pred=432235-436135
+      idx 284 INV: global=879621-879701, two-pass=876175-876315, diff=3446ms, pred=877175-878175
+      idx 23 PAR: global=50952-51073, two-pass=47755-48045, diff=3197ms, pred=45745-49365
+      idx 359 PAR: global=1165262-1165542, two-pass=1162225-1162445, diff=3097ms, pred=1162225-1163085
+
+  2432_T2: 90 +< utterances
+    Both timed:    83
+      Identical:   53
+      Diff ≤500ms: 6
+      Diff >500ms: 24
+      Diff >3s:    4
+    global only:      0
+    two-pass only:      0
+    Neither timed: 7
+    Within predecessor window (±500ms):
+      global: 35/83 (42%)
+      two-pass: 40/83 (48%)
+    Largest differences (>3s):
+      idx 222 PAR: global=554225-561645, two-pass=554225-554645, diff=7000ms, pred=553865-554085
+      idx 31 PAR: global=85609-85829, two-pass=91179-92403, diff=6574ms, pred=86165-86665
+      idx 337 INV: global=828885-830655, two-pass=833794-834115, diff=4909ms, pred=829232-829592
+      idx 116 INV: global=311098-312721, two-pass=307875-308165, diff=4556ms, pred=308345-311365
+
+  2463_T2: 102 +< utterances
+    Both timed:    100
+      Identical:   48
+      Diff ≤500ms: 12
+      Diff >500ms: 40
+      Diff >3s:    7
+    global only:      0
+    two-pass only:      0
+    Neither timed: 2
+    Within predecessor window (±500ms):
+      global: 38/100 (38%)
+      two-pass: 47/100 (47%)
+    Largest differences (>3s):
+      idx 86 PAR: global=170891-171011, two-pass=165925-166125, diff=4966ms, pred=170731-170871
+      idx 141 PAR: global=299705-299925, two-pass=295545-295765, diff=4160ms, pred=293465-296405
+      idx 425 PAR: global=837929-839732, two-pass=835445-835645, diff=4087ms, pred=835915-837765
+      idx 213 INV: global=428821-429242, two-pass=424925-425165, diff=4077ms, pred=425185-427605
+      idx 394 PAR: global=777685-783005, two-pass=773685-779454, diff=4000ms, pred=773585-775205
+
+  AGGREGATE (320 +< utterances):
+    Both timed:    307
+    Identical:     162 (53%)
+    Diff >500ms:   112 (36%)
+    Diff >3s:      25
+    Within predecessor (±500ms):
+      global: 132/307 (43%)
+      two-pass: 158/307 (51%)
+
+============================================================
+Timing Quality: no-linker vs two-pass
+============================================================
+  2265_T4: no +< utterances
+
+  2420_T3: 7 +< utterances
+    Both timed:    6
+      Identical:   0
+      Diff ≤500ms: 0
+      Diff >500ms: 6
+      Diff >3s:    6
+    no-linker only:      1
+    two-pass only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      no-linker: 2/6 (33%)
+      two-pass: 0/6 (0%)
+    Largest differences (>3s):
+      idx 426 INV: no-linker=1422165-1422845, two-pass=169855-170055, diff=1252790ms, pred=1422045-1422165
+      idx 433 PAR: no-linker=1430525-1435853, two-pass=232958-233319, diff=1202534ms, pred=1430345-1432165
+      idx 442 PAR: no-linker=1452215-1452335, two-pass=292325-292615, diff=1159890ms, pred=1451125-1451815
+      idx 346 PAR: no-linker=1112745-1113095, two-pass=159125-159655, diff=953620ms, pred=1105485-1112575
+      idx 192 PAR: no-linker=590135-590355, two-pass=154475-154895, diff=435660ms, pred=589215-589955
+
+  2432_T2: 12 +< utterances
+    Both timed:    11
+      Identical:   0
+      Diff ≤500ms: 0
+      Diff >500ms: 11
+      Diff >3s:    11
+    no-linker only:      1
+    two-pass only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      no-linker: 4/11 (36%)
+      two-pass: 0/11 (0%)
+    Largest differences (>3s):
+      idx 408 PAR: no-linker=1005135-1005425, two-pass=251805-252085, diff=753340ms, pred=1004265-1004745
+      idx 384 INV: no-linker=956085-956305, two-pass=229520-229620, diff=726685ms, pred=955425-955905
+      idx 370 INV: no-linker=929605-930245, two-pass=209185-209805, diff=720440ms, pred=928905-929605
+      idx 312 INV: no-linker=791155-791615, two-pass=118063-118564, diff=673092ms, pred=789395-791135
+      idx 302 PAR: no-linker=752475-753925, two-pass=104385-104705, diff=649220ms, pred=753125-753365
+
+  2463_T2: 16 +< utterances
+    Both timed:    15
+      Identical:   1
+      Diff ≤500ms: 0
+      Diff >500ms: 14
+      Diff >3s:    14
+    no-linker only:      1
+    two-pass only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      no-linker: 6/15 (40%)
+      two-pass: 0/15 (0%)
+    Largest differences (>3s):
+      idx 394 PAR: no-linker=773685-779454, two-pass=122555-123165, diff=656289ms, pred=773585-775205
+      idx 398 INV: no-linker=785545-785925, two-pass=138075-138365, diff=647560ms, pred=784965-785405
+      idx 323 PAR: no-linker=616325-616645, two-pass=121995-122285, diff=494360ms, pred=616795-617085
+      idx 298 PAR: no-linker=572385-572845, two-pass=119785-120165, diff=452680ms, pred=570905-572285
+      idx 280 INV: no-linker=545765-546045, two-pass=118632-118792, diff=427253ms, pred=543365-545485
+
+  AGGREGATE (35 +< utterances):
+    Both timed:    32
+    Identical:     1 (3%)
+    Diff >500ms:   31 (97%)
+    Diff >3s:      31
+    Within predecessor (±500ms):
+      no-linker: 12/32 (38%)
+      two-pass: 0/32 (0%)
+
+============================================================
+Ground Truth Comparison: global
+============================================================
+
+  020518b: 131 +< utterances
+    Both timed:    75
+      Identical:   0
+      Diff ≤500ms: 24
+      Diff >500ms: 51
+      Diff >3s:    14
+    truth only:      0
+    global only:      52
+    Neither timed: 4
+    Within predecessor window (±500ms):
+      truth: 4/75 (5%)
+      global: 15/75 (20%)
+    Largest differences (>3s):
+      idx 1535 MOT: truth=3812910-3821261, global=3809425-3811245, diff=10016ms, pred=3808724-3809224
+      idx 3239 MOT: truth=8870620-8871461, global=8863005-8863365, diff=8096ms, pred=8862927-8870940
+      idx 653 FAT: truth=1997861-2001926, global=1994475-1994895, diff=7031ms, pred=1995156-1998080
+      idx 1507 MOT: truth=3773736-3774897, global=3767675-3768245, diff=6652ms, pred=3772755-3773836
+      idx 3240 MOT: truth=8871121-8871621, global=8864955-8865245, diff=6376ms, pred=8870620-8871461
+
+  060211a2: 159 +< utterances
+    Both timed:    144
+      Identical:   0
+      Diff ≤500ms: 41
+      Diff >500ms: 103
+      Diff >3s:    15
+    truth only:      15
+    global only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 72/144 (50%)
+      global: 82/144 (57%)
+    Largest differences (>3s):
+      idx 116 MOT: truth=225236-226397, global=231742-232784, diff=6506ms, pred=224836-232816
+      idx 657 MAR: truth=1150472-1153003, global=1156604-1158226, diff=6132ms, pred=1150472-1155918
+      idx 430 CHI: truth=822501-825378, global=827718-827878, diff=5217ms, pred=821040-822501
+      idx 726 FAT: truth=1250007-1251951, global=1247387-1247527, diff=4424ms, pred=1248096-1250407
+      idx 658 CHI: truth=1154003-1155918, global=1158226-1158447, diff=4223ms, pred=1150472-1153003
+
+  060211b1: 105 +< utterances
+    Both timed:    100
+      Identical:   0
+      Diff ≤500ms: 35
+      Diff >500ms: 65
+      Diff >3s:    10
+    truth only:      5
+    global only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 41/100 (41%)
+      global: 58/100 (58%)
+    Largest differences (>3s):
+      idx 343 FAT: truth=714827-715338, global=726324-726685, diff=11497ms, pred=711886-714827
+      idx 403 FAT: truth=879781-880455, global=885385-885986, diff=5604ms, pred=872966-888595
+      idx 274 MAR: truth=584349-585684, global=589429-589749, diff=5080ms, pred=584098-584749
+      idx 64 MAR: truth=143544-144844, global=148615-148795, diff=5071ms, pred=140738-148782
+      idx 790 FAT: truth=1573321-1574499, global=1577644-1577724, diff=4323ms, pred=1569321-1575929
+
+  060406b2: 91 +< utterances
+    Both timed:    88
+      Identical:   0
+      Diff ≤500ms: 32
+      Diff >500ms: 56
+      Diff >3s:    6
+    truth only:      3
+    global only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 33/88 (38%)
+      global: 43/88 (49%)
+    Largest differences (>3s):
+      idx 259 FAT: truth=519545-521089, global=527595-527885, diff=8050ms, pred=519245-528025
+      idx 379 FAT: truth=841828-842247, global=846799-846899, diff=4971ms, pred=841028-847576
+      idx 484 FAT: truth=1055317-1055815, global=1059950-1060551, diff=4736ms, pred=1054317-1060108
+      idx 622 FAT: truth=1415571-1415989, global=1416997-1420344, diff=4355ms, pred=1410015-1418268
+      idx 216 CHI: truth=438599-439714, global=442230-443312, diff=3631ms, pred=437554-438599
+
+  AGGREGATE (486 +< utterances):
+    Both timed:    407
+    Match truth:   0 (0%)
+    Diff >500ms:   275 (68%)
+    Diff >3s:      45
+    Within predecessor (±500ms):
+      truth:  150/407 (37%)
+      global: 198/407 (49%)
+
+============================================================
+Ground Truth Comparison: two-pass
+============================================================
+
+  060211a2: 159 +< utterances
+    Both timed:    144
+      Identical:   0
+      Diff ≤500ms: 26
+      Diff >500ms: 118
+      Diff >3s:    37
+    truth only:      15
+    two-pass only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 72/144 (50%)
+      two-pass: 83/144 (58%)
+    Largest differences (>3s):
+      idx 148 MAR: truth=273637-276911, two-pass=286088-287089, diff=12451ms, pred=272309-276144
+      idx 146 CHI: truth=270514-271919, two-pass=277155-283963, diff=12044ms, pred=270014-272441
+      idx 151 MAR: truth=277518-281961, two-pass=289553-290955, diff=12035ms, pred=277060-278418
+      idx 152 MOT: truth=279568-283077, two-pass=290995-291796, diff=11427ms, pred=277518-281961
+      idx 150 FAT: truth=277060-278418, two-pass=288271-289553, diff=11211ms, pred=276211-277360
+
+  060211b1: 105 +< utterances
+    Both timed:    98
+      Identical:   0
+      Diff ≤500ms: 28
+      Diff >500ms: 70
+      Diff >3s:    32
+    truth only:      7
+    two-pass only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 41/98 (42%)
+      two-pass: 52/98 (53%)
+    Largest differences (>3s):
+      idx 107 CHI: truth=218602-223968, two-pass=212075-212295, diff=11673ms, pred=218602-219066
+      idx 343 FAT: truth=714827-715338, two-pass=726312-726572, diff=11485ms, pred=711886-714827
+      idx 67 MAR: truth=150288-156398, two-pass=143745-147765, diff=8633ms, pred=149873-150488
+      idx 57 CHI: truth=123513-130053, two-pass=123745-123965, diff=6088ms, pred=121949-123913
+      idx 295 MAR: truth=615081-617208, two-pass=618583-623089, diff=5881ms, pred=614087-615481
+
+  060406b2: 91 +< utterances
+    Both timed:    88
+      Identical:   0
+      Diff ≤500ms: 16
+      Diff >500ms: 72
+      Diff >3s:    16
+    truth only:      3
+    two-pass only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 33/88 (38%)
+      two-pass: 55/88 (62%)
+    Largest differences (>3s):
+      idx 148 CHI: truth=254352-265033, two-pass=254065-254525, diff=10508ms, pred=254352-256767
+      idx 625 MAR: truth=1429514-1435784, two-pass=1429825-1430045, diff=5739ms, pred=1429514-1432138
+      idx 333 CHI: truth=761023-765760, two-pass=759675-760295, diff=5465ms, pred=760723-761640
+      idx 108 MAR: truth=194351-201294, two-pass=199745-200645, diff=5394ms, pred=194351-195524
+      idx 219 MAR: truth=442550-445081, two-pass=447441-447702, diff=4891ms, pred=442030-442750
+
+  AGGREGATE (355 +< utterances):
+    Both timed:    330
+    Match truth:   0 (0%)
+    Diff >500ms:   260 (79%)
+    Diff >3s:      85
+    Within predecessor (±500ms):
+      truth:  146/330 (44%)
+      two-pass: 190/330 (58%)
+
+============================================================
+Timing Quality: global vs two-pass
+============================================================
+
+  DTA_f02: 205 +< utterances
+    Both timed:    203
+      Identical:   160
+      Diff ≤500ms: 16
+      Diff >500ms: 27
+      Diff >3s:    8
+    global only:      0
+    two-pass only:      0
+    Neither timed: 2
+    Within predecessor window (±500ms):
+      global: 100/203 (49%)
+      two-pass: 100/203 (49%)
+    Largest differences (>3s):
+      idx 629 INV: global=1753440-1753500, two-pass=1746345-1746565, diff=7095ms, pred=1744205-1753345
+      idx 651 INV: global=1811802-1812302, two-pass=1806905-1807125, diff=5177ms, pred=1800865-1811045
+      idx 378 INV: global=1077898-1078059, two-pass=1073235-1073525, diff=4663ms, pred=1071025-1077765
+      idx 164 INV: global=503445-503545, two-pass=507102-508103, diff=4558ms, pred=504245-505445
+      idx 347 INV: global=986505-986785, two-pass=982505-982705, diff=4080ms, pred=982925-986265
+
+  PRV_f02_1: 382 +< utterances
+    Both timed:    375
+      Identical:   219
+      Diff ≤500ms: 33
+      Diff >500ms: 123
+      Diff >3s:    50
+    global only:      2
+    two-pass only:      3
+    Neither timed: 2
+    Within predecessor window (±500ms):
+      global: 201/375 (54%)
+      two-pass: 210/375 (56%)
+    Largest differences (>3s):
+      idx 865 INV: global=2266105-2266365, two-pass=2254035-2254325, diff=12070ms, pred=2265925-2266085
+      idx 28 INV: global=81675-81965, two-pass=70435-70725, diff=11240ms, pred=70435-81525
+      idx 862 INV: global=2254035-2254325, two-pass=2244995-2245285, diff=9040ms, pred=2245545-2252365
+      idx 360 INV: global=984246-984766, two-pass=975475-975765, diff=9001ms, pred=983445-983685
+      idx 753 INV: global=1964955-1965245, two-pass=1956495-1956785, diff=8460ms, pred=1965116-1965217
+
+  PRV_m02_1: 354 +< utterances
+    Both timed:    352
+      Identical:   235
+      Diff ≤500ms: 25
+      Diff >500ms: 92
+      Diff >3s:    23
+    global only:      0
+    two-pass only:      1
+    Neither timed: 1
+    Within predecessor window (±500ms):
+      global: 243/352 (69%)
+      two-pass: 254/352 (72%)
+    Largest differences (>3s):
+      idx 830 INV: global=1896845-1897285, two-pass=1887935-1888155, diff=9130ms, pred=1887075-1897395
+      idx 831 INV: global=1900313-1900373, two-pass=1893735-1893955, diff=6578ms, pred=1896845-1897285
+      idx 223 INV: global=536105-536185, two-pass=530055-530295, diff=6050ms, pred=529895-538085
+      idx 155 INV: global=365014-365595, two-pass=359065-359565, diff=6030ms, pred=357725-364885
+      idx 387 PAR: global=894321-894481, two-pass=888485-888775, diff=5836ms, pred=888195-894245
+
+  AGGREGATE (941 +< utterances):
+    Both timed:    930
+    Identical:     614 (66%)
+    Diff >500ms:   242 (26%)
+    Diff >3s:      81
+    Within predecessor (±500ms):
+      global: 544/930 (58%)
+      two-pass: 564/930 (61%)
+
+============================================================
+Timing Quality: global vs two-pass
+============================================================
+
+  fusser12: 736 +< utterances
+    Both timed:    327
+      Identical:   111
+      Diff ≤500ms: 17
+      Diff >500ms: 199
+      Diff >3s:    165
+    global only:      144
+    two-pass only:      81
+    Neither timed: 184
+    Within predecessor window (±500ms):
+      global: 140/327 (43%)
+      two-pass: 65/327 (20%)
+    Largest differences (>3s):
+      idx 2043 CEW: global=3255795-3367285, two-pass=3454646-3462180, diff=198851ms, pred=3257353-3257795
+      idx 2034 CEW: global=3251918-3253663, two-pass=3445553-3451556, diff=197893ms, pred=3251076-3251918
+      idx 2030 CEW: global=3252012-3254395, two-pass=3436929-3443872, diff=189477ms, pred=3251051-3252012
+      idx 2024 CEW: global=3249369-3249449, two-pass=3434301-3434421, diff=184972ms, pred=3248268-3249369
+      idx 2027 CEW: global=3250711-3251051, two-pass=3434504-3435765, diff=184714ms, pred=3249489-3250711
+
+  german050814: 451 +< utterances
+    Both timed:    270
+      Identical:   97
+      Diff ≤500ms: 4
+      Diff >500ms: 169
+      Diff >3s:    145
+    global only:      126
+    two-pass only:      0
+    Neither timed: 55
+    Within predecessor window (±500ms):
+      global: 92/270 (34%)
+      two-pass: 50/270 (19%)
+    Largest differences (>3s):
+      idx 986 MUT: global=1388303-1388723, two-pass=1606328-1607069, diff=218346ms, pred=1388223-1388303
+      idx 985 CHR: global=1388223-1388303, two-pass=1605928-1606168, diff=217865ms, pred=1388142-1388203
+      idx 984 CHI: global=1388142-1388203, two-pass=1604707-1605688, diff=217485ms, pred=1386001-1388042
+      idx 980 MUT: global=1378836-1382618, two-pass=1580341-1587133, diff=204515ms, pred=1380613-1382736
+      idx 979 CHI: global=1380613-1382736, two-pass=1576168-1582458, diff=199722ms, pred=1380152-1380593
+
+  tbi_n22: 156 +< utterances
+    Both timed:    151
+      Identical:   44
+      Diff ≤500ms: 34
+      Diff >500ms: 73
+      Diff >3s:    21
+    global only:      0
+    two-pass only:      0
+    Neither timed: 5
+    Within predecessor window (±500ms):
+      global: 52/151 (34%)
+      two-pass: 55/151 (36%)
+    Largest differences (>3s):
+      idx 286 INV: global=481105-482905, two-pass=463705-464105, diff=18800ms, pred=471865-481105
+      idx 285 PAR: global=471865-481105, two-pass=466545-466625, diff=14480ms, pred=469305-470566
+      idx 287 PAR: global=480905-480945, two-pass=468985-469025, diff=11920ms, pred=481105-482905
+      idx 288 PAR: global=482905-483425, two-pass=472094-478279, diff=10811ms, pred=480905-480945
+      idx 233 PAR: global=385645-392305, two-pass=382385-382505, diff=9800ms, pred=387424-387524
+
+  tbi_tb23: 151 +< utterances
+    Both timed:    145
+      Identical:   32
+      Diff ≤500ms: 24
+      Diff >500ms: 89
+      Diff >3s:    17
+    global only:      0
+    two-pass only:      0
+    Neither timed: 6
+    Within predecessor window (±500ms):
+      global: 51/145 (35%)
+      two-pass: 67/145 (46%)
+    Largest differences (>3s):
+      idx 176 PAR: global=370445-375885, two-pass=368225-368445, diff=7440ms, pred=369872-369952
+      idx 623 PAR: global=1063045-1063245, two-pass=1057115-1057405, diff=5930ms, pred=1057825-1063045
+      idx 223 PAR: global=460365-460565, two-pass=455245-455525, diff=5120ms, pred=455985-460365
+      idx 435 PAR: global=759165-763805, two-pass=758565-758685, diff=5120ms, pred=758685-759165
+      idx 432 INV2: global=756273-756533, two-pass=751549-752130, diff=4724ms, pred=755885-756165
+
+  AGGREGATE (1494 +< utterances):
+    Both timed:    893
+    Identical:     284 (32%)
+    Diff >500ms:   530 (59%)
+    Diff >3s:      348
+    Within predecessor (±500ms):
+      global: 335/893 (38%)
+      two-pass: 237/893 (27%)
+
+============================================================
+Ground Truth Comparison: global
+============================================================
+
+  fusser12: 736 +< utterances
+    Both timed:    471
+      Identical:   0
+      Diff ≤500ms: 26
+      Diff >500ms: 445
+      Diff >3s:    367
+    truth only:      265
+    global only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 269/471 (57%)
+      global: 57/471 (12%)
+    Largest differences (>3s):
+      idx 396 CEW: truth=637941-639543, global=824086-824486, diff=186145ms, pred=637430-640425
+      idx 410 CEW: truth=662589-663889, global=843720-844000, diff=181131ms, pred=660476-668011
+      idx 409 WEN: truth=660476-668011, global=840658-843680, diff=180182ms, pred=659419-661950
+      idx 411 LUN: truth=666107-667987, global=844020-845181, diff=177913ms, pred=662589-663889
+      idx 412 CEW: truth=667569-669044, global=842625-842915, diff=175056ms, pred=666107-667987
+
+  german050814: 451 +< utterances
+    Both timed:    206
+      Identical:   0
+      Diff ≤500ms: 21
+      Diff >500ms: 185
+      Diff >3s:    166
+    truth only:      2
+    global only:      190
+    Neither timed: 53
+    Within predecessor window (±500ms):
+      truth: 23/206 (11%)
+      global: 6/206 (3%)
+    Largest differences (>3s):
+      idx 252 MUT: truth=429272-430913, global=207212-208394, diff=222519ms, pred=428450-429651
+      idx 249 RIG: truth=425209-426029, global=208567-209067, diff=216962ms, pred=424848-425348
+      idx 243 RIG: truth=419260-422444, global=206567-207107, diff=215337ms, pred=418238-418738
+      idx 237 RIG: truth=406081-408624, global=204626-205466, diff=203158ms, pred=404619-405500
+      idx 225 MUT: truth=392763-394344, global=199204-199784, diff=194560ms, pred=390780-393122
+
+  tbi_n22: 156 +< utterances
+    Both timed:    102
+      Identical:   0
+      Diff ≤500ms: 65
+      Diff >500ms: 37
+      Diff >3s:    0
+    truth only:      0
+    global only:      49
+    Neither timed: 5
+    Within predecessor window (±500ms):
+      truth: 28/102 (27%)
+      global: 54/102 (53%)
+
+  tbi_tb23: 151 +< utterances
+    Both timed:    105
+      Identical:   0
+      Diff ≤500ms: 68
+      Diff >500ms: 37
+      Diff >3s:    1
+    truth only:      0
+    global only:      40
+    Neither timed: 6
+    Within predecessor window (±500ms):
+      truth: 34/105 (32%)
+      global: 52/105 (50%)
+    Largest differences (>3s):
+      idx 235 PAR: truth=474322-474822, global=471355-471645, diff=3177ms, pred=469355-474702
+
+  AGGREGATE (1494 +< utterances):
+    Both timed:    884
+    Match truth:   0 (0%)
+    Diff >500ms:   704 (80%)
+    Diff >3s:      534
+    Within predecessor (±500ms):
+      truth:  354/884 (40%)
+      global: 169/884 (19%)
+
+============================================================
+Ground Truth Comparison: two-pass
+============================================================
+
+  fusser12: 736 +< utterances
+    Both timed:    408
+      Identical:   0
+      Diff ≤500ms: 31
+      Diff >500ms: 377
+      Diff >3s:    287
+    truth only:      328
+    two-pass only:      0
+    Neither timed: 0
+    Within predecessor window (±500ms):
+      truth: 244/408 (60%)
+      two-pass: 63/408 (15%)
+    Largest differences (>3s):
+      idx 389 LUN: truth=629551-632454, two-pass=800204-815502, diff=183048ms, pred=628855-629551
+      idx 412 CEW: truth=667569-669044, two-pass=842625-842915, diff=175056ms, pred=666107-667987
+      idx 388 LUN: truth=628855-629551, two-pass=786527-800040, diff=170489ms, pred=628483-630944
+      idx 849 CEW: truth=1419663-1421637, two-pass=1572749-1590234, diff=168597ms, pred=1416854-1421660
+      idx 851 CEW: truth=1424121-1424830, two-pass=1588835-1589125, diff=164714ms, pred=1421637-1428545
+
+  german050814: 451 +< utterances
+    Both timed:    144
+      Identical:   0
+      Diff ≤500ms: 16
+      Diff >500ms: 128
+      Diff >3s:    112
+    truth only:      64
+    two-pass only:      126
+    Neither timed: 117
+    Within predecessor window (±500ms):
+      truth: 16/144 (11%)
+      two-pass: 6/144 (4%)
+    Largest differences (>3s):
+      idx 980 MUT: truth=1317705-1319928, two-pass=1580341-1587133, diff=267205ms, pred=1315921-1318084
+      idx 979 CHI: truth=1315921-1318084, two-pass=1576168-1582458, diff=264374ms, pred=1314880-1316021
+      idx 977 MUT: truth=1314880-1316021, two-pass=1575541-1577002, diff=260981ms, pred=1311058-1312219
+      idx 972 RIG: truth=1311058-1312219, two-pass=1562544-1563325, diff=251486ms, pred=1307132-1310697
+      idx 964 RIG: truth=1291410-1297439, two-pass=1526645-1541184, diff=243745ms, pred=1289527-1291690
+
+  tbi_n22: 156 +< utterances
+    Both timed:    102
+      Identical:   0
+      Diff ≤500ms: 31
+      Diff >500ms: 71
+      Diff >3s:    20
+    truth only:      0
+    two-pass only:      49
+    Neither timed: 5
+    Within predecessor window (±500ms):
+      truth: 28/102 (27%)
+      two-pass: 67/102 (66%)
+    Largest differences (>3s):
+      idx 286 INV: truth=481318-483300, two-pass=463705-464105, diff=19195ms, pred=471865-481518
+      idx 285 PAR: truth=471865-481518, two-pass=466545-466625, diff=14893ms, pred=464695-471524
+      idx 288 PAR: truth=482880-483921, two-pass=472094-478279, diff=10786ms, pred=481318-483300
+      idx 233 PAR: truth=385645-392653, two-pass=382385-382505, diff=10148ms, pred=385124-385624
+      idx 195 PAR: truth=335898-339783, two-pass=326805-334445, diff=9093ms, pred=326945-335777
+
+  tbi_tb23: 151 +< utterances
+    Both timed:    105
+      Identical:   0
+      Diff ≤500ms: 30
+      Diff >500ms: 75
+      Diff >3s:    23
+    truth only:      0
+    two-pass only:      40
+    Neither timed: 6
+    Within predecessor window (±500ms):
+      truth: 34/105 (32%)
+      two-pass: 78/105 (74%)
+    Largest differences (>3s):
+      idx 176 PAR: truth=370416-376224, two-pass=368225-368445, diff=7779ms, pred=367372-370255
+      idx 623 PAR: truth=1063184-1063684, two-pass=1057115-1057405, diff=6279ms, pred=1058020-1063464
+      idx 223 PAR: truth=460664-461164, two-pass=455245-455525, diff=5639ms, pred=456100-460623
+      idx 256 PAR: truth=499718-500218, two-pass=494405-494685, diff=5533ms, pred=498276-500078
+      idx 435 PAR: truth=759197-764100, two-pass=758565-758685, diff=5415ms, pred=758696-759396
+
+  AGGREGATE (1494 +< utterances):
+    Both timed:    759
+    Match truth:   0 (0%)
+    Diff >500ms:   651 (86%)
+    Diff >3s:      442
+    Within predecessor (±500ms):
+      truth:  322/759 (42%)
+      two-pass: 214/759 (28%)

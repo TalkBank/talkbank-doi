@@ -3,9 +3,12 @@
 //! Uses the talkbank-parser and talkbank-model crates directly.
 //!
 //! Subcommands:
-//! - `measure`: Count timed/untimed utterances per speaker in a CHAT file.
-//! - `split`:   Split a CHAT file into single-speaker files.
-//! - `strip`:   Remove all timing (bullets, inline timing, %wor tiers).
+//! - `measure`:  Count timed/untimed utterances per speaker in a CHAT file.
+//! - `split`:    Split a CHAT file into single-speaker files.
+//! - `strip`:    Remove all timing (bullets, inline timing, %wor tiers).
+//! - `convert`:  Convert `&*SPK:word` overlap markers to separate `+<` utterances.
+
+mod convert;
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -68,6 +71,17 @@ enum Command {
         input: PathBuf,
         /// Output CHAT file.
         output: PathBuf,
+    },
+
+    /// Convert &*SPK:word overlap markers to separate +< utterances.
+    Convert {
+        /// Input CHAT file.
+        input: PathBuf,
+        /// Output CHAT file.
+        output: PathBuf,
+        /// Omit the +< linker on converted utterances (plain separate utterances).
+        #[arg(long)]
+        no_linker: bool,
     },
 }
 
@@ -268,6 +282,29 @@ fn run_strip(input: &PathBuf, output: &PathBuf) {
 }
 
 // ---------------------------------------------------------------------------
+// convert
+// ---------------------------------------------------------------------------
+
+fn run_convert(input: &PathBuf, output: &PathBuf, no_linker: bool) {
+    let mut chat = parse_chat(input);
+    let result = if no_linker {
+        convert::convert_overlaps_no_linker(&mut chat)
+    } else {
+        convert::convert_overlaps(&mut chat)
+    };
+
+    write_chat(&chat, output);
+    let linker_note = if no_linker { " (no +< linker)" } else { "" };
+    println!(
+        "Converted {} &* markers from {} utterances{} -> {}",
+        result.converted,
+        result.hosts_modified,
+        linker_note,
+        output.display()
+    );
+}
+
+// ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
 
@@ -277,5 +314,10 @@ fn main() {
         Command::Measure { paths } => run_measure(paths),
         Command::Split { input, output_dir } => run_split(input, output_dir),
         Command::Strip { input, output } => run_strip(input, output),
+        Command::Convert {
+            input,
+            output,
+            no_linker,
+        } => run_convert(input, output, *no_linker),
     }
 }
