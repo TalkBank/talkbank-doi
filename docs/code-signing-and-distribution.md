@@ -1,32 +1,54 @@
 # Code Signing, Notarization, and Distribution
 
 **Status:** Reference
-**Last updated:** 2026-03-16
+**Last updated:** 2026-03-17
 
 This document covers code signing and distribution for all TalkBank projects that ship binaries to end users. Our users are primarily academic researchers (psychology, linguistics, law) who are not technical — they need installers that "just work" without Gatekeeper warnings or manual security exceptions.
 
+The current private reference set is already extracted from the legacy Chatter
+signing scripts. Reuse this document plus
+`deploy/scripts/extract-signing-secrets.sh` instead of re-deriving the flow from
+`java-chatter-stable/build-mac-app.sh` and `notarize.sh` every time.
+
 ## Projects That Need Signing
 
-| Project | Binary type | Platforms | Current state |
-|---------|------------|-----------|---------------|
+| Project / surface | Binary type | Platforms | Current state |
+|------------------|-------------|-----------|---------------|
 | **java-chatter-stable** | Java `.app` via `jpackage` + DMG | macOS only | Signed + notarized (manual, from dev machine) |
-| **batchalign3** (`batchalign3`) | Rust binary via maturin | macOS, Linux, Windows | Not signed yet for standalone archive distribution |
-| **talkbank-tools** (`chatter`, including `chatter lsp`) | Rust CLI via cargo | macOS, Linux, Windows | Not signed yet; current public-release workflow emits macOS `.tar.gz` archives, so notarization is not wired |
-| **batchalign3** (Python wheel) | PyO3 `.so`/`.pyd` + CLI entry point | macOS, Linux, Windows | Not signed (installed via `uv`/`pip`) |
+| **talkbank-tools — Chatter desktop app** | Tauri `.app` + DMG/zip | macOS, Windows, Linux | macOS signing/notarization required before public release; not wired yet |
+| **talkbank-tools — `chatter` CLI** (including `chatter lsp`) | Rust binary via cargo/Homebrew/archive | macOS, Linux, Windows | Standalone macOS archives not signed yet; current public-release workflow emits macOS `.tar.gz` archives, so notarization is not wired |
+| **batchalign3 — dashboard desktop app** | Tauri `.app` + DMG/zip | macOS, Windows, Linux | Dormant surface; same macOS signing/notarization requirement if revived |
+| **batchalign3 — standalone `batchalign3` CLI** | Rust binary via cargo/archive | macOS, Linux, Windows | Standalone macOS archives not signed yet |
+| **batchalign3 — wheel / `uv tool install` path** | PyO3 `.so`/`.pyd` + CLI entry point | macOS, Linux, Windows | Release prep stays staged; PyPI publishing is on hold |
 
 ## Release Decision Summary
 
 - **`java-chatter-stable` DMG on macOS:** yes, it needs Apple signing +
   notarization. That path already exists and is documented below.
+- **`talkbank-tools` Chatter desktop app on macOS:** yes, treat the Tauri app
+  bundle exactly like any other end-user macOS app — sign it, package it in a
+  notarizable DMG or zip, notarize, and staple where applicable.
+- **`batchalign3` dashboard desktop app on macOS:** same requirement if this
+  dormant surface resumes direct distribution.
 - **`talkbank-tools` public macOS downloads of `chatter` (including the
   `chatter lsp` surface):** yes, treat Apple signing + notarization as required
   before the first public GitHub Release. The current macOS `.tar.gz`
   packaging must become a notarizable `.zip` or `.dmg` first.
-- **`batchalign3` PyPI wheel path:** not a notarization blocker while PyPI is on
-  hold. Keep signing secrets/workflow prep ready, but this is lower urgency than
-  the first public `talkbank-tools` release.
-- **`batchalign3` standalone macOS archives or the revived desktop dashboard:**
-  yes, sign + notarize if we ship them as direct downloads.
+- **`batchalign3` standalone macOS archives:** yes, sign + notarize if we ship
+  them as direct downloads.
+- **`batchalign3` wheel / `uv tool install` path:** not a notarization blocker
+  while release publishing is on hold. Keep wheel/signing prep ready, but treat
+  PyPI as staged preparation rather than an active publishing lane.
+
+## macOS release hardening matrix
+
+| Surface | Bundle / artifact ID | Ship shape | Sign + notarize? | Notes |
+|---------|-----------------------|------------|------------------|-------|
+| **Chatter desktop app** | `org.talkbank.chatter` | `Chatter.app` inside DMG or release zip | **Required** | Tauri/Rust app; no Java JIT entitlements. If bundled CLI support lands, sign the nested `chatter` resource before sealing the app. |
+| **Batchalign3 dashboard desktop app** | `org.talkbank.batchalign3.dashboard` | `Batchalign3.app` inside DMG or release zip | **Required if distributed** | Current shell launches `batchalign3` from PATH, so app notarization does not cover a separately distributed CLI. |
+| **`chatter` standalone CLI** | n/a | Notarized zip or DMG | **Required for direct public macOS downloads** | Sign the Mach-O binary with Developer ID Application + hardened runtime before packaging. |
+| **`batchalign3` standalone CLI** | n/a | Notarized zip or DMG | **Required if we ship direct macOS downloads** | Same signing flow as `chatter`. |
+| **`batchalign3` wheel / `uv tool install` path** | n/a | Wheel | **Not a notarization gate today** | Keep wheel/release prep staged, but PyPI publishing remains on hold. |
 
 ## Apple Developer Account
 
@@ -315,8 +337,10 @@ Summary of what each project needs per platform:
 
 | Project | macOS | Windows | Linux | Primary install method |
 |---------|-------|---------|-------|----------------------|
-| **batchalign3** (CLI) | codesign + notarize for standalone downloads | signtool/Azure | GPG-signed tarball | `uv tool install batchalign3` (planned PyPI path) |
-| **batchalign3** (wheel) | Not strictly needed | Sign `.pyd` | Not needed | `uv pip install batchalign3` |
+| **Chatter** (talkbank-tools desktop app) | codesign + notarize DMG/zip | signtool/Azure or signed MSI | AppImage or signed package later | GitHub Releases app bundle |
+| **batchalign3 dashboard** (desktop app) | codesign + notarize DMG/zip if shipped | signtool/Azure if shipped | AppImage or signed package if shipped | Dormant Tauri surface |
+| **batchalign3** (CLI archive) | codesign + notarize for standalone downloads | signtool/Azure | GPG-signed tarball | Standalone archive only if we choose to ship one |
+| **batchalign3** (wheel / `uv tool install`) | Not a notarization gate today | Sign `.pyd` eventually | Not needed | Release prep staged; PyPI publishing on hold |
 | **talkbank-tools CLI** (`chatter`, including `chatter lsp`) | codesign + notarize | signtool/Azure | GPG-signed tarball | Homebrew tap or standalone download |
 | **java-chatter** | codesign + notarize (current) | jpackage + signtool | N/A | DMG download |
 
@@ -326,22 +350,24 @@ Summary of what each project needs per platform:
 
 1. **Export the Developer ID certificate as .p12** from the current machine's keychain and store securely (1Password or equivalent)
 2. **Create an App Store Connect API key** for notarization (replaces the keychain profile dependency)
-3. **Change `talkbank-tools/.github/workflows/release.yml` macOS packaging** from `.tar.gz` to a notarizable `.zip` or `.dmg`
-4. **Add macOS signing + notarization to the `talkbank-tools` public CLI release flow** for `chatter` (which also ships `chatter lsp`)
-5. **Decide whether we want standalone macOS `batchalign3` archives before PyPI resumes**; if yes, give them the same codesign + notarize path
-6. **Test the signed artifacts** on a clean Mac (one that has never run the unsigned version)
+3. **Add a Tauri signing + notarization lane for Chatter desktop** (`org.talkbank.chatter`) and mirror that pattern for the dashboard desktop app if it resumes distribution
+4. **Change `talkbank-tools/.github/workflows/release.yml` macOS packaging** from `.tar.gz` to a notarizable `.zip` or `.dmg`
+5. **Add macOS signing + notarization to the `talkbank-tools` public CLI release flow** for `chatter` (which also ships `chatter lsp`)
+6. **Decide whether we want standalone macOS `batchalign3` archives before wheel publishing resumes**; if yes, give them the same codesign + notarize path
+7. **Keep batchalign3 release/PyPI workflows staged but on hold** until the broader public release gate reopens
+8. **Test the signed artifacts** on a clean Mac (one that has never run the unsigned version)
 
 ### Short-term
 
-7. **Set up Windows code signing** — evaluate Azure Trusted Signing vs traditional OV cert
-8. **Add signing to CI** for both macOS and Windows release builds
-9. **GPG key for Linux releases** — create a TalkBank project GPG key, publish the public key
+9. **Set up Windows code signing** — evaluate Azure Trusted Signing vs traditional OV cert
+10. **Add signing to CI** for both macOS and Windows release builds
+11. **GPG key for Linux releases** — create a TalkBank project GPG key, publish the public key
 
 ### Nice-to-have
 
-10. **Homebrew tap** for `chatter` and `batchalign3`
-11. **`.deb`/`.rpm` packages** if researchers report trouble with standalone binaries
-12. **Automated release workflow** that builds + signs + notarizes + publishes for all platforms
+12. **Homebrew tap** for `chatter` and `batchalign3`
+13. **`.deb`/`.rpm` packages** if researchers report trouble with standalone binaries
+14. **Automated release workflow** that builds + signs + notarizes + publishes for all platforms
 
 ## Reference: Codesign Flags
 
