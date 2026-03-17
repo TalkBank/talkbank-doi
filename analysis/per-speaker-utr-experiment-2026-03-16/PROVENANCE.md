@@ -8,12 +8,28 @@ experiments. Enables full reproduction on any machine with access to `net`.
 
 ## Tool Versions
 
+### Experiments 1-4: Fixed-buffer two-pass
+
 | Component | Commit | Date |
 |-----------|--------|------|
 | batchalign3 | `f02702e4` | 2026-03-17 |
 | talkbank-tools | `fe5bb89` | 2026-03-17 |
 | talkbank-dev (this workspace) | `a0b94dc` | 2026-03-17 |
 | utr-experiment | (in talkbank-dev) | 2026-03-17 |
+
+**Two-pass algorithm:** Fixed ±500ms buffer around predecessor window.
+`find_predecessor_window()` in `utr/two_pass.rs`.
+
+### Experiment 5: Adaptive-window two-pass
+
+| Component | State | Date |
+|-----------|-------|------|
+| batchalign3 | uncommitted changes on `f02702e4` | 2026-03-17 |
+| talkbank-tools | `a238740` | 2026-03-17 |
+
+**Two-pass algorithm:** Adaptive window — tries ±500ms, then
+±predecessor_duration (min 2s), then ±2x predecessor_duration (min 5s).
+Stops at first match. `recover_with_adaptive_window()` in `utr/two_pass.rs`.
 
 ## CHAT Source Files
 

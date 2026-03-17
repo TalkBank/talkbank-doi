@@ -174,36 +174,72 @@ alignment strategy:
 - Countable as utterances by analysis tools
 - Cleaner transcript readability
 
-### 2. Keep two-pass as default (with caveat)
+### 2. Keep two-pass as default with best-of-both fallback
 
-Two-pass provides a small but real improvement on English files (3-8
-percentage points more backchannels placed in the correct overlap
-window). It never hurts English coverage. The cost is zero when no `+<`
-utterances are present.
+Two-pass now runs both strategies and keeps whichever timed more
+utterances at the UTR level. This provides:
+- Better backchannel placement on English (3-8pp improvement)
+- No UTR-level harm on non-English (fallback selects global when
+  two-pass recovers fewer utterances)
+- Zero cost when no `+<` utterances are present
 
-**However:** Non-English files with poor ASR quality are harmed by
-two-pass. Consider adding language-aware strategy selection in the
-future:
-- English + well-supported languages → two-pass (default)
-- Low-resource or poorly-supported ASR languages → fall back to global
+### 3. Critical finding: FA sensitivity to UTR output
 
-### 3. Do not force-migrate existing `&*` files
+**The non-English coverage regression (1229→873 on German, 1502→1308
+on Welsh) is NOT caused by UTR.**
 
-`&*` encoding works correctly with the current aligner. Migration would
-add `+<` utterances that get independent timing, but the timing quality
-improvement is modest. Migration should be opt-in and driven by
-analysis needs (needing to count backchannels, needing backchannel
-timing for turn-taking research, etc.).
+Debugging revealed that UTR assigns only ~24-35 utterance-level bullets
+on German. The large coverage difference comes from **downstream FA
+grouping**: when UTR assigns different bullets, FA creates different
+utterance groups, which cascades into different word-level alignment
+coverage. The full picture:
 
-### 4. Future improvements
+```
+UTR (pre-pass) → sets utterance bullets
+  ↓
+FA grouping → groups utterances by time windows
+  ↓
+FA alignment → word-level timing per group
+  ↓
+Final coverage → depends on ALL of the above
+```
 
-- **Language-aware fallback:** Detect ASR quality and fall back to
-  global when windowed recovery is likely to fail.
-- **Wider predecessor window:** The current ±500ms buffer may be too
-  narrow. Experiment with larger buffers.
-- **FA-level backchannel recovery:** Instead of UTR-level timing, use
-  forced alignment within the predecessor's audio window for precise
-  word-level timing of backchannels.
+Two-pass UTR changes the UTR output, which changes FA grouping, which
+changes final coverage. The UTR best-of-both fallback correctly picks
+the better UTR result, but a better UTR result can still lead to worse
+FA grouping downstream.
+
+**This means the best-of-both comparison needs to happen at the full
+pipeline output level, not just UTR.** This is a deeper architectural
+issue that requires further investigation.
+
+### 4. Do not force-migrate existing `&*` files
+
+`&*` encoding works correctly with the current aligner. Migration should
+be opt-in and driven by analysis needs.
+
+### 5. Next experiments needed
+
+The current experiments measured UTR + FA combined output but compared
+strategies only at the UTR level. The next round needs:
+
+1. **Isolate UTR vs FA effects.** Run UTR-only (no FA) and measure
+   coverage. Then run FA on each UTR output and measure separately.
+   This tells us which component is responsible for regressions.
+
+2. **Full-pipeline best-of-both.** Run the entire `align` pipeline
+   with both strategies, then compare final output and keep the better
+   one. Expensive (2x alignment per file) but correct. Could be done
+   as a post-hoc comparison rather than inline.
+
+3. **FA grouping sensitivity analysis.** Given the same ASR tokens,
+   how does FA grouping change when 1-2 UTR bullets are different?
+   A unit-level investigation into the grouping algorithm's stability.
+
+4. **Non-English ASR quality audit.** The real issue for Welsh/German
+   is ASR quality, not the overlap strategy. Measure ASR WER per
+   language to understand which languages have sufficient ASR quality
+   for two-pass to help.
 
 ## Experimental Setup
 

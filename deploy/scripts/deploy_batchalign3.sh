@@ -5,6 +5,10 @@
 # machines. The server host (net) gets its daemon started and health-checked;
 # client machines get the wheel installed only.
 #
+# Safety: the old installation is preserved until the new install is verified.
+# If the install fails (network outage, disk full, etc.), the old binary
+# remains functional and the server is not stopped.
+#
 # Usage:
 #   bash scripts/deploy_batchalign3.sh               # all fleet (server + clients)
 #   bash scripts/deploy_batchalign3.sh --server      # net only
@@ -114,7 +118,19 @@ resolve_ssh() {
     fi
 }
 
+# Preflight: check that a host can reach PyPI (needed for dependency resolution).
+# Returns 0 if reachable, 1 if not.
+check_pypi_reachable() {
+    local ssh_user="$1" host="$2"
+    ssh -o ConnectTimeout=5 "$ssh_user@$host" \
+        'curl -s --max-time 10 -o /dev/null -w "%{http_code}" https://pypi.org/simple/filelock/ 2>/dev/null' \
+        | grep -q "200"
+}
+
 # Install wheel on a single host (no daemon start, no health check).
+#
+# Safety invariant: the old installation is NOT removed until the new one is
+# verified working. If anything fails, the old binary remains on PATH.
 install_host() {
     local entry="$1"
     local ssh_user host
@@ -132,28 +148,59 @@ install_host() {
         return 1
     fi
 
+    # --- Preflight: verify PyPI is reachable before touching anything ---
+    echo "  Checking PyPI connectivity..."
+    if ! check_pypi_reachable "$ssh_user" "$host"; then
+        echo "  ABORT: cannot reach PyPI from $host"
+        echo "  The existing installation (if any) is preserved."
+        echo "  Fix network on $host, then retry."
+        return 1
+    fi
+
     scp -q "$WHEEL" "$ssh_user@$host:/tmp/$WHEEL_NAME"
 
-    # Stop batchalign3 (leave batchalign-next alone)
-    ssh "$ssh_user@$host" '
-        batchalign3 serve stop 2>/dev/null || true
-        sleep 1
-        pkill -9 -f "batchalign3 serve" 2>/dev/null || true
-    ' 2>/dev/null || true
-
+    # --- Install into uv (old installation stays until verified) ---
+    #
+    # --force-reinstall overwrites the existing venv in-place, so there is
+    # no window where the binary disappears. If the install fails, the old
+    # venv contents remain (uv does not delete-then-create).
     echo "  Installing (with HK engines)..."
-    ssh "$ssh_user@$host" "
-        uv tool uninstall batchalign3 2>/dev/null || true
+    local install_log
+    install_log=$(ssh "$ssh_user@$host" "
         uv tool install --python 3.12 --force-reinstall '/tmp/${WHEEL_NAME}[hk]' 2>&1
-    " | tail -3
+    ")
+    local install_rc=$?
 
+    if [[ $install_rc -ne 0 ]]; then
+        echo "  INSTALL FAILED (exit $install_rc):"
+        echo "$install_log" | tail -10 | sed 's/^/    /'
+        echo ""
+        echo "  The existing installation (if any) is preserved."
+        echo "  Wheel left at /tmp/$WHEEL_NAME for manual retry."
+        return 1
+    fi
+    echo "$install_log" | tail -3 | sed 's/^/    /'
+
+    # --- Verify the new binary works ---
     local ver
     ver=$(ssh "$ssh_user@$host" 'batchalign3 version 2>&1' || echo "FAILED")
     echo "  Version: $ver"
 
-    if [[ "$ver" == *"FAILED"* ]]; then
+    if [[ "$ver" == *"FAILED"* || "$ver" == *"not found"* ]]; then
         echo "  ERROR: batchalign3 not working after install"
+        echo "  Wheel left at /tmp/$WHEEL_NAME for manual retry."
         return 1
+    fi
+
+    # --- Stop old server AFTER successful install ---
+    # Only now is it safe to stop — we know the new binary works.
+    if $is_server; then
+        echo "  Stopping old server..."
+        ssh "$ssh_user@$host" '
+            batchalign3 serve stop 2>/dev/null || true
+            sleep 1
+            pkill -f "batchalign3 serve" 2>/dev/null || true
+        ' 2>/dev/null || true
     fi
 
     # Write server.yaml
@@ -198,6 +245,7 @@ YAML
         "
     fi
 
+    # Clean up wheel only on success
     ssh "$ssh_user@$host" "rm -f /tmp/$WHEEL_NAME" 2>/dev/null || true
     return 0
 }
