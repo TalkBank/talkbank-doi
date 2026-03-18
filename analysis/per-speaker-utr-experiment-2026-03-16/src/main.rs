@@ -19,7 +19,7 @@ use std::fs;
 use std::path::PathBuf;
 
 use clap::{Parser, Subcommand};
-use talkbank_model::alignment::helpers::{for_each_leaf_mut, ContentLeafMut};
+use talkbank_model::alignment::helpers::{walk_words_mut, WordItemMut};
 use talkbank_model::errors::NullErrorSink;
 use talkbank_model::model::dependent_tier::DependentTier;
 use talkbank_model::model::{ChatFile, Line};
@@ -308,15 +308,15 @@ fn run_strip(input: &PathBuf, output: &PathBuf) {
         utt.main.content.bullet = None;
 
         // Strip inline word-level bullets using the content walker.
-        for_each_leaf_mut(&mut utt.main.content.content.0, None, &mut |leaf| {
+        walk_words_mut(&mut utt.main.content.content.0, None, &mut |leaf| {
             match leaf {
-                ContentLeafMut::Word(w, _) => {
+                WordItemMut::Word(w) => {
                     w.inline_bullet = None;
                 }
-                ContentLeafMut::ReplacedWord(r) => {
+                WordItemMut::ReplacedWord(r) => {
                     r.word.inline_bullet = None;
                 }
-                ContentLeafMut::Separator(_) => {}
+                WordItemMut::Separator(_) => {}
             }
         });
 
