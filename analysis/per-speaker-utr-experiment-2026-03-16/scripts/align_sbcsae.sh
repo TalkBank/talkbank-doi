@@ -24,7 +24,7 @@ for cha in "$INPUT_DIR"/*.cha; do
     ln -s "$(cd "$AUDIO_DIR" && pwd)/$base.mp3" "$tmpdir/$base.mp3"
 
     echo "=== $base ($STRATEGY) ==="
-    "$BATCHALIGN" align "$tmpdir/$base.cha" \
+    "$BATCHALIGN" --no-open-dashboard align "$tmpdir/$base.cha" \
         -o "$OUT_DIR" \
         --utr-strategy "$STRATEGY" \
         --debug-dir "$DEBUG_DIR" \

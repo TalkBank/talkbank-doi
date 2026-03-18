@@ -28,7 +28,7 @@ for cha in "$INPUT_DIR"/*.cha; do
     ln -s "$(cd "$AUDIO_DIR" && pwd)/$base.mp3" "$tmpdir/$base.mp3"
 
     echo "=== $base ($CORPUS, fuzzy $THRESHOLD) ==="
-    "$BATCHALIGN" align "$tmpdir/$base.cha" \
+    "$BATCHALIGN" --no-open-dashboard align "$tmpdir/$base.cha" \
         -o "$OUT_DIR" \
         --utr-strategy auto \
         --utr-fuzzy "$THRESHOLD" \

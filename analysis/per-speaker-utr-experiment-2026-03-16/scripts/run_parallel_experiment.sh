@@ -102,7 +102,7 @@ echo "Output: $OUT_DIR"
 echo ""
 
 # Submit as a single batch job
-"$BATCHALIGN" align "$STAGING"/*.cha \
+"$BATCHALIGN" --no-open-dashboard align "$STAGING"/*.cha \
     -o "$OUT_DIR" \
     --utr-strategy "$STRATEGY" \
     $EXTRA_FLAGS \
