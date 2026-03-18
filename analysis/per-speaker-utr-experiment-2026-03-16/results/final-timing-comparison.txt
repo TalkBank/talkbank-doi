@@ -1,0 +1,113 @@
+=== SBCSAE ===
+
+=== sbcsae-output-global ===
+  Utterances:   10540
+  GT timed:     7074 (67.1%)
+  Recovered:    7776 (73.8%)
+  Both timed:   7021
+  --- Start time error (vs ground truth) ---
+    Median:     137ms
+    Within 500ms: 6085 (86.7%)
+    Within 1s:    6509 (92.7%)
+    p90:        696ms
+  --- ⌊ Overlap utterances ---
+    GT timed:     1766
+    Recovered:    2136
+    Both timed:   1752
+    Regressions:  14 (GT had timing, recovered lost it)
+    New coverage: 384 (GT had no timing, recovered added it)
+    --- ⌊ Start error vs GT ---
+      Median:     139ms
+      Within 500ms: 1465 (83.6%)
+      Within 1s:    1614 (92.1%)
+
+=== sbcsae-output-twopass ===
+  Utterances:   10540
+  GT timed:     7074 (67.1%)
+  Recovered:    8130 (77.1%)
+  Both timed:   7019
+  --- Start time error (vs ground truth) ---
+    Median:     151ms
+    Within 500ms: 5629 (80.2%)
+    Within 1s:    6135 (87.4%)
+    p90:        1318ms
+  --- ⌊ Overlap utterances ---
+    GT timed:     1766
+    Recovered:    2409
+    Both timed:   1751
+    Regressions:  15 (GT had timing, recovered lost it)
+    New coverage: 658 (GT had no timing, recovered added it)
+    --- ⌊ Start error vs GT ---
+      Median:     249ms
+      Within 500ms: 1080 (61.7%)
+      Within 1s:    1285 (73.4%)
+
+=== JEFFERSON NB ===
+
+=== jefferson-output-global ===
+  Utterances:   2561
+  GT timed:     270 (10.5%)
+  Recovered:    313 (12.2%)
+  Both timed:   251
+  --- Start time error (vs ground truth) ---
+    Median:     569ms
+    Within 500ms: 118 (47.0%)
+    Within 1s:    181 (72.1%)
+    p90:        2371ms
+  --- ⌊ Overlap utterances ---
+    GT timed:     111
+    Recovered:    136
+    Both timed:   99
+    Regressions:  12 (GT had timing, recovered lost it)
+    New coverage: 37 (GT had no timing, recovered added it)
+    --- ⌊ Start error vs GT ---
+      Median:     485ms
+      Within 500ms: 50 (50.5%)
+      Within 1s:    74 (74.7%)
+
+=== jefferson-output-twopass ===
+  Utterances:   2561
+  GT timed:     270 (10.5%)
+  Recovered:    225 (8.8%)
+  Both timed:   170
+  --- Start time error (vs ground truth) ---
+    Median:     1491ms
+    Within 500ms: 42 (24.7%)
+    Within 1s:    70 (41.2%)
+    p90:        14784ms
+  --- ⌊ Overlap utterances ---
+    GT timed:     111
+    Recovered:    106
+    Both timed:   73
+    Regressions:  38 (GT had timing, recovered lost it)
+    New coverage: 33 (GT had no timing, recovered added it)
+    --- ⌊ Start error vs GT ---
+      Median:     1876ms
+      Within 500ms: 16 (21.9%)
+      Within 1s:    28 (38.4%)
+
+=== TAIWANHAKKA ===
+
+=== taiwanhakka-output-global ===
+  Utterances:   2661
+  GT timed:     0 (0.0%)
+  Recovered:    2315 (87.0%)
+  Both timed:   0
+  --- ⌊ Overlap utterances ---
+    GT timed:     0
+    Recovered:    981
+    Both timed:   0
+    Regressions:  0 (GT had timing, recovered lost it)
+    New coverage: 981 (GT had no timing, recovered added it)
+
+=== taiwanhakka-output-twopass ===
+  Utterances:   2661
+  GT timed:     0 (0.0%)
+  Recovered:    2439 (91.7%)
+  Both timed:   0
+  --- ⌊ Overlap utterances ---
+    GT timed:     0
+    Recovered:    1003
+    Both timed:   0
+    Regressions:  0 (GT had timing, recovered lost it)
+    New coverage: 1003 (GT had no timing, recovered added it)
