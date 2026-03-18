@@ -63,16 +63,32 @@ talkbank-dev/                         # This repo (private, tracked in git)
 ├── web/                              # Bank websites (mani-managed, 17 sub-repos)
 ├── talkbank-browser-check/           # Link/404 checker with login
 │
-│ # Corpus data (16 repos, currently GitLab, migrating to GitHub)
+│ # Corpus data (24 repos — 12 unsplit + 4 banks split; migrating GitLab → GitHub)
 └── data/
-    ├── childes-data/                 #   52k files — child language
-    ├── phon-data/                    #   26k files — phonology (+ 0phon/ XML sources)
-    ├── ca-data/                      #   11k files — conversation analysis
-    ├── aphasia-data/                 #   11k files — aphasia
-    ├── slabank-data/                 #   10k files — second language acquisition
-    ├── dementia-data/                #    7k files — dementia
-    ├── homebank-data/                #    6k files — home recordings
-    └── ... (+ fluency, class, biling, asd, tbi, psychosis, rhd, samtale, motor)
+    ├── aphasia-data/                 #   aphasia (unsplit)
+    ├── asd-data/                     #   ASD (unsplit)
+    ├── biling-data/                  #   bilingualism (unsplit)
+    ├── ca-candor-data/               #   CANDOR corpus (split from ca-data, 4.8 GB)
+    ├── ca-data/                      #   conversation analysis remainder (split, 300 MB)
+    ├── childes-eng-na-data/          #   CHILDES: Eng-NA, Eng-AAE
+    ├── childes-eng-uk-data/          #   CHILDES: Eng-UK, Clinical-Eng, Clinical-Other
+    ├── childes-romance-germanic-data/ #  CHILDES: French, Romance, Spanish, German, DutchAfrikaans, Scandinavian, Celtic
+    ├── childes-other-data/           #   CHILDES: Biling, Chinese, EastAsian, Japanese, Slavic, Other, etc.
+    ├── class-data/                   #   classroom (unsplit)
+    ├── dementia-data/                #   dementia (unsplit)
+    ├── fluency-data/                 #   fluency (unsplit)
+    ├── homebank-public-data/         #   HomeBank: Public + Secure
+    ├── homebank-cougar-data/         #   HomeBank: Password/Cougar
+    ├── homebank-bergelson-data/      #   HomeBank: Password/Bergelson
+    ├── homebank-password-data/       #   HomeBank: Password/ remainder
+    ├── motor-data/                   #   motor (unsplit)
+    ├── phon-eng-french-data/         #   phonology: Eng-NA, French
+    ├── phon-other-data/              #   phonology: all other languages
+    ├── psychosis-data/               #   psychosis (unsplit)
+    ├── rhd-data/                     #   RHD (unsplit)
+    ├── samtale-data/                 #   samtale (unsplit)
+    ├── slabank-data/                 #   SLA (unsplit)
+    └── tbi-data/                     #   TBI (unsplit)
 ```
 
 ## Cross-Repo Commands
@@ -110,7 +126,8 @@ batchalign3/pyo3/                # batchalign-core PyO3 bridge (path deps → ta
 
 ```bash
 # Compare current results against baseline (run from talkbank-tools/):
-diff <(cargo run --release -p talkbank-cli -- validate ../data/phon-data/ --force 2>&1 \
+# Post-split: phon-data is now phon-eng-french-data and phon-other-data
+diff <(cargo run --release -p talkbank-cli -- validate ../data/phon-eng-french-data/ ../data/phon-other-data/ --force 2>&1 \
        | grep '✗' | sed 's/✗ Errors found in //' | sort) \
      ../known-issues/phon-data-validation-baseline.txt
 ```
@@ -120,10 +137,10 @@ See `known-issues/README.md` for creating and updating baselines.
 ## Analysis Scripts
 
 ```bash
-python3 scripts/analysis/scan_phon_mismatches.py data/phon-data        # Phon XML↔IPA mismatches
-python3 scripts/analysis/count_tier_coverage.py data/phon-data          # Tier frequency report
-scripts/analysis/diff_validator_runs.sh baseline data/phon-data         # Save baseline
-scripts/analysis/diff_validator_runs.sh compare data/phon-data          # Compare after changes
+python3 scripts/analysis/scan_phon_mismatches.py data/phon-eng-french-data data/phon-other-data  # Phon XML↔IPA mismatches
+python3 scripts/analysis/count_tier_coverage.py data/phon-eng-french-data data/phon-other-data    # Tier frequency report
+scripts/analysis/diff_validator_runs.sh baseline data/phon-eng-french-data                        # Save baseline
+scripts/analysis/diff_validator_runs.sh compare data/phon-eng-french-data                         # Compare after changes
 ```
 
 ## Large-Scale Corpus Testing
@@ -204,7 +221,7 @@ Incident reports live in `docs/postmortems/`. Check these before deploying to un
 
 ## Migration Status
 
-**GitLab → GitHub:** 16 data repos on git.talkbank.org planned for migration. See `staging/docs/migration-plan.md` and `docs/inventory.md`.
+**GitLab → GitHub:** 16 data repos on git.talkbank.org being split into 24 repos and migrated to GitHub. 24 empty private GitHub repos created (2026-03-18). See `docs/migration/implementation-plan.md` for the full plan, `docs/migration/dependency-map.md` for the complete dependency audit, and `docs/migration/gitlab-to-github-research.md` for research and decisions.
 
 **Legacy docs:** 84 files from ~/Dropbox/documentation/ transferred to `docs/legacy/`. Being reviewed for accuracy — see `docs/legacy/README.md` for status of each.
 
@@ -243,5 +260,5 @@ Coding standards live in each repo's CLAUDE.md:
 Full project inventory: `docs/inventory.md`
 
 ---
-Last Updated: 2026-03-12
+Last Updated: 2026-03-18
 

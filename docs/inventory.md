@@ -1,5 +1,8 @@
 # TalkBank Project Inventory
 
+**Status:** Current
+**Last updated:** 2026-03-18
+
 Complete map of all TalkBank project assets, their locations, and migration status.
 Created 2026-03-10 to support the consolidation into `talkbank-dev`.
 
@@ -147,30 +150,48 @@ Local checkout: `~/web/` (mani-managed workspace with all bank repos as sub-repo
 
 ---
 
-## 3. Corpus Data Repositories (GitLab → GitHub migration)
+## 3. Corpus Data Repositories (GitLab → GitHub migration in progress)
 
-All 16 repos currently on **git.talkbank.org** (self-hosted GitLab). Migration to GitHub planned — see `~/staging/docs/migration-plan.md`.
+Originally 16 repos on **git.talkbank.org** (self-hosted GitLab). Being split into 24 repos and migrated to GitHub. 24 empty private repos created on GitHub (2026-03-18). See `docs/migration/implementation-plan.md` for the full plan.
 
-| Repo | GitLab Remote | Size | Split Plan |
-|------|--------------|------|------------|
-| childes-data | gitlab.talkbank.org:talkbank/childes-data | ~4 GB | Split → 4 repos (eng-na, eng-uk, romance-germanic, other) |
-| phon-data | gitlab.talkbank.org:talkbank/phon-data | ~5.5 GB | Split → 2 repos (eng-french, other) |
-| ca-data | gitlab.talkbank.org:talkbank/ca-data | ~5.1 GB | Split → 2 repos (candor at 4.8 GB, remainder) |
-| homebank-data | gitlab.talkbank.org:talkbank/homebank-data | ~13.6 GB | Split → 4 repos (public, cougar, bergelson, password-other) |
-| aphasia-data | gitlab.talkbank.org:talkbank/aphasia-data | | No split needed |
-| dementia-data | gitlab.talkbank.org:talkbank/dementia-data | | No split needed |
-| slabank-data | gitlab.talkbank.org:talkbank/slabank-data | | No split needed |
-| asd-data | gitlab.talkbank.org:talkbank/asd-data | | No split needed |
-| biling-data | gitlab.talkbank.org:talkbank/biling-data | | No split needed |
-| class-data | gitlab.talkbank.org:talkbank/class-data | | No split needed |
-| fluency-data | gitlab.talkbank.org:talkbank/fluency-data | | No split needed |
-| motor-data | gitlab.talkbank.org:talkbank/motor-data | | No split needed |
-| psychosis-data | gitlab.talkbank.org:talkbank/psychosis-data | | No split needed |
-| rhd-data | gitlab.talkbank.org:talkbank/rhd-data | | No split needed |
-| samtale-data | gitlab.talkbank.org:talkbank/samtale-data | | No split needed |
-| tbi-data | gitlab.talkbank.org:talkbank/tbi-data | | No split needed |
+### Current state: GitLab (16 repos, being decommissioned)
 
-After split: **24 data repos** on GitHub (per `~/staging/workspace.toml`).
+| Repo | Status |
+|------|--------|
+| childes-data | Splitting → 4 repos |
+| phon-data | Splitting → 2 repos |
+| ca-data | Splitting → 2 repos |
+| homebank-data | Splitting → 4 repos |
+| aphasia-data, asd-data, biling-data, class-data, dementia-data, fluency-data, motor-data, psychosis-data, rhd-data, samtale-data, slabank-data, tbi-data | Migrating as-is |
+
+### Target state: GitHub (24 repos)
+
+| Repo | GitHub | Bank | Contents | Size |
+|------|--------|------|----------|------|
+| aphasia-data | TalkBank/aphasia-data | aphasia | All | 94 MB |
+| asd-data | TalkBank/asd-data | asd | All | 56 MB |
+| biling-data | TalkBank/biling-data | biling | All | 122 MB |
+| ca-candor-data | TalkBank/ca-candor-data | ca | CANDOR only | 4.8 GB |
+| ca-data | TalkBank/ca-data | ca | Everything except CANDOR | 300 MB |
+| childes-eng-na-data | TalkBank/childes-eng-na-data | childes | Eng-NA, Eng-AAE | 766 MB |
+| childes-eng-uk-data | TalkBank/childes-eng-uk-data | childes | Eng-UK, Clinical-Eng, Clinical-Other | 1.2 GB |
+| childes-romance-germanic-data | TalkBank/childes-romance-germanic-data | childes | French, Romance, Spanish, German, DutchAfrikaans, Scandinavian, Celtic | 862 MB |
+| childes-other-data | TalkBank/childes-other-data | childes | Biling, Chinese, EastAsian, Japanese, Slavic, Other, etc. | 1.5 GB |
+| class-data | TalkBank/class-data | class | All | 83 MB |
+| dementia-data | TalkBank/dementia-data | dementia | All | 80 MB |
+| fluency-data | TalkBank/fluency-data | fluency | All | 313 MB |
+| homebank-public-data | TalkBank/homebank-public-data | homebank | Public + Secure | 719 MB |
+| homebank-cougar-data | TalkBank/homebank-cougar-data | homebank | Password/Cougar | 5.4 GB |
+| homebank-bergelson-data | TalkBank/homebank-bergelson-data | homebank | Password/Bergelson | 3.5 GB |
+| homebank-password-data | TalkBank/homebank-password-data | homebank | Password/ remainder | 4.3 GB |
+| motor-data | TalkBank/motor-data | motor | All | 4 KB |
+| phon-eng-french-data | TalkBank/phon-eng-french-data | phon | Eng-NA, French | 2.7 GB |
+| phon-other-data | TalkBank/phon-other-data | phon | All other languages | 2.6 GB |
+| psychosis-data | TalkBank/psychosis-data | psychosis | All | 87 MB |
+| rhd-data | TalkBank/rhd-data | rhd | All | 19 MB |
+| samtale-data | TalkBank/samtale-data | samtale | All | 2.4 MB |
+| slabank-data | TalkBank/slabank-data | slabank | All | 221 MB |
+| tbi-data | TalkBank/tbi-data | tbi | All | 38 MB |
 
 ---
 
