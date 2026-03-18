@@ -2,6 +2,23 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working in the `talkbank-dev` private workspace.
 
+## Succession-Aware Design (applies to ALL decisions)
+
+The entire TalkBank core team (Brian, Leonid, Davida, Chen, John) will retire simultaneously in 3-5 years. An external professor will inherit everything. **Every system must be operable by someone who has never met us.**
+
+These principles override convenience. When in doubt, choose the option that makes handover easier:
+
+1. **No snowflakes.** Every server configuration must be reproducible from code. If a VM dies, rebuild from a repo, not from memory.
+2. **No gatekeepers.** Every routine operation (adding a corpus, minting a DOI, deploying) must work without SSH to a specific machine.
+3. **No single points of failure.** No person, machine, or account whose loss makes TalkBank inoperable.
+4. **Prefer managed services over self-hosted.** GitHub over self-hosted GitLab. Cloud storage over local drives. Fewer things to maintain.
+5. **Prefer standard tooling over custom scripts.** Docker, pre-commit framework, well-known CI patterns — not clever bespoke solutions.
+6. **No hardcoded paths to CMU machines.** Successor won't be at CMU. Use config/env vars.
+7. **No credentials in repos.** Use secret managers or environment variables.
+8. **Document or automate every process that currently requires "ask someone."**
+
+Full succession plan: `docs/migration/phase4-succession.md`
+
 ## Overview
 
 Private development workspace for [TalkBank](https://talkbank.org/) — the single home for all TalkBank project assets. Contains internal docs, deploy scripts, analysis, and known-issue baselines. All code repos, data repos, and tools are gitignored sub-repos with independent histories, cloned via `make clone`.
