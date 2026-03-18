@@ -319,3 +319,49 @@ strategies only at the UTR level. The next round needs:
 ### Provenance
 See `PROVENANCE.md` for exact file checksums, audio paths, and
 reproduction steps.
+
+---
+
+## CA Overlap Marker Experiments (2026-03-17)
+
+### Experiment B: Overlap Consistency Audit
+
+Audited all ca-data files for CA overlap marker (⌈⌉⌊⌋) pairing quality and
+temporal consistency.
+
+| Metric | ca-data | childes-data |
+|--------|---------|-------------|
+| Files with markers | 366 | 76 |
+| Cross-speaker pairs | 12,081 | 20 |
+| Timed pairs | 2,451 | 2 |
+| **Temporal consistency** | **99%** | **100%** |
+
+**Conclusion:** CA overlap markers are highly reliable as timing constraints.
+SBCSAE dominates the timed pairs (2,427 of 2,451).
+
+### Experiment A: Proportional Onset Estimation Accuracy
+
+For 2,421 timed cross-speaker overlap pairs in SBCSAE, compared the
+proportional onset estimate (from ⌈ word position) against the actual ⌊
+utterance start time.
+
+| Metric | Value |
+|--------|-------|
+| **Median absolute error** | **301ms** |
+| Within ±500ms (tight window) | 66.3% |
+| Within ±1000ms | 85.7% |
+| Within ±2000ms (medium window) | 96.3% |
+| Mean signed error | -473ms (underestimate bias) |
+
+**Key finding:** The proportional estimate is accurate enough to narrow the
+pass-2 search window by ~6x (from full predecessor range to onset ±500ms).
+The negative bias (underestimate) is favorable — it means the forward-looking
+search window still captures the actual onset.
+
+**Implementation:** CA-aware windowing is now in the production UTR code
+(`batchalign-chat-ops/src/fa/utr/two_pass.rs`). When the predecessor has ⌈
+markers, pass 2 anchors the search window at the estimated onset point. Also,
+utterances with ⌊ markers are now treated as overlap candidates (same as `+<`).
+
+See `results/onset-accuracy-summary.md` for full analysis and
+`results/ca-overlap-audit-summary.md` for the audit results.

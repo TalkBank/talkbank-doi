@@ -1,0 +1,751 @@
+file	utterances	with_markers	⌈	⌉	⌊	⌋	cross_pairs	timed_pairs	temporal_ok	quality
+007_Samen_Bessler2	22	3	0	1	1	1	0	0	0	fully_paired
+009_schwerer_Unfall2	5	2	0	1	1	0	0	0	0	mixed
+010_schwerer_Unfall3	8	1	0	0	0	1	0	0	0	mixed
+011_schwerer_Unfall4	8	1	0	0	1	1	0	0	0	mixed
+012_schwerer_Unfall5	13	2	1	2	0	0	0	0	0	mixed
+015_Samen_Bessler5	18	1	0	0	0	1	0	0	0	mixed
+017_Samen_Bessler7	19	3	1	1	0	1	0	0	0	fully_paired
+019_Reichenauer_Allee1	22	1	0	0	1	1	0	0	0	mixed
+020_Reichenauer_Allee2	23	6	0	2	2	4	0	0	0	fully_paired
+028_Schwarzhoelzle2	12	3	0	1	1	2	0	0	0	fully_paired
+036_Bernhardiner1	19	1	0	1	0	0	0	0	0	mixed
+037_Bernhardiner2	15	3	0	1	1	2	0	0	0	fully_paired
+038_Bernhardiner3	40	2	0	0	2	2	0	0	0	mixed
+040_Bernhardiner4	20	1	0	0	1	0	0	0	0	open_only
+041_Bernhardiner5	25	2	0	0	0	2	0	0	0	mixed
+042_beissender_Geruch1	67	2	0	0	2	2	0	0	0	mixed
+049_Fensterscheibe1	12	1	0	0	0	1	0	0	0	mixed
+053_Wasser_im_Keller1	21	1	0	1	0	0	0	0	0	mixed
+055_Wasser_im_Keller2	21	1	0	0	1	1	0	0	0	mixed
+064_65_tuerkischer_Vater	29	1	0	0	0	1	0	0	0	mixed
+067_weisser_Toyota1	20	1	0	1	0	0	0	0	0	mixed
+072_bewegungsunfaehige_Person1	25	6	0	1	1	4	0	0	0	fully_paired
+086_Marder2	83	7	0	2	4	5	0	0	0	mixed
+097_Auslanderwohnheim	27	2	0	1	1	0	0	0	0	mixed
+137_Brand_Norma1	37	1	1	1	0	0	0	0	0	mixed
+232_BuWe_Feuermelder1	30	3	0	2	1	0	0	0	0	mixed
+250_BuWe_Feuermelder3	17	2	0	0	2	2	0	0	0	mixed
+253_BuWe_Feuermelder4	10	1	0	0	0	1	0	0	0	mixed
+258_Feuer_Ried2	10	1	0	1	0	0	0	0	0	mixed
+259_Feuer_Ried3	10	2	0	0	0	2	0	0	0	mixed
+260_Feuer_Ried4	15	4	1	1	2	3	0	0	0	fully_paired
+261_Feuer_Ried5	6	1	0	0	0	1	0	0	0	mixed
+264_Feuer_Ried7	11	2	0	0	2	2	0	0	0	mixed
+268_Feuer_Ried8	12	1	0	0	1	0	0	0	0	open_only
+01-86	140	1	0	1	0	0	0	0	0	mixed
+02-86	97	2	0	0	0	2	0	0	0	mixed
+03-87	70	1	0	0	1	1	0	0	0	mixed
+04-88	78	1	0	0	1	1	0	0	0	mixed
+06-88	89	4	0	0	4	1	0	0	0	mixed
+07-88	101	1	0	0	1	0	0	0	0	open_only
+09-88	46	1	0	0	1	1	0	0	0	mixed
+10-89	68	1	0	0	1	0	0	0	0	open_only
+11-89	106	3	1	0	0	2	0	0	0	mixed
+12-89	90	2	1	1	0	1	0	0	0	fully_paired
+13-89	129	4	0	1	2	2	0	0	0	fully_paired
+14-89	43	3	1	1	2	1	0	0	0	fully_paired
+16-89	449	19	3	5	6	12	0	0	0	mixed
+18-89	62	3	2	1	1	1	0	0	0	fully_paired
+19-89	143	10	4	4	3	4	0	0	0	fully_paired
+20-89	36	3	1	2	1	0	0	0	0	mixed
+21-89	131	9	2	6	2	2	0	0	0	fully_paired
+23-91	114	3	1	0	1	2	0	0	0	mixed
+25-91	50	7	0	1	3	4	0	0	0	mixed
+26-91	65	6	1	1	1	4	0	0	0	fully_paired
+27-91	77	1	0	0	1	1	0	0	0	mixed
+28-91	93	5	1	2	3	2	1	0	0	fully_paired
+29-91	49	1	0	1	0	0	0	0	0	mixed
+30-91	97	1	0	1	0	0	0	0	0	mixed
+biscuit	447	30	0	15	0	15	0	0	0	fully_paired
+cafe	516	86	0	59	3	25	0	0	0	mixed
+caution1	39	7	0	3	0	4	0	0	0	fully_paired
+caution2	217	7	0	1	1	5	0	0	0	fully_paired
+chambre	439	99	1	56	1	43	0	0	0	fully_paired
+conv_table	448	93	1	33	3	60	0	0	0	fully_paired
+figuration	1808	13	0	3	0	10	0	0	0	fully_paired
+golden	491	81	0	44	2	37	0	0	0	fully_paired
+lentilles	31	6	0	4	0	2	0	0	0	fully_paired
+logeurs	1792	629	9	296	0	357	0	0	0	mixed
+plan	208	38	2	15	1	22	0	0	0	fully_paired
+poste	122	12	0	10	1	1	0	0	0	fully_paired
+tuerie	237	12	0	8	1	3	0	0	0	fully_paired
+person	181	1	0	0	0	1	0	0	0	mixed
+alyx	216	3	1	1	0	2	0	0	0	fully_paired
+ateret	690	2	1	0	1	1	1	1	1	mixed
+jennifer	423	2	1	0	1	0	1	1	1	open_only
+owen	188	3	1	0	2	0	1	1	1	open_only
+anna	164	11	8	0	3	0	2	0	0	open_only
+4175	1101	93	31	37	25	37	3	0	0	mixed
+4504	254	6	1	3	1	2	0	0	0	fully_paired
+4874	135	10	2	5	3	5	1	0	0	fully_paired
+4889	1389	139	23	33	59	62	4	0	0	mixed
+4984	1234	153	45	41	74	48	15	0	0	mixed
+5000	1282	148	35	29	83	44	13	0	0	mixed
+5051	71	1	0	0	1	1	0	0	0	mixed
+5926	1136	40	15	13	18	10	1	0	0	mixed
+6015	111	12	3	3	5	7	2	0	0	fully_paired
+6062	1434	178	85	68	73	85	25	0	0	mixed
+6065	101	1	0	1	0	0	0	0	0	mixed
+6093	140	1	0	0	0	1	0	0	0	mixed
+6193	610	54	11	20	12	34	3	0	0	fully_paired
+6239	1255	89	38	35	18	33	3	0	0	mixed
+6255	103	1	0	0	0	1	0	0	0	mixed
+6278	332	23	4	8	10	6	1	0	0	mixed
+6379	101	4	0	2	0	2	0	0	0	fully_paired
+6476	1202	48	18	20	14	16	6	0	0	mixed
+6862	771	38	12	8	19	13	2	0	0	mixed
+6869	485	29	10	6	12	11	2	0	0	fully_paired
+6899	1021	44	19	15	14	14	2	0	0	mixed
+6938	1413	158	63	60	21	68	5	0	0	mixed
+6952	1194	30	11	11	6	12	0	0	0	mixed
+6269	674	15	7	5	7	7	1	0	0	fully_paired
+6285	532	30	9	10	12	17	2	0	0	mixed
+6526	402	11	4	3	1	6	0	0	0	mixed
+6661	976	41	19	22	16	16	4	0	0	mixed
+6750	1155	123	31	60	25	50	4	0	0	mixed
+6784	164	2	0	2	0	0	0	0	0	mixed
+6914	868	22	10	9	10	9	5	0	0	fully_paired
+6931	38	5	2	2	3	3	0	0	0	fully_paired
+6962	297	9	3	4	4	5	0	0	0	fully_paired
+0921	791	65	5	36	3	29	0	0	0	fully_paired
+1367	682	1	1	1	0	0	0	0	0	mixed
+1469	438	26	6	10	10	15	1	0	0	mixed
+1772	963	99	20	54	10	40	6	0	0	mixed
+2137	908	34	9	13	11	20	4	0	0	fully_paired
+4057	318	13	4	6	6	6	1	0	0	fully_paired
+4095	819	27	4	10	3	17	0	0	0	fully_paired
+4096	811	58	18	27	16	31	11	0	0	fully_paired
+4318	272	16	3	7	8	8	2	0	0	mixed
+4358	936	37	4	13	8	21	1	0	0	mixed
+4400	597	26	6	11	9	13	2	0	0	mixed
+4414	741	26	10	8	12	13	7	0	0	fully_paired
+4463	557	51	16	21	28	24	11	0	0	mixed
+4500	874	24	7	11	7	11	2	0	0	fully_paired
+5034	697	37	9	11	19	21	1	0	0	mixed
+5052	781	46	13	21	23	19	7	0	0	mixed
+5539	536	17	3	5	5	11	2	0	0	fully_paired
+5558	869	14	2	5	5	8	1	0	0	mixed
+5607	927	60	33	33	22	22	12	0	0	mixed
+5650	1079	91	13	42	17	41	3	0	0	mixed
+5861	532	12	1	5	3	6	1	0	0	fully_paired
+6153	804	44	7	16	16	22	1	0	0	mixed
+6834	539	24	11	12	8	11	1	0	0	mixed
+911	81	5	0	0	4	3	0	0	0	mixed
+HabHeuch	85	16	3	5	2	10	0	0	0	fully_paired
+Kim_Larsen	124	10	1	5	2	5	0	0	0	fully_paired
+01	108	1	0	0	0	1	0	0	0	mixed
+02	105	1	0	0	0	1	0	0	0	mixed
+03	141	21	1	12	0	10	0	0	0	fully_paired
+04	167	4	0	2	1	2	0	0	0	fully_paired
+05	64	2	0	2	0	0	0	0	0	mixed
+06	104	1	0	1	0	0	0	0	0	mixed
+07	117	7	0	4	0	3	0	0	0	fully_paired
+08	75	8	1	5	0	2	0	0	0	fully_paired
+09	92	9	3	5	0	2	0	0	0	mixed
+10	117	4	0	1	0	3	0	0	0	fully_paired
+11	154	25	0	14	1	15	0	0	0	fully_paired
+12	161	10	3	3	1	3	1	0	0	fully_paired
+13	183	12	0	4	0	8	0	0	0	fully_paired
+14	103	9	4	5	0	2	0	0	0	mixed
+15	120	4	0	1	2	3	0	0	0	fully_paired
+16	105	9	1	3	0	6	0	0	0	fully_paired
+17	99	4	0	2	1	1	0	0	0	fully_paired
+18	179	7	0	3	0	4	0	0	0	fully_paired
+19	122	25	7	11	9	12	1	0	0	fully_paired
+20	191	36	0	21	1	15	0	0	0	fully_paired
+21	63	6	1	2	3	3	0	0	0	fully_paired
+22	81	9	2	7	3	0	0	0	0	mixed
+25	105	2	0	0	0	2	0	0	0	mixed
+26	120	26	2	12	4	15	1	0	0	fully_paired
+27	105	23	0	11	1	11	0	0	0	fully_paired
+28	187	25	10	12	7	11	0	0	0	mixed
+29	67	14	0	8	0	7	0	0	0	fully_paired
+30	105	35	6	18	14	13	0	0	0	mixed
+31	80	15	3	6	1	5	0	0	0	fully_paired
+33	90	16	1	7	3	8	0	0	0	fully_paired
+34	186	68	16	26	1	33	0	0	0	mixed
+35	139	47	3	20	18	27	0	0	0	mixed
+36	114	32	4	17	0	13	0	0	0	mixed
+37	96	10	0	9	0	1	0	0	0	fully_paired
+38	149	72	2	34	2	38	0	0	0	fully_paired
+39	165	13	1	7	0	5	0	0	0	fully_paired
+40	97	3	0	2	0	1	0	0	0	fully_paired
+seg1	42	6	4	1	2	0	2	0	0	mixed
+muffin	25	1	0	0	0	1	0	0	0	mixed
+tasha	30	1	0	0	1	0	0	0	0	open_only
+10gulfwar	123	3	0	0	3	0	0	0	0	open_only
+11gulfwar	82	2	0	0	2	0	0	0	0	open_only
+12gulfwar	104	3	1	0	2	0	1	1	1	open_only
+13gulfwar	69	4	2	0	2	0	2	2	2	open_only
+2gulfwar	126	2	1	1	0	1	0	0	0	fully_paired
+3gulfwar	162	2	1	0	1	0	1	1	1	open_only
+4gulfwar	124	2	1	0	1	0	1	1	1	open_only
+9gulfwar	51	2	1	0	1	0	1	1	1	open_only
+1-group	9	2	1	0	1	0	1	1	1	open_only
+7-interview	12	1	0	0	1	0	0	0	0	open_only
+bs2	117	5	0	2	2	2	0	0	0	fully_paired
+bs5	348	12	1	4	2	5	0	0	0	fully_paired
+01golf	231	6	0	4	1	2	0	0	0	fully_paired
+06fungus	184	14	0	8	3	5	0	0	0	mixed
+07assassination1	204	26	2	17	3	6	0	0	0	fully_paired
+08assassination2	451	93	4	50	3	39	0	0	0	fully_paired
+09palmsprings	218	28	1	16	0	11	0	0	0	fully_paired
+10blinddate	425	100	1	48	2	51	0	0	0	fully_paired
+11goldbridge	166	35	0	23	0	12	0	0	0	fully_paired
+12invitation	264	36	1	20	1	15	0	0	0	fully_paired
+13hightide	109	15	1	8	2	6	0	0	0	fully_paired
+14anniversary	171	25	4	15	3	6	0	0	0	fully_paired
+15fishing	42	5	0	2	2	2	0	0	0	fully_paired
+16dreary	199	29	2	14	1	14	0	0	0	fully_paired
+17tacos	67	12	1	4	0	7	0	0	0	fully_paired
+18clothing	113	13	1	6	0	7	0	0	0	fully_paired
+19paper	82	26	1	13	4	12	1	0	0	mixed
+20marysinvitation	62	7	1	4	0	2	0	0	0	fully_paired
+21swimnude	953	219	2	111	28	97	0	0	0	mixed
+22thanksgiving	81	22	3	9	4	10	0	0	0	fully_paired
+23marines	53	12	0	4	1	8	0	0	0	fully_paired
+24meatless	375	67	0	38	7	29	0	0	0	mixed
+25powertools	357	89	3	52	1	34	0	0	0	fully_paired
+Poetics	683	1	0	0	0	1	0	0	0	mixed
+adv700ju047	3018	10	0	1	0	9	0	0	0	fully_paired
+col285mx038	542	2	0	1	0	1	0	0	0	fully_paired
+col999mx059	666	1	0	1	0	0	0	0	0	mixed
+def270sf061	1276	1	0	0	0	1	0	0	0	mixed
+dis475mu012	666	1	0	0	0	1	0	0	0	mixed
+lab175su026	2272	9	0	5	0	4	0	0	0	fully_paired
+lab175su032	1788	3	0	2	0	1	0	0	0	fully_paired
+lab175su033	930	1	0	0	0	1	0	0	0	mixed
+lab200ju018	1309	3	0	2	0	1	0	0	0	fully_paired
+lab500su044	1296	1	0	0	0	1	0	0	0	mixed
+lab500su089	1167	1	0	0	0	1	0	0	0	mixed
+lel185su066	1201	2	0	2	0	0	0	0	0	mixed
+lel565su064	942	1	0	1	0	0	0	0	0	mixed
+les175su028	471	1	0	1	0	0	0	0	0	mixed
+les220su140	1680	3	0	2	0	1	0	0	0	fully_paired
+les565su137	1377	4	0	0	0	4	0	0	0	mixed
+les605su080	847	1	0	0	0	1	0	0	0	mixed
+mtg270sg049	1193	1	0	0	0	1	0	0	0	mixed
+mtg425jg004	1515	4	0	2	0	2	0	0	0	fully_paired
+mtg485sg142	804	1	0	0	0	1	0	0	0	mixed
+mtg999st015	1640	1	0	0	0	1	0	0	0	mixed
+ofc115su060	3555	2	0	1	0	1	0	0	0	fully_paired
+ofc150mu042	2359	2	0	0	0	2	0	0	0	mixed
+ofc175ju145	896	2	0	0	0	2	0	0	0	mixed
+ofc195su116	2811	12	0	6	0	6	0	0	0	fully_paired
+ofc270mg048	2436	3	0	3	0	0	0	0	0	mixed
+ofc280su109	1656	1	0	1	0	0	0	0	0	mixed
+ofc300ju149	1063	2	0	0	0	2	0	0	0	mixed
+ofc320su153	1129	2	0	2	0	0	0	0	0	mixed
+ofc578sg037	502	2	0	1	0	1	0	0	0	fully_paired
+sem300mu100	1988	1	0	0	0	1	0	0	0	mixed
+sem475mx041	1535	2	0	1	0	1	0	0	0	fully_paired
+sem495su111	1538	5	0	3	0	2	0	0	0	fully_paired
+sem545mg083	2293	4	0	3	0	1	0	0	0	fully_paired
+svc999mx104	3303	4	0	2	0	2	0	0	0	fully_paired
+svc999mx148	1745	1	0	1	0	0	0	0	0	mixed
+stp125jg050	2118	4	0	2	0	2	0	0	0	fully_paired
+stp560jg118	684	1	0	0	0	1	0	0	0	mixed
+sgr175mu126	3216	19	0	10	0	9	0	0	0	fully_paired
+sgr175su123	3033	1	0	1	0	0	0	0	0	mixed
+sgr195su127	1846	1	0	0	0	1	0	0	0	mixed
+sgr565su144	1512	5	0	5	0	0	0	0	0	mixed
+sgr999su146	1726	8	0	5	0	3	0	0	0	fully_paired
+car	366	49	4	19	14	23	0	0	0	mixed
+halkojen	20	2	0	1	0	1	0	0	0	fully_paired
+luontoilta	224	72	0	28	2	42	0	0	0	fully_paired
+baukartell	189	18	2	5	8	8	0	0	0	mixed
+eifersucht	173	10	2	1	5	2	0	0	0	mixed
+craxi	176	20	0	9	0	11	0	0	0	fully_paired
+01	667	155	70	76	78	75	70	24	24	mixed
+02	1006	546	246	265	303	294	245	72	72	mixed
+03	1133	526	220	235	275	261	219	50	48	mixed
+04	845	537	223	240	297	276	222	61	61	mixed
+05	508	193	87	88	92	89	87	37	36	mixed
+06	1069	539	231	256	271	264	230	37	36	mixed
+07	454	74	34	38	38	31	34	6	6	mixed
+08	851	497	178	242	285	223	177	64	63	mixed
+09	495	133	53	62	64	60	53	18	16	mixed
+10	741	468	204	212	222	221	202	58	58	mixed
+11	695	325	150	150	175	170	149	39	38	mixed
+12	566	107	46	50	54	54	46	12	12	mixed
+13	1851	1399	574	627	858	773	567	128	127	mixed
+14	594	271	114	123	139	127	114	30	30	mixed
+15	1337	860	315	355	433	401	311	92	92	mixed
+16	1090	803	356	393	427	418	355	99	99	mixed
+17	633	307	126	136	144	135	126	46	46	mixed
+18	319	127	58	61	63	59	58	13	12	mixed
+19	930	535	218	237	287	276	216	52	52	mixed
+20	328	52	23	21	24	26	23	3	3	fully_paired
+21	713	202	92	93	111	108	92	1	1	mixed
+22	413	142	63	63	68	67	63	23	23	mixed
+23	1149	837	355	373	499	473	352	56	56	mixed
+24	679	207	91	93	98	94	91	38	37	mixed
+25	310	4	2	1	2	2	2	0	0	fully_paired
+26	327	82	34	32	41	40	34	11	11	mixed
+27	437	40	16	19	20	20	16	0	0	mixed
+28	1010	498	216	244	256	245	216	64	62	mixed
+29	891	317	141	149	152	149	140	66	65	mixed
+30	336	27	13	13	13	13	13	0	0	fully_paired
+31	1160	719	291	307	387	332	288	89	88	mixed
+32	1305	928	351	386	521	468	341	99	99	mixed
+33	655	515	200	220	330	295	197	25	24	mixed
+34	498	105	36	53	59	41	35	9	9	mixed
+35	938	721	293	323	418	380	287	90	86	mixed
+36	1281	820	349	378	466	413	346	110	109	mixed
+37	764	245	101	121	134	114	100	22	21	mixed
+38	359	72	31	31	37	35	31	15	15	mixed
+39	789	427	152	182	251	214	150	29	29	mixed
+40	246	8	4	4	4	4	4	2	2	fully_paired
+41	551	314	116	131	151	137	116	19	19	mixed
+42	558	184	77	81	98	88	75	17	14	mixed
+43	896	391	151	174	192	182	151	50	49	mixed
+44	696	238	103	110	119	112	103	28	27	mixed
+45	653	155	56	70	79	67	56	20	20	mixed
+46	424	167	67	76	90	81	67	26	26	mixed
+47	679	304	107	139	155	116	107	48	48	mixed
+48	912	513	208	241	297	256	208	51	51	mixed
+49	982	649	272	295	391	364	267	63	63	mixed
+50	753	393	158	179	217	191	157	32	32	mixed
+51	1206	704	263	318	402	358	262	69	69	mixed
+52	967	490	201	231	253	230	201	73	71	mixed
+53	483	176	63	80	91	77	63	24	24	mixed
+54	328	94	41	43	48	46	41	2	1	mixed
+55	358	87	39	41	51	49	38	0	0	mixed
+56	1142	540	208	235	279	248	207	66	66	mixed
+57	683	103	38	46	53	52	38	3	3	mixed
+58	720	215	82	99	109	82	82	24	23	mixed
+59	1387	920	397	440	527	470	392	104	104	mixed
+60	461	129	52	58	67	55	52	18	18	mixed
+amy	3555	81	35	39	28	40	14	14	14	mixed
+jason-accident	29	1	0	1	0	0	0	0	0	mixed
+lynne-turkey	34	1	0	1	0	0	0	0	0	mixed
+mary	1364	4	0	2	1	2	0	0	0	fully_paired
+sequence	31	1	0	1	0	0	0	0	0	mixed
+wooden	49	3	0	0	2	3	0	0	0	mixed
+01	449	106	22	39	73	29	8	0	0	mixed
+02	648	516	201	289	303	309	192	0	0	mixed
+03	650	121	10	52	89	56	7	0	0	mixed
+04	377	67	10	20	46	15	6	0	0	mixed
+05	498	59	5	21	24	22	1	0	0	mixed
+06	221	9	3	2	5	2	0	0	0	fully_paired
+07	327	10	1	0	7	2	0	0	0	mixed
+08	232	13	0	2	8	8	0	0	0	mixed
+09	357	20	9	9	6	5	1	0	0	mixed
+10	627	209	10	88	128	87	1	0	0	mixed
+11	507	69	11	21	38	20	2	0	0	mixed
+12	287	84	9	22	58	21	5	0	0	mixed
+13	222	35	5	5	26	7	1	0	0	mixed
+14	184	16	4	4	10	1	1	0	0	mixed
+15	159	28	3	4	18	7	2	0	0	mixed
+M001	385	207	104	108	108	104	98	0	0	mixed
+M002	419	155	88	88	74	74	67	0	0	mixed
+M003	507	257	138	138	138	138	132	0	0	fully_paired
+M004	387	116	59	59	58	58	58	0	0	fully_paired
+M005	294	63	34	34	33	33	32	0	0	fully_paired
+M006	544	256	140	140	131	131	130	0	0	mixed
+M007	391	152	81	81	79	79	79	0	0	fully_paired
+M008	331	130	70	70	67	67	67	0	0	mixed
+M009	738	321	172	173	166	166	164	0	0	mixed
+M010	250	38	20	20	19	19	19	0	0	fully_paired
+M011	403	130	69	69	68	68	67	0	0	fully_paired
+M012	181	72	40	40	38	38	38	0	0	fully_paired
+M013	414	174	92	92	92	92	91	0	0	fully_paired
+M014	490	234	129	129	127	127	125	0	0	fully_paired
+M015	460	166	89	89	89	89	89	0	0	fully_paired
+M016	1350	846	469	469	461	461	450	0	0	mixed
+M017	175	86	50	50	48	48	48	0	0	fully_paired
+M018	411	179	99	99	100	100	99	0	0	fully_paired
+M019	464	210	114	114	115	115	114	0	0	fully_paired
+M020	303	142	80	80	77	77	76	0	0	mixed
+M021	433	131	73	73	66	66	62	0	0	mixed
+M022	313	110	58	58	59	59	57	0	0	fully_paired
+M023	337	102	56	56	55	55	53	0	0	fully_paired
+M024	506	348	207	208	201	201	199	0	0	mixed
+M025	262	102	56	56	56	56	55	0	0	fully_paired
+M026	366	164	91	91	92	92	91	0	0	fully_paired
+M027	410	188	109	109	105	106	95	0	0	mixed
+
+=== Bergmann ===
+  Files total:        34
+  Files with markers: 34
+  Fully paired:       7 (21%)
+  Mixed:              25
+  Open only:          2
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== Business ===
+  Files total:        24
+  Files with markers: 24
+  Fully paired:       8 (33%)
+  Mixed:              14
+  Open only:          2
+  Cross-speaker pairs: 1
+  Timed pairs:        0
+
+=== CLAPI ===
+  Files total:        13
+  Files with markers: 13
+  Fully paired:       11 (85%)
+  Mixed:              2
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== CMU/05 ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       0 (0%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== CMU/08 ===
+  Files total:        4
+  Files with markers: 4
+  Fully paired:       1 (25%)
+  Mixed:              1
+  Open only:          2
+  Cross-speaker pairs: 3
+  Timed pairs:        3
+  Temporally consistent: 3 (100%)
+
+=== CMU/10 ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       0 (0%)
+  Mixed:              0
+  Open only:          1
+  Cross-speaker pairs: 2
+  Timed pairs:        0
+
+=== CallFriend/eng-n ===
+  Files total:        23
+  Files with markers: 23
+  Fully paired:       6 (26%)
+  Mixed:              17
+  Open only:          0
+  Cross-speaker pairs: 88
+  Timed pairs:        0
+
+=== CallFriend/eng-s ===
+  Files total:        9
+  Files with markers: 9
+  Fully paired:       4 (44%)
+  Mixed:              5
+  Open only:          0
+  Cross-speaker pairs: 16
+  Timed pairs:        0
+
+=== CallFriend/jpn ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       1 (50%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== CallFriend/spa ===
+  Files total:        21
+  Files with markers: 21
+  Fully paired:       8 (38%)
+  Mixed:              13
+  Open only:          0
+  Cross-speaker pairs: 77
+  Timed pairs:        0
+
+=== Examples ===
+  Files total:        3
+  Files with markers: 3
+  Fully paired:       2 (67%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== GCSAusE ===
+  Files total:        37
+  Files with markers: 37
+  Fully paired:       24 (65%)
+  Mixed:              13
+  Open only:          0
+  Cross-speaker pairs: 3
+  Timed pairs:        0
+
+=== Goldman ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       0 (0%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 2
+  Timed pairs:        0
+
+=== Goodwin ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       0 (0%)
+  Mixed:              1
+  Open only:          1
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== GulfWar ===
+  Files total:        8
+  Files with markers: 8
+  Fully paired:       1 (12%)
+  Mixed:              0
+  Open only:          7
+  Cross-speaker pairs: 6
+  Timed pairs:        6
+  Temporally consistent: 6 (100%)
+
+=== JOC ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       0 (0%)
+  Mixed:              0
+  Open only:          2
+  Cross-speaker pairs: 1
+  Timed pairs:        1
+  Temporally consistent: 1 (100%)
+
+=== Jefferson/LinguaFranca ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       2 (100%)
+  Mixed:              0
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== Jefferson/NB ===
+  Files total:        21
+  Files with markers: 21
+  Fully paired:       17 (81%)
+  Mixed:              4
+  Open only:          0
+  Cross-speaker pairs: 1
+  Timed pairs:        0
+
+=== Jefferson/Poetics ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       0 (0%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/advising ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       1 (100%)
+  Mixed:              0
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/colloquia ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       1 (50%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/defense ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       0 (0%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/discussion ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       0 (0%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/labs ===
+  Files total:        6
+  Files with markers: 6
+  Fully paired:       3 (50%)
+  Mixed:              3
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/lel ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       0 (0%)
+  Mixed:              2
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/les ===
+  Files total:        4
+  Files with markers: 4
+  Fully paired:       1 (25%)
+  Mixed:              3
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/meetings ===
+  Files total:        4
+  Files with markers: 4
+  Fully paired:       1 (25%)
+  Mixed:              3
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/office_hours ===
+  Files total:        9
+  Files with markers: 9
+  Fully paired:       3 (33%)
+  Mixed:              6
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/seminars ===
+  Files total:        4
+  Files with markers: 4
+  Fully paired:       3 (75%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/service_encounters ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       1 (50%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/student_presentations ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       1 (50%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MICASE/study_groups ===
+  Files total:        5
+  Files with markers: 5
+  Fully paired:       2 (40%)
+  Mixed:              3
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MOVIN/Australian ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       0 (0%)
+  Mixed:              1
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MOVIN/Finnish ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       2 (100%)
+  Mixed:              0
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MOVIN/German ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       0 (0%)
+  Mixed:              2
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== MOVIN/Italian ===
+  Files total:        1
+  Files with markers: 1
+  Fully paired:       1 (100%)
+  Mixed:              0
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== SBCSAE ===
+  Files total:        60
+  Files with markers: 60
+  Fully paired:       4 (7%)
+  Mixed:              56
+  Open only:          0
+  Cross-speaker pairs: 8985
+  Timed pairs:        2427
+  Temporally consistent: 2396 (99%)
+
+=== SCoSE ===
+  Files total:        4
+  Files with markers: 4
+  Fully paired:       1 (25%)
+  Mixed:              3
+  Open only:          0
+  Cross-speaker pairs: 14
+  Timed pairs:        14
+  Temporally consistent: 14 (100%)
+
+=== SPIRE ===
+  Files total:        2
+  Files with markers: 2
+  Fully paired:       0 (0%)
+  Mixed:              2
+  Open only:          0
+  Cross-speaker pairs: 0
+  Timed pairs:        0
+
+=== TaiwanHakka/Conversation ===
+  Files total:        15
+  Files with markers: 15
+  Fully paired:       1 (7%)
+  Mixed:              14
+  Open only:          0
+  Cross-speaker pairs: 227
+  Timed pairs:        0
+
+=== TaiwanMandarin ===
+  Files total:        27
+  Files with markers: 27
+  Fully paired:       17 (63%)
+  Mixed:              10
+  Open only:          0
+  Cross-speaker pairs: 2655
+  Timed pairs:        0
+
+=== OVERALL ===
+  Files total:        366
+  Files with markers: 366
+  Fully paired:       135 (37%)
+  Mixed:              214
+  Open only:          17
+  Cross-speaker pairs: 12081
+  Timed pairs:        2451
+  Temporally consistent: 2420 (99%)

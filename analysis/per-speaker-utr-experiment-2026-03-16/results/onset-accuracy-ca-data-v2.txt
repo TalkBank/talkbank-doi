@@ -1,0 +1,12 @@
+
+=== OVERALL (3858 measurements) ===
+  Within ±500ms:  2596 (67.3%)
+  Within ±1000ms: 3350 (86.8%)
+  Within ±2000ms: 3717 (96.3%)
+  Median |error|: 314ms
+  p90 |error|:    1161ms
+  p95 |error|:    1688ms
+  Mean |error|:   518ms
+  Mean signed:    -481ms (positive = overestimate)
+
+--- Per-file summary ---

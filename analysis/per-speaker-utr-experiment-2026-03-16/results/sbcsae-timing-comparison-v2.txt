@@ -1,0 +1,42 @@
+
+=== sbcsae-output-global ===
+  Utterances:   10540
+  GT timed:     7074 (67.1%)
+  Recovered:    7776 (73.8%)
+  Both timed:   7021
+  --- Start time error (vs ground truth) ---
+    Median:     137ms
+    Within 500ms: 6085 (86.7%)
+    Within 1s:    6509 (92.7%)
+    p90:        696ms
+  --- ⌊ Overlap utterances ---
+    GT timed:     1766
+    Recovered:    2136
+    Both timed:   1752
+    Regressions:  14 (GT had timing, recovered lost it)
+    New coverage: 384 (GT had no timing, recovered added it)
+    --- ⌊ Start error vs GT ---
+      Median:     139ms
+      Within 500ms: 1465 (83.6%)
+      Within 1s:    1614 (92.1%)
+
+=== sbcsae-output-twopass ===
+  Utterances:   10540
+  GT timed:     7074 (67.1%)
+  Recovered:    8131 (77.1%)
+  Both timed:   7019
+  --- Start time error (vs ground truth) ---
+    Median:     150ms
+    Within 500ms: 5634 (80.3%)
+    Within 1s:    6131 (87.3%)
+    p90:        1325ms
+  --- ⌊ Overlap utterances ---
+    GT timed:     1766
+    Recovered:    2407
+    Both timed:   1751
+    Regressions:  15 (GT had timing, recovered lost it)
+    New coverage: 656 (GT had no timing, recovered added it)
+    --- ⌊ Start error vs GT ---
+      Median:     247ms
+      Within 500ms: 1084 (61.9%)
+      Within 1s:    1281 (73.2%)

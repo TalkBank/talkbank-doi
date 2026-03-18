@@ -8,8 +8,11 @@
 //! - `strip`:    Remove all timing (bullets, inline timing, %wor tiers).
 //! - `convert`:  Convert `&*SPK:word` overlap markers to separate `+<` utterances.
 
+mod compare_timing;
 mod convert;
 mod decompose;
+mod onset_accuracy;
+mod overlap_audit;
 
 use std::collections::BTreeMap;
 use std::fs;
@@ -97,6 +100,39 @@ enum Command {
         /// Omit the +< linker on converted utterances (plain separate utterances).
         #[arg(long)]
         no_linker: bool,
+    },
+
+    /// Audit CA overlap markers (⌈⌉⌊⌋) for pairing quality and temporal consistency.
+    OverlapAudit {
+        /// CHAT file(s) or directories to audit.
+        #[arg(required = true)]
+        paths: Vec<PathBuf>,
+        /// Print per-file details (default: only print corpus summary).
+        #[arg(long)]
+        verbose: bool,
+    },
+
+    /// Measure proportional onset estimation accuracy (Experiment A validation).
+    ///
+    /// For each cross-speaker overlap pair with timing, compares the estimated
+    /// onset (from ⌈ word position) against the actual onset (⌊ utterance start).
+    OnsetAccuracy {
+        /// CHAT file(s) or directories to analyze.
+        #[arg(required = true)]
+        paths: Vec<PathBuf>,
+        /// Print per-measurement details (default: only print summary).
+        #[arg(long)]
+        verbose: bool,
+    },
+
+    /// Compare recovered timing against ground truth (per-utterance).
+    CompareTiming {
+        /// Ground truth directory.
+        #[arg(long)]
+        gt: PathBuf,
+        /// Recovered timing directories to compare (e.g., global and two-pass).
+        #[arg(required = true)]
+        recovered: Vec<PathBuf>,
     },
 }
 
@@ -343,6 +379,205 @@ fn run_convert(input: &PathBuf, output: &PathBuf, no_linker: bool) {
 }
 
 // ---------------------------------------------------------------------------
+// overlap-audit
+// ---------------------------------------------------------------------------
+
+fn collect_cha_files(paths: &[PathBuf]) -> Vec<PathBuf> {
+    let mut files: Vec<PathBuf> = Vec::new();
+    for p in paths {
+        if p.is_dir() {
+            collect_cha_files_recursive(p, &mut files);
+        } else if p.extension().is_some_and(|ext| ext == "cha") {
+            files.push(p.clone());
+        }
+    }
+    files.sort();
+    files
+}
+
+fn collect_cha_files_recursive(dir: &PathBuf, files: &mut Vec<PathBuf>) {
+    if let Ok(entries) = fs::read_dir(dir) {
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if path.is_dir() {
+                collect_cha_files_recursive(&path, files);
+            } else if path.extension().is_some_and(|ext| ext == "cha") {
+                files.push(path);
+            }
+        }
+    }
+}
+
+fn run_overlap_audit(paths: &[PathBuf], verbose: bool) {
+    let files = collect_cha_files(paths);
+    if files.is_empty() {
+        eprintln!("No .cha files found");
+        std::process::exit(1);
+    }
+
+    eprintln!("Auditing {} files for CA overlap markers...", files.len());
+
+    let mut results: Vec<overlap_audit::FileAuditResult> = Vec::new();
+
+    if verbose {
+        overlap_audit::print_header();
+    }
+
+    for path in &files {
+        let chat = parse_chat(path);
+        let display_path = path.to_string_lossy().to_string();
+        let result = overlap_audit::audit_file(&chat, &display_path);
+
+        // Only include files that actually have overlap markers
+        if result.utterances_with_markers > 0 {
+            if verbose {
+                overlap_audit::print_result(&result);
+            }
+            results.push(result);
+        }
+    }
+
+    // Group by subcorpus and print summaries
+    let groups = overlap_audit::group_by_subcorpus(&results);
+    let mut overall = overlap_audit::CorpusStats::default();
+
+    for (subcorpus, file_results) in &groups {
+        let mut stats = overlap_audit::CorpusStats::default();
+        for r in file_results {
+            overlap_audit::accumulate(&mut stats, r);
+            overlap_audit::accumulate(&mut overall, r);
+        }
+        overlap_audit::print_corpus_summary(subcorpus, &stats);
+    }
+
+    overlap_audit::print_corpus_summary("OVERALL", &overall);
+}
+
+// ---------------------------------------------------------------------------
+// compare-timing
+// ---------------------------------------------------------------------------
+
+fn run_compare_timing(gt_dir: &PathBuf, recovered_dirs: &[PathBuf]) {
+    let gt_files = collect_cha_files(&[gt_dir.clone()]);
+    if gt_files.is_empty() {
+        eprintln!("No .cha files found in ground truth dir");
+        std::process::exit(1);
+    }
+
+    for rec_dir in recovered_dirs {
+        let label = rec_dir
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string();
+
+        let mut comparisons = Vec::new();
+        for gt_path in &gt_files {
+            let base = gt_path.file_name().unwrap();
+            let rec_path = rec_dir.join(base);
+            if !rec_path.exists() {
+                continue;
+            }
+            let gt = parse_chat(gt_path);
+            let rec = parse_chat(&rec_path);
+            let display = base.to_string_lossy().to_string();
+            comparisons.push(compare_timing::compare_files(&gt, &rec, &display));
+        }
+
+        compare_timing::print_comparison(&label, &comparisons);
+    }
+}
+
+// ---------------------------------------------------------------------------
+// onset-accuracy
+// ---------------------------------------------------------------------------
+
+fn run_onset_accuracy(paths: &[PathBuf], verbose: bool) {
+    let files = collect_cha_files(paths);
+    if files.is_empty() {
+        eprintln!("No .cha files found");
+        std::process::exit(1);
+    }
+
+    eprintln!("Measuring onset accuracy across {} files...", files.len());
+
+    let mut all_measurements: Vec<onset_accuracy::OnsetMeasurement> = Vec::new();
+
+    if verbose {
+        onset_accuracy::print_header();
+    }
+
+    for path in &files {
+        let chat = parse_chat(path);
+        let display_path = path.to_string_lossy().to_string();
+        let measurements = onset_accuracy::measure_file(&chat, &display_path);
+
+        if verbose {
+            for m in &measurements {
+                onset_accuracy::print_measurement(m);
+            }
+        }
+
+        all_measurements.extend(measurements);
+    }
+
+    // Overall statistics
+    let stats = onset_accuracy::compute_stats(&all_measurements);
+    onset_accuracy::print_stats("OVERALL", &stats);
+
+    // Per-file statistics for files with measurements
+    if !verbose {
+        // Group by file and show per-file summaries
+        let mut by_file: std::collections::BTreeMap<String, Vec<&onset_accuracy::OnsetMeasurement>> =
+            std::collections::BTreeMap::new();
+        for m in &all_measurements {
+            let name = std::path::Path::new(&m.file)
+                .file_stem()
+                .unwrap_or_default()
+                .to_string_lossy()
+                .to_string();
+            by_file.entry(name).or_default().push(m);
+        }
+
+        println!("\n--- Per-file summary ---");
+        println!("file\tcount\t<=500ms%\t<=1s%\tmedian_err\tp90_err");
+        for (name, measurements) in &by_file {
+            let owned: Vec<onset_accuracy::OnsetMeasurement> = measurements
+                .iter()
+                .map(|m| onset_accuracy::OnsetMeasurement {
+                    file: m.file.clone(),
+                    top_utt_idx: m.top_utt_idx,
+                    bottom_utt_idx: m.bottom_utt_idx,
+                    top_speaker: m.top_speaker.clone(),
+                    bottom_speaker: m.bottom_speaker.clone(),
+                    top_bullet: m.top_bullet,
+                    bottom_bullet: m.bottom_bullet,
+                    onset_fraction: m.onset_fraction,
+                    estimated_onset_ms: m.estimated_onset_ms,
+                    actual_onset_ms: m.actual_onset_ms,
+                    error_ms: m.error_ms,
+                    abs_error_ms: m.abs_error_ms,
+                    within_500ms: m.within_500ms,
+                    within_1000ms: m.within_1000ms,
+                    within_2000ms: m.within_2000ms,
+                })
+                .collect();
+            let s = onset_accuracy::compute_stats(&owned);
+            if s.count > 0 {
+                println!(
+                    "{name}\t{}\t{:.0}%\t{:.0}%\t{}ms\t{}ms",
+                    s.count,
+                    s.within_500ms as f64 / s.count as f64 * 100.0,
+                    s.within_1000ms as f64 / s.count as f64 * 100.0,
+                    s.median_abs_error,
+                    s.p90_abs_error,
+                );
+            }
+        }
+    }
+}
+
+// ---------------------------------------------------------------------------
 // main
 // ---------------------------------------------------------------------------
 
@@ -363,5 +598,8 @@ fn main() {
             output,
             no_linker,
         } => run_convert(input, output, *no_linker),
+        Command::OverlapAudit { paths, verbose } => run_overlap_audit(paths, *verbose),
+        Command::OnsetAccuracy { paths, verbose } => run_onset_accuracy(paths, *verbose),
+        Command::CompareTiming { gt, recovered } => run_compare_timing(gt, recovered),
     }
 }

@@ -1,0 +1,669 @@
+file	status	error_count	error_codes
+13	errors	46	E347(69)
+07	errors	2	E347(3)
+06	errors	6	E347(9)
+12	errors	230	E347(336) E348(9)
+04	errors	46	E347(66) E348(3)
+10	errors	248	E347(264) E348(108)
+11	errors	70	E347(75) E348(30)
+05	errors	82	E348(87) E347(36)
+01	errors	64	E347(84) E348(12)
+15	errors	56	E347(69) E348(15)
+14	valid	0	
+02	errors	316	E347(474)
+03	errors	118	E347(153) E348(24)
+08	errors	22	E347(21) E348(12)
+09	valid	0	
+M025	errors	10	E347(15)
+M019	errors	16	E347(24)
+M018	errors	12	E347(18)
+M024	errors	92	E347(138)
+M026	errors	24	E347(36)
+M027	errors	38	E347(54) E348(3)
+M023	errors	22	E347(33)
+M022	errors	6	E347(9)
+M008	errors	18	E347(27)
+M020	errors	26	E347(39)
+M021	errors	34	E347(51)
+M009	errors	32	E347(48)
+M010	errors	6	E347(9)
+M004	errors	12	E347(18)
+M005	errors	6	E347(9)
+M011	errors	10	E347(15)
+M007	errors	10	E347(15)
+M013	errors	18	E347(24) E348(3)
+M012	errors	10	E347(15)
+M006	errors	28	E347(42)
+M002	errors	40	E347(60)
+M016	errors	70	E347(105)
+M017	errors	14	E347(21)
+M003	errors	36	E347(54)
+M015	errors	10	E347(15)
+M001	errors	24	E347(36)
+M014	errors	22	E347(33)
+Poetics	errors	10	E348(15)
+bs4	errors	48	E348(69) E347(3)
+bs5	errors	584	E348(828) E347(48)
+bs2	errors	190	E348(264) E347(21)
+bs1	errors	12	E348(18)
+11goldbridge	errors	58	E348(81) E347(6)
+01golf	errors	114	E348(162) E347(9)
+19paper	errors	74	E348(102) E347(9)
+05directions	errors	20	E348(30)
+25powertools	errors	436	E348(531) E347(123)
+23marines	errors	66	E348(81) E347(18)
+07assassination1	errors	130	E348(192) E347(3)
+06fungus	errors	144	E348(213) E347(3)
+14anniversary	errors	164	E348(216) E347(30)
+10blinddate	errors	362	E348(501) E347(42)
+13hightide	errors	68	E348(93) E347(9)
+12invitation	errors	160	E348(216) E347(24)
+16dreary	errors	184	E348(255) E347(21)
+17tacos	errors	70	E348(93) E347(12)
+24meatless	errors	418	E348(579) E347(48)
+20marysinvitation	errors	52	E348(75) E347(3)
+09palmsprings	errors	142	E348(201) E347(12)
+18clothing	errors	26	E348(33) E347(6)
+21swimnude	errors	716	E348(963) E347(111)
+15fishing	errors	84	E348(114) E347(12)
+22thanksgiving	errors	78	E348(111) E347(6)
+08assassination2	errors	422	E348(591) E347(42)
+02countryclub	errors	8	E348(12)
+038_Bernhardiner3	errors	20	E348(30)
+004_Moramin2	errors	20	E348(30)
+088_Notruf	valid	0	
+103_Adressenanfrage	errors	4	E348(6)
+026_Egon_Lutzweg_Unfall	errors	20	E348(30)
+049_Fensterscheibe1	valid	0	
+090_Hoechste	valid	0	
+003_Moramin1	errors	28	E348(42)
+150_Herzinfarkt1	valid	0	
+082_Aerztlicher_Notruf	valid	0	
+017_Samen_Bessler7	errors	12	E348(12) E347(6)
+050_Fensterscheibe2	valid	0	
+260_Feuer_Ried4	errors	14	E348(18) E347(3)
+250_BuWe_Feuermelder3	errors	4	E348(6)
+007_Samen_Bessler2	errors	4	E348(6)
+072_bewegungsunfaehige_Person1	errors	2	E347(3)
+055_Wasser_im_Keller2	errors	2	E348(3)
+074_bewegungsunfaehige_Person3	errors	2	E347(3)
+014_Samen_Bessler4	errors	8	E348(12)
+011_schwerer_Unfall4	valid	0	
+067_weisser_Toyota1	valid	0	
+009_schwerer_Unfall2	errors	2	E347(3)
+140_Brand_Norma4	valid	0	
+069_weisser_Toyota2	errors	2	E348(3)
+041_Bernhardiner5	errors	24	E348(36)
+071_weisser_Toyota3	valid	0	
+010_schwerer_Unfall3	valid	0	
+145_Pudel_zugelaufen	valid	0	
+064_65_tuerkischer_Vater	errors	8	E348(12)
+053_Wasser_im_Keller1	valid	0	
+087_Marder3	valid	0	
+040_Bernhardiner4	errors	16	E348(24)
+261_Feuer_Ried5	errors	4	E348(6)
+097_Auslanderwohnheim	errors	4	E347(6)
+044_krankenhaus	valid	0	
+232_BuWe_Feuermelder1	errors	6	E348(6) E347(3)
+008_schwerer_Unfall1	errors	4	E348(6)
+073_bewegungsunfaehige_Person2	valid	0	
+013_Samen_Bessler3	errors	8	E348(12)
+037_Bernhardiner2	errors	12	E348(18)
+102_kein_Brandfall	valid	0	
+020_Reichenauer_Allee2	errors	10	E348(12) E347(3)
+141_Schluessel3	valid	0	
+152_Herzinfarkt2	valid	0	
+027_Schwarzhoelzle1	errors	32	E348(48)
+264_Feuer_Ried7	errors	12	E348(18)
+083_Luftpumpe	valid	0	
+259_Feuer_Ried3	valid	0	
+042_beissender_Geruch1	errors	52	E348(78)
+263_Feuer_Ried6	errors	16	E348(24)
+143_Kaempfende_Schwaene	valid	0	
+270_Feuer_Ried9	errors	30	E348(42) E347(3)
+253_BuWe_Feuermelder4	valid	0	
+139_Brand_Norma3	valid	0	
+036_Bernhardiner1	valid	0	
+077_Badewanne_verstopft2	valid	0	
+085_Marder1	valid	0	
+079_Benzin_ausgelaufen	valid	0	
+019_Reichenauer_Allee1	errors	28	E348(42)
+012_schwerer_Unfall5	errors	12	E348(18)
+257_Feuer_Ried1	valid	0	
+076_Badewanne_verstopft1	valid	0	
+022_Tierkadaver	errors	52	E348(78)
+093_Wasser_im_Keller	errors	2	E348(3)
+258_Feuer_Ried2	valid	0	
+268_Feuer_Ried8	errors	8	E348(12)
+137_Brand_Norma1	errors	4	E347(6)
+043_beissender_Geruch2	errors	12	E348(18)
+086_Marder2	errors	2	E347(3)
+078_Falschanruf	valid	0	
+015_Samen_Bessler5	errors	20	E348(30)
+006_Samen_Bessler1	errors	16	E348(24)
+048_der_Hamann	errors	2	E347(3)
+028_Schwarzhoelzle2	errors	4	E347(6)
+243_BuWe_Feuermelder2	errors	12	E348(18)
+138_Brand_Norma2	valid	0	
+084_Feuerstelle_kein_Brand	valid	0	
+016_Samen_Bessler6	errors	4	E348(6)
+11-89	errors	62	E348(84) E347(9)
+30-91	errors	20	E348(30)
+13-89	errors	34	E348(42) E347(9)
+28-91	errors	24	E348(30) E347(6)
+21-89	errors	16	E347(15) E348(9)
+09-88	errors	4	E348(3) E347(3)
+17-89	errors	6	E348(6) E347(3)
+02-86	errors	32	E348(48)
+26-91	errors	28	E348(33) E347(9)
+07-88	errors	38	E348(48) E347(9)
+15-89	errors	10	E348(15)
+19-89	errors	78	E348(90) E347(27)
+23-91	errors	48	E348(66) E347(6)
+10-89	errors	14	E348(18) E347(3)
+12-89	errors	28	E348(36) E347(6)
+01-86	errors	82	E348(114) E347(9)
+16-89	errors	188	E348(201) E347(81)
+08-88	errors	24	E348(36)
+29-91	errors	18	E348(27)
+20-89	errors	12	E348(18)
+04-88	errors	22	E348(30) E347(3)
+25-91	errors	8	E348(12)
+14-89	errors	8	E348(9) E347(3)
+18-89	errors	20	E348(24) E347(6)
+06-88	errors	28	E348(42)
+27-91	errors	30	E348(42) E347(3)
+03-87	errors	20	E348(30)
+13gulfwar	errors	20	E348(30)
+5gulfwar	errors	20	E348(30)
+8gulfwar	errors	12	E348(18)
+2gulfwar	errors	8	E348(12)
+11gulfwar	errors	40	E348(54) E347(6)
+14gulfwar	errors	12	E348(18)
+4gulfwar	errors	12	E348(18)
+9gulfwar	errors	16	E348(24)
+12gulfwar	errors	36	E348(54)
+1gulfwar	valid	0	
+6gulfwar	errors	4	E348(6)
+15gulfwar	errors	20	E348(30)
+3gulfwar	errors	24	E348(36)
+10gulfwar	errors	32	E348(48)
+mary-pizza	valid	0	
+amy	errors	8	E348(12)
+jason-accident	valid	0	
+steve-basketball	valid	0	
+lynne-bus	valid	0	
+lynne-turkey	valid	0	
+lynne-tipsy	valid	0	
+mary	valid	0	
+lynne-hunter	valid	0	
+lynne-poodle	valid	0	
+mary-class	valid	0	
+lab500su044	errors	2	E348(3)
+lab175su033	errors	2	E348(3)
+lab175su032	errors	6	E348(9)
+lab175su026	errors	18	E348(27)
+lab500su089	errors	2	E348(3)
+lab200ju018	errors	6	E348(9)
+lel565su064	errors	2	E348(3)
+lel185su066	errors	4	E348(6)
+svc999mx148	errors	2	E348(3)
+svc999mx104	errors	8	E348(12)
+adv700ju023	errors	4	E348(3) E347(3)
+adv700ju047	errors	20	E348(30)
+stp560jg118	errors	2	E348(3)
+stp200ju019	errors	2	E348(3)
+stp125jg050	errors	8	E348(12)
+les605su080	errors	2	E348(3)
+les220su140	errors	6	E348(9)
+les175su028	errors	2	E348(3)
+les565su137	errors	8	E348(12)
+col999mx059	errors	2	E348(3)
+col999mx040	errors	2	E348(3)
+col285mx038	errors	4	E348(6)
+sem475mx041	errors	4	E348(6)
+sem300mu100	errors	2	E348(3)
+sem545mg083	errors	8	E348(12)
+sem495su111	errors	10	E348(15)
+mtg999st015	errors	2	E348(3)
+mtg485sg142	errors	2	E348(3)
+mtg270sg049	errors	2	E348(3)
+mtg425jg004	errors	8	E348(12)
+def270sf061	errors	2	E348(3)
+dis475mu012	errors	2	E348(3)
+dis175su027	errors	6	E348(6) E347(3)
+sgr175su123	errors	2	E348(3)
+sgr175mu126	errors	40	E348(60)
+sgr565su144	errors	12	E348(18)
+sgr195su127	errors	2	E348(3)
+sgr999su146	errors	16	E348(24)
+ofc280su109	errors	2	E348(3)
+ofc175ju145	errors	4	E348(6)
+ofc300ju149	errors	4	E348(6)
+ofc115su060	errors	4	E348(6)
+ofc578sg037	errors	4	E348(6)
+ofc270mg048	errors	6	E348(9)
+ofc150mu042	errors	4	E348(6)
+ofc320su153	errors	4	E348(6)
+ofc195su116	errors	24	E348(36)
+sequence	errors	36	E348(54)
+future	errors	56	E348(84)
+wooden	errors	16	E348(18) E347(6)
+identity	errors	16	E348(24)
+car	errors	400	E348(570) E347(30)
+baukartell	errors	172	E348(240) E347(18)
+eifersucht	errors	240	E348(348) E347(12)
+kerl	errors	48	E348(72)
+craxi	errors	22	E348(30) E347(3)
+halkojen	errors	12	E348(18)
+luontoilta	errors	112	E348(144) E347(24)
+6869	errors	8	E348(9) E347(3)
+6062	errors	28	E348(39) E347(3)
+5635	errors	26	E348(39)
+6476	errors	12	E348(15) E347(3)
+5220	errors	4	E348(6)
+4504	valid	0	
+6065	errors	4	E348(3) E347(3)
+4984	errors	26	E348(33) E347(6)
+5051	valid	0	
+6015	valid	0	
+4175	errors	28	E348(30) E347(12)
+6372	errors	24	E348(36)
+4823	errors	114	E348(168) E347(3)
+6952	errors	8	E348(9) E347(3)
+6239	errors	20	E348(18) E347(12)
+5926	errors	4	E348(6)
+6193	errors	10	E348(15)
+6379	errors	20	E348(27) E347(3)
+6255	valid	0	
+4708	errors	88	E348(132)
+6862	errors	4	E348(6)
+6899	errors	12	E348(12) E347(6)
+4889	errors	24	E348(30) E347(6)
+6278	errors	2	E347(3)
+6126	valid	0	
+4874	valid	0	
+6093	errors	2	E348(3)
+6938	errors	44	E348(54) E347(12)
+5000	errors	14	E348(12) E347(9)
+6661	errors	2	E347(3)
+6931	valid	0	
+6561	valid	0	
+6750	errors	38	E348(42) E347(15)
+6962	valid	0	
+6784	errors	34	E348(51)
+6914	errors	8	E347(9) E348(3)
+6526	valid	0	
+6269	valid	0	
+6285	errors	2	E348(3)
+0921	errors	7	E347(9) E1(2)
+1367	valid	0	
+4500	errors	4	E348(6)
+4463	errors	6	E348(9)
+5034	errors	8	E348(12)
+1469	errors	4	E348(6)
+5052	errors	2	E348(3)
+4358	errors	42	E348(36) E1(9) E2(7) E347(6)
+4414	errors	4	E348(6)
+4400	errors	21	E348(21) E1(7)
+6834	valid	0	
+5861	valid	0	
+5650	errors	96	E348(138) E347(6)
+1772	errors	20	E348(24) E347(6)
+5539	errors	2	E347(3)
+6153	errors	30	E348(45)
+2137	errors	6	E348(9)
+4318	errors	3	E348(3) E2(1)
+4095	errors	10	E348(15)
+4057	errors	2	E347(3)
+4096	errors	16	E348(21) E1(2)
+5607	errors	4	E348(6)
+5558	valid	0	
+person	valid	0	
+michelle	valid	0	
+anna	errors	64	E348(96)
+alyx	errors	4	E348(6)
+jennifer	errors	12	E348(18)
+ateret	errors	8	E348(12)
+megan	errors	24	E348(36)
+owen	errors	40	E348(60)
+cinco	errors	14	E347(12) E348(9)
+muffin	errors	2	E348(3)
+tasha	errors	24	E348(36)
+1-group	errors	4	E348(6)
+7-interview	errors	12	E348(18)
+3-beauty	errors	4	E348(3) E347(3)
+HabHeuch	errors	52	E348(51) E347(27)
+Kim_Larsen	errors	34	E348(48) E347(3)
+oath	errors	4	E348(6)
+911	errors	10	E348(12) E347(3)
+13	errors	142	E348(198) E347(15)
+07	errors	22	E348(30) E347(3)
+06	errors	44	E348(66)
+12	errors	136	E348(201) E347(3)
+04	errors	252	E348(369) E347(9)
+10	errors	50	E348(69) E347(6)
+38	errors	62	E348(69) E347(24)
+39	errors	118	E348(159) E347(18)
+11	errors	46	E348(57) E347(12)
+05	errors	6	E348(6) E347(3)
+29	errors	2	E347(3)
+01	errors	32	E348(45) E347(3)
+15	errors	8	E348(12)
+14	errors	26	E348(39)
+28	errors	64	E348(87) E347(9)
+16	errors	16	E348(24)
+02	errors	80	E348(114) E347(6)
+03	errors	18	E348(27)
+17	errors	38	E348(57)
+40	valid	0	
+32	errors	36	E348(54)
+26	errors	36	E348(54)
+27	errors	4	E348(6)
+33	errors	22	E348(30) E347(3)
+25	errors	20	E348(30)
+31	errors	28	E348(36) E347(6)
+19	errors	6	E348(6) E347(3)
+18	errors	190	E348(258) E347(27)
+30	errors	16	E348(21) E347(3)
+24	errors	68	E348(102)
+08	errors	58	E348(75) E347(12)
+20	errors	4	E348(6)
+34	errors	62	E348(87) E347(6)
+35	errors	42	E348(54) E347(9)
+21	errors	8	E348(12)
+09	errors	32	E348(48)
+37	errors	8	E347(12)
+23	errors	250	E348(369) E347(6)
+22	errors	80	E348(120)
+36	errors	56	E348(69) E347(15)
+golden	errors	16	E348(18) E347(6)
+biscuit	errors	118	E348(150) E347(27)
+conv_fam	errors	16	E348(24)
+cafe	errors	62	E348(81) E347(12)
+tuerie	errors	10	E348(12) E347(3)
+logeurs	errors	302	E348(243) E347(210)
+figuration	errors	38	E347(30) E348(27)
+conv_table	errors	36	E348(30) E347(24)
+plan	errors	14	E348(12) E347(9)
+poste	errors	4	E348(6)
+lentilles	valid	0	
+danger	errors	4	E348(6)
+chambre	errors	54	E348(69) E347(12)
+caution1	errors	2	E347(3)
+caution2	valid	0	
+vid	valid	0	
+seg1	errors	12	E348(18)
+seg2	errors	2	E348(3)
+13	errors	850	E348(942) E347(333)
+07	errors	4	E348(6)
+06	errors	300	E348(420) E347(30)
+12	errors	38	E348(54) E347(3)
+04	errors	288	E348(342) E347(90)
+10	errors	230	E348(324) E347(21)
+38	errors	46	E348(60) E347(9)
+39	errors	160	E348(174) E347(66)
+11	errors	118	E348(144) E347(33)
+05	errors	96	E348(138) E347(6)
+29	errors	114	E348(168) E347(3)
+01	errors	44	E348(57) E347(9)
+15	errors	786	E348(1068) E347(111)
+14	errors	116	E348(153) E347(21)
+28	errors	162	E348(228) E347(15)
+16	errors	346	E348(414) E347(105)
+02	errors	192	E348(216) E347(72)
+03	errors	172	E348(198) E347(60)
+17	errors	180	E348(264) E347(6)
+58	errors	56	E348(78) E347(6)
+59	errors	344	E348(390) E347(126)
+49	errors	334	E348(384) E347(117)
+60	errors	36	E348(42) E347(12)
+48	errors	164	E348(174) E347(72)
+51	errors	316	E348(348) E347(126)
+45	errors	8	E348(12)
+44	errors	42	E348(54) E347(9)
+50	errors	142	E348(159) E347(54)
+46	errors	38	E348(42) E347(15)
+52	errors	220	E348(312) E347(18)
+53	errors	54	E348(78) E347(3)
+47	errors	132	E348(192) E347(6)
+43	errors	198	E348(282) E347(15)
+57	errors	20	E348(24) E347(6)
+56	errors	210	E348(300) E347(15)
+42	errors	78	E348(96) E347(21)
+54	errors	6	E348(6) E347(3)
+40	valid	0	
+41	errors	212	E348(306) E347(12)
+55	errors	36	E347(48) E348(6)
+32	errors	702	E348(867) E347(186)
+26	errors	36	E348(48) E347(6)
+27	errors	4	E348(6)
+33	errors	320	E348(270) E347(210)
+25	errors	4	E348(6)
+31	errors	408	E348(522) E347(90)
+19	errors	242	E348(294) E347(69)
+18	errors	38	E348(54) E347(3)
+30	errors	12	E348(18)
+24	errors	124	E348(174) E347(12)
+08	errors	140	E348(186) E347(24)
+20	errors	32	E348(48)
+34	errors	10	E348(12) E347(3)
+35	errors	542	E348(660) E347(153)
+21	errors	68	E348(78) E347(24)
+09	errors	78	E348(108) E347(9)
+37	errors	32	E348(36) E347(12)
+23	errors	352	E348(342) E347(186)
+22	errors	72	E348(108)
+36	errors	348	E348(408) E347(114)
+020621	errors	52	E348(39) E347(33) E704(6)
+010720	errors	26	E347(24) E348(15)
+020026	errors	22	E348(18) E347(15)
+010118	errors	2	E348(3)
+020810	errors	26	E348(21) E347(18)
+030018	errors	28	E347(24) E348(18)
+020425	errors	20	E347(24) E348(6)
+010524	errors	80	E347(75) E348(33) E704(12)
+011028	errors	2	E347(3)
+020222	errors	14	E347(15) E348(6)
+020124	errors	4	E347(6)
+010027	errors	4	E347(6)
+biggirl	errors	4	E348(6)
+010426	errors	206	E348(279) E347(30)
+realfood	errors	40	E348(60)
+020320	errors	32	E347(27) E348(21)
+030508	errors	36	E347(36) E348(18)
+020901	errors	28	E348(27) E347(15)
+010818	errors	12	E347(12) E348(6)
+030921	errors	8	E347(12)
+020502	errors	34	E347(36) E348(15)
+010007	valid	0	
+030501	errors	8	E348(9) E347(3)
+030515	errors	94	E347(81) E348(51) E704(9)
+021020	errors	2	E347(3)
+010202	errors	2	E348(3)
+010216	errors	60	E347(57) E348(21) E704(12)
+010001	errors	8	E348(12)
+030228	errors	6	E348(6) E347(3)
+020003	errors	58	E347(78) E704(9)
+010301	errors	30	E348(24) E347(21)
+010923	errors	42	E347(33) E348(30)
+010328	errors	44	E347(33) E348(30) E704(3)
+040420	errors	2	E347(3)
+030700e	valid	0	
+030700f	valid	0	
+020500c	valid	0	
+030700c	valid	0	
+020500f	valid	0	
+020500e	errors	2	E347(3)
+020500d	errors	2	E347(3)
+030700a	valid	0	
+010700i	valid	0	
+020100g	errors	4	E347(6)
+021100c	valid	0	
+020100f	valid	0	
+011000d	valid	0	
+010700h	valid	0	
+010700j	valid	0	
+011000f	valid	0	
+021100a	valid	0	
+020100e	valid	0	
+011000g	valid	0	
+011000c	valid	0	
+020100a	valid	0	
+011000b	valid	0	
+010900k	valid	0	
+011000a	valid	0	
+010900h	valid	0	
+020400b	valid	0	
+020600g	valid	0	
+030600g	valid	0	
+020800b	valid	0	
+020600f	valid	0	
+020400c	valid	0	
+010900d	valid	0	
+010700a	errors	2	E347(3)
+010700c	valid	0	
+010900f	valid	0	
+030600d	valid	0	
+020600d	valid	0	
+020600e	valid	0	
+010900g	valid	0	
+010700b	valid	0	
+020400d	errors	6	E347(9)
+020800d	valid	0	
+030600a	valid	0	
+020600a	valid	0	
+020800e	valid	0	
+020400e	valid	0	
+010900b	valid	0	
+010700e	valid	0	
+020600b	valid	0	
+030600b	valid	0	
+030600c	valid	0	
+020600c	valid	0	
+020800f	valid	0	
+010700d	valid	0	
+010900a	valid	0	
+011100g	valid	0	
+011100f	errors	10	E347(15)
+020200a	valid	0	
+031000a	valid	0	
+020000d	valid	0	
+031000c	valid	0	
+020200c	valid	0	
+011100d	valid	0	
+020200b	valid	0	
+031000b	errors	2	E347(3)
+031000f	valid	0	
+011100a	valid	0	
+031000g	valid	0	
+020000b	valid	0	
+031000e	valid	0	
+020200d	valid	0	
+020000a	valid	0	
+T5	errors	8	E347(9) E348(3)
+T4	errors	2	E347(3)
+T3	errors	6	E347(9)
+T21	errors	2	E347(3)
+T192	errors	2	E347(3)
+09	errors	6	E348(6) E347(3)
+04	errors	46	E348(48) E347(21)
+38	errors	62	E348(66) E347(27)
+39	errors	4	E348(3) E347(3)
+05	errors	14	E348(15) E347(6)
+29	errors	34	E348(33) E347(18)
+28	errors	90	E348(90) E347(45)
+02	errors	34	E348(36) E347(15)
+03	errors	58	E348(57) E347(30)
+65	errors	16	E348(18) E347(6)
+48	errors	54	E348(54) E347(27)
+45	errors	42	E348(45) E347(18)
+44	errors	10	E348(9) E347(6)
+46	errors	2	E348(3)
+12SleepyHeads	valid	0	
+07Camping	errors	2	E348(3)
+20CowabungaDudes	valid	0	
+14StageDoor	valid	0	
+01Goldilocks	valid	0	
+18RunAround	valid	0	
+21SleepingBeauty	valid	0	
+09NeedingMarbles	valid	0	
+05AmyConv	valid	0	
+03JLUpstairs	valid	0	
+06SealsquidUpstairs	valid	0	
+22LadyDogs	valid	0	
+19ValentinesDay	valid	0	
+08UpstairsDownstairs	valid	0	
+10BoysTown	valid	0	
+13FireEngine	valid	0	
+24HighwayTrucks	valid	0	
+16MarbyMesses	valid	0	
+15DollhouseTwo	valid	0	
+11December	valid	0	
+06SealSquid	valid	0	
+23CareBaby	valid	0	
+17SqueakyMom	valid	0	
+02MarblePlay	valid	0	
+040919	errors	4	E348(3) E347(3)
+home	errors	2	E347(3)
+muffin	errors	2	E348(3)
+cs4-8	valid	0	
+1-18	valid	0	
+2-23	valid	0	
+2-4	valid	0	
+d6cookie	valid	0	
+d1	valid	0	
+d6	valid	0	
+d4	errors	6	E347(6) E704(3)
+d5	errors	6	E348(9)
+JackTom	valid	0	
+JillAmy	errors	18	E348(27)
+CatTricks	errors	12	E348(18)
+MainIdea	errors	16	E348(24)
+is10-10-05a1	valid	0	
+is18-02-06	errors	34	E347(36) E348(15)
+is25-11-05a	errors	120	E347(150) E348(30)
+is10-10-05a2	errors	4	E348(6)
+is01-02-06	errors	2	E347(3)
+is28-10-05a	errors	12	E347(18)
+is01-11-05a	valid	0	
+is01-11-05b	errors	10	E347(9) E348(6)
+is01-11-05c	errors	8	E347(12)
+is28-10-05a1	valid	0	
+is30-11-06a	errors	14	E348(12) E347(9)
+is07-04-06	errors	20	E347(21) E348(9)
+is18-11-05b	errors	8	E347(9) E348(3)
+is10-10-05a	errors	2	E347(3)
+is01-11-05d	errors	8	E347(12)
+is20-12-05a	errors	16	E347(18) E348(6)
+is18-11-05a	errors	6	E347(9)
+is10-10-05b	valid	0	
+is01-11-05	valid	0	
+is30-01-08b	valid	0	
+is30-01-08a	valid	0	
+is23-01-08a	errors	4	E347(6)
+is12-01-06a	valid	0	
+is10-10-05	errors	10	E348(9) E347(6)
+is12-01-06b	errors	30	E347(36) E348(9)
+is11-11-05a	errors	30	E347(42) E348(3)
+is12-01-06c	valid	0	
+is10-02-06	errors	32	E347(39) E348(9)
+mf1	errors	324	E348(468) E347(18)
+mf3	errors	500	E348(735) E347(15)
+ac	errors	896	E348(1287) E347(57)
+mf2	errors	214	E348(312) E347(9)
+cd1	errors	18	E348(24) E347(3)
+ol	errors	162	E348(243)
+mr	valid	0	
+cd2	errors	116	E348(174)
+cd3	errors	334	E348(480) E347(21)
+mf4	errors	1424	E348(2043) E347(93)
+olm2	errors	436	E348(621) E347(33)
+aj4	errors	1464	E348(2034) E347(162)
+olm1	errors	296	E348(438) E347(6)
+oa	errors	20	E348(30)
+aj1	errors	768	E348(1110) E347(42)
+aj2	errors	1362	E348(1944) E347(99)
+aj3	errors	1014	E348(1455) E347(66)
+cj1	errors	444	E348(624) E347(42)
+coral	errors	20	E348(30)
