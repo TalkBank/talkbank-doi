@@ -135,6 +135,21 @@ cargo run --release -p talkbank-cli -- validate ../data/ --roundtrip --force  # 
 cargo run --release -p talkbank-cli -- validate ../data/ --skip-alignment     # Faster
 ```
 
+## Batchalign3 Testing
+
+When running `batchalign3 align` or other commands in experiments/testing:
+- **Always pass `--no-open-dashboard`** to prevent browser tab spam
+- **Use at most 4 workers** (`--workers 4`) to avoid OOM crashes — each worker loads ML models consuming several GB RAM
+- **Never run 8+ workers** on a 64 GB machine — this caused a kernel-level crash
+
+```bash
+# Correct experiment invocation:
+batchalign3 --no-open-dashboard align input.cha -o output/ --utr-strategy auto -v
+
+# Start server with safe worker count:
+batchalign3 serve start --workers 4
+```
+
 ## Deployment
 
 ### Deploy Scripts
