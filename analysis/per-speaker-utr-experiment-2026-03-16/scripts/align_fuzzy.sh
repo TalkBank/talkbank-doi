@@ -20,12 +20,15 @@ mkdir -p "$OUT_DIR"
 
 for cha in "$INPUT_DIR"/*.cha; do
     base=$(basename "$cha" .cha)
-    audio="$AUDIO_DIR/$base.mp3"
-    [ -f "$audio" ] || { echo "SKIP $base: no audio at $audio"; continue; }
+    audio=""
+    for ext in mp3 mp4 wav; do
+        [ -f "$AUDIO_DIR/$base.$ext" ] && audio="$AUDIO_DIR/$base.$ext" && break
+    done
+    [ -n "$audio" ] || { echo "SKIP $base: no audio in $AUDIO_DIR"; continue; }
 
     tmpdir=$(mktemp -d)
     cp "$cha" "$tmpdir/"
-    ln -s "$(cd "$AUDIO_DIR" && pwd)/$base.mp3" "$tmpdir/$base.mp3"
+    ln -s "$(cd "$AUDIO_DIR" && pwd)/$(basename "$audio")" "$tmpdir/$(basename "$audio")"
 
     echo "=== $base ($CORPUS, fuzzy $THRESHOLD) ==="
     "$BATCHALIGN" --no-open-dashboard align "$tmpdir/$base.cha" \
