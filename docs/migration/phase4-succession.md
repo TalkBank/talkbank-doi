@@ -220,6 +220,111 @@ Reduces "works on our machines" risk to zero.
 
 ---
 
+## Technical North Star: One-Command TalkBank Instance
+
+**Goal:** `docker compose up` (or equivalent) stands up a complete, working TalkBank — web sites, data browsing, media serving, batchalign — from scratch, on any machine, by anyone.
+
+### What This Requires
+
+**1. Infrastructure-as-code for the web stack**
+
+Everything on talkbank.org today is hand-configured. It needs to become a repo:
+
+```
+talkbank-infra/
+├── docker-compose.yml          # Orchestrates everything
+├── nginx/
+│   ├── nginx.conf              # Generated from webdev/ templates
+│   └── certs/                  # Let's Encrypt auto-renewal
+├── tbb/                        # John's Node app (or successor)
+├── runner/                     # GitHub Actions self-hosted runner config
+└── README.md                   # "How to stand up TalkBank"
+```
+
+A successor clones this repo, sets a few environment variables (domain, media path), and `docker compose up` gives them a working TalkBank instance.
+
+**2. Published packages**
+
+| Package | Registry | Status |
+|---------|----------|--------|
+| talkbank-tools CLI (`chatter`) | crates.io + GitHub Releases (binaries) | TODO |
+| batchalign3 CLI | PyPI (`batchalign3-cli`) + crates.io | In progress |
+| batchalign3 Python (ML server) | PyPI (`batchalign3`) | In progress |
+| Pre-commit hooks | pip-installable or standalone scripts | Phase 3 |
+
+Users and the successor should be able to `pip install batchalign3` or `cargo install talkbank-cli` without cloning repos or building from source.
+
+**3. Media strategy**
+
+20 TB on a physical Mac Studio at CMU. Options ranked by reproducibility:
+
+| Option | Cost | Reproducibility | Maintenance |
+|--------|------|----------------|-------------|
+| Cloud object storage (S3/B2) + CDN | ~$100-200/month | Excellent — anyone can replicate | Zero (managed) |
+| University-hosted NAS | Depends on institution | Good — standard IT request | Low |
+| Internet Archive | Free | Excellent — permanent | Zero (but slow, less control) |
+| Physical Mac at successor's institution | One-time hardware | Poor — hardware-dependent | Medium |
+
+Cloud storage is the most Phase 4-compatible. Can migrate incrementally: start mirroring from net to S3/B2 now, switch DNS later.
+
+**4. Data pipeline reproducibility**
+
+After Phase 3, the data pipeline is:
+```
+User pushes → pre-push hooks (local) → GitHub → Actions pulls on server → TBB reads clones
+```
+
+To make this reproducible for a successor:
+- Pre-push hooks are installed via setup script (already planned)
+- GitHub Actions workflows are in each repo (already planned)
+- The self-hosted runner is part of the Docker Compose infra (see #1)
+- No manual steps anywhere
+
+**5. Batchalign containerization**
+
+batchalign3 needs ML models (Whisper, Stanza, etc.) which are multi-GB downloads. A Docker image with models baked in means:
+- `docker run talkbank/batchalign3 align input.cha` just works
+- No CUDA/MPS/driver issues on the host
+- Successor's grad students can run it without understanding the Python/Rust stack
+
+### Phase 4 Design Principles
+
+These should inform every decision made in Phases 1-3:
+
+1. **No snowflakes.** Every server configuration must be reproducible from code. If a VM dies, we can rebuild it from a repo, not from someone's memory.
+
+2. **No gatekeepers.** Every routine operation (adding a corpus, minting a DOI, deploying a change) must be possible without SSH access to a specific machine.
+
+3. **No single points of failure.** No person, machine, or account whose loss makes TalkBank inoperable. Every credential has a documented recovery path.
+
+4. **Prefer managed services over self-hosted.** GitHub over self-hosted GitLab. Cloud storage over local drives. Let's Encrypt over manual certs. Fewer things to maintain = fewer things that break when nobody's maintaining them.
+
+5. **Prefer standard tooling over custom scripts.** Docker over bespoke deploy scripts. Pre-commit framework over custom hooks. Well-known CI patterns over clever pipelines.
+
+### Decisions in Phases 1-3 That Advance Phase 4
+
+| Decision | How it helps Phase 4 |
+|----------|---------------------|
+| Move to GitHub | Eliminates self-hosted git server. Successor just needs GitHub org access. |
+| Pre-commit hooks replace deploy | No server-side deploy script. Pipeline works on any machine with hooks installed. |
+| GitHub Actions for pulls | Standard CI, no custom orchestration. Self-hosted runner is commodity infrastructure. |
+| Standardized workspace layout | Setup script works for anyone, anywhere. |
+| Fresh git init (no history) | Smaller repos, faster clones, no archaeology needed. |
+| John's dynamic ZIPs | Eliminates generated artifacts that need a build step. |
+| Single DOI tool | One tool to maintain, not three. |
+
+### Decisions to Avoid (Would Make Phase 4 Harder)
+
+| Temptation | Why it hurts Phase 4 |
+|------------|---------------------|
+| Custom CI server (Jenkins, etc.) | One more thing to maintain; GitHub Actions is sufficient. |
+| Hardcoding paths to CMU machines | Successor won't be at CMU. Use config/env vars. |
+| Storing credentials in repos | Not transferable, not secure. Use secret managers or env vars. |
+| Building tools that require our specific server setup | Docker/containers ensure portability. |
+| Keeping any process that requires "ask Chen" | Document it or automate it. |
+
+---
+
 ## Open Questions for Brian
 
 1. Has he identified potential successors? (Which professors, which universities?)
