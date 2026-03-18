@@ -1,0 +1,40 @@
+========================================
+Phase 6: CA Overlap Experiment Rerun
+Date: Wed Mar 18 17:10:01 EDT 2026
+========================================
+
+=== sbcsae ===
+--- Strategy: global ---
+  Coverage: 7776/10540
+--- Strategy: auto ---
+  Coverage: 8226/10540
+
+Previous results:
+  global (prev): 7776/10540
+  two-pass (prev): 8130/10540
+  fuzzy 0.85 (prev): 8094/10540
+
+=== jefferson ===
+--- Strategy: global ---
+  Coverage: 2274/2561
+--- Strategy: auto ---
+  Coverage: 2371/2561
+
+Previous results:
+  global (prev): 2274/2561
+  two-pass (prev): 2182/2561
+  fuzzy 0.85 (prev): 2295/2561
+
+=== taiwanhakka ===
+--- Strategy: global ---
+  Coverage: 2322/2661
+--- Strategy: auto ---
+  Coverage: 2246/2661
+
+Previous results:
+  global (prev): 2322/2661
+  two-pass (prev): 2446/2661
+  fuzzy 0.85 (prev): 2446/2661
+
+========================================
+Done. Full results in: results/phase6-20260318-1709.txt
