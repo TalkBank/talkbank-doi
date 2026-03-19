@@ -402,9 +402,13 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         if is_new_speaker {
             // Flush previous utterance.
             if !current_elements.is_empty() {
-                let term = resolve_terminator(last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)), false);
+                // Compute gap: current utterance end → next line's start.
+                let gap = line.start_time - current_end_ms.unwrap_or(0) as f64 / 1000.0;
+                let term = resolve_terminator(
+                    last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)),
+                    gap,
+                );
                 let utt_idx = utterances.len();
-                // Fix up bracket utterance_index for all brackets in this utterance.
                 for elem in &current_elements {
                     if let ContentElement::Bracket(bid) = elem {
                         if let Some(br) = all_brackets.iter_mut().find(|b: &&mut BracketRef| b.id == *bid) {
@@ -442,7 +446,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
 
             if has_trn_terminator && !current_elements.is_empty() {
                 // Flush at terminator boundary.
-                let term = resolve_terminator(last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)), false);
+                let term = resolve_terminator(last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)), line.start_time - current_end_ms.unwrap_or(0) as f64 / 1000.0);
                 let utt_idx = utterances.len();
                 for elem in &current_elements {
                     if let ContentElement::Bracket(bid) = elem {
@@ -545,9 +549,12 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         }
     }
 
-    // Flush final utterance.
+    // Flush final utterance — no next speaker, large gap → trail off if truncated.
     if !current_elements.is_empty() {
-        let term = resolve_terminator(last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)), false);
+        let term = resolve_terminator(
+            last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)),
+            f64::MAX,
+        );
         let utt_idx = utterances.len();
         for elem in &current_elements {
             if let ContentElement::Bracket(bid) = elem {
@@ -595,21 +602,33 @@ enum RawTerminator {
     Linker,     // & : becomes +,
 }
 
-fn resolve_terminator(raw: Option<RawTerminator>, next_speaker_same: bool) -> Terminator {
+/// Resolve a raw TRN terminator to a CHAT terminator.
+///
+/// For truncation (`--`), uses the temporal gap to the next speaker's start:
+/// - gap < 0.5s → `+/.` (interrupted: next speaker already started)
+/// - gap ≥ 0.5s → `+...` (trail off: significant pause before next speaker)
+fn resolve_terminator(raw: Option<RawTerminator>, gap_to_next_seconds: f64) -> Terminator {
     match raw {
         Some(RawTerminator::Period) => Terminator::Period,
         Some(RawTerminator::Question) => Terminator::Question,
         Some(RawTerminator::Truncation) => {
-            if next_speaker_same {
-                Terminator::TrailOff  // +... (same speaker trails off)
+            // Temporal analysis: did the next speaker start before this one stopped?
+            // gap < 0: next speaker overlaps → interrupted (+/.)
+            // gap >= 0: this speaker stopped first → trail off (+...)
+            //
+            // Note: Brian's hand-edited CHAT uses a roughly 50/50 split between
+            // +/. and +... that doesn't purely follow timing. His decisions were
+            // based on listening to the audio. Our temporal approximation skews
+            // toward +... because many TRN timestamps are exactly aligned (gap=0).
+            // This is documented in TRN-TO-CHAT-TRANSLATION.md.
+            if gap_to_next_seconds < 0.0 {
+                Terminator::Interruption  // +/.
             } else {
-                Terminator::Interruption  // +/. (different speaker interrupts)
+                Terminator::TrailOff  // +...
             }
         }
         Some(RawTerminator::Linker) => Terminator::SelfCompletion,
-        None => {
-            Terminator::Implicit
-        }
+        None => Terminator::Implicit,
     }
 }
 

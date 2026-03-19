@@ -145,12 +145,17 @@ glottal stop.
 | `&` (at turn end) | `+,` | Continuation linker → self-completion |
 | (no terminator) | `.` | Implicit period inserted |
 
-**Note on `--`:** The hand-edited CHAT uses both `+/.` (interruption by
-another speaker) and `+...` (trailing off, same speaker). The distinction
-is semantic — it depends on WHY the speaker stopped — and can only be
-determined by listening to the audio. The converter defaults to `+/.` for
-all `--` because this is the most common case. Cases requiring `+...`
-need manual review.
+**Automated `--` resolution:** The converter uses temporal analysis:
+- If the next speaker's start time is **before** this speaker's `--` timestamp
+  (negative gap), the speaker was interrupted → `+/.`
+- If the next speaker's start time is **at or after** the `--` timestamp
+  (zero or positive gap), the speaker trailed off → `+...`
+
+This gives ~28% `+/.` and ~72% `+...` on SBC002. Brian's hand-edited CHAT has
+~52% `+/.` and ~49% `+...` — his decisions were based on listening to audio,
+not purely on timing. The temporal approximation is principled but imperfect:
+many TRN timestamps are exactly aligned (gap=0), which all become `+...` under
+our rule even though some were perceptually interruptions.
 
 ### Phonological Fragments
 
@@ -280,6 +285,71 @@ TRN uses full names (`JAMIE`, `HAROLD`). CHAT uses truncated IDs (`JAMI`, `HARO`
 ```
 
 ---
+
+## Heuristics and Approximations
+
+This section documents every decision in the converter that involves
+heuristic reasoning rather than deterministic translation.
+
+### H1: Overlap grouping (which brackets belong together)
+
+**Algorithm:** petgraph union-find over a constraint graph.
+**Edges:** Alignment edges (indentation), temporal overlap (200ms tolerance),
+line adjacency (≤2 lines).
+**Accuracy:** ~99% of brackets grouped correctly (2,140 E348 at parity with
+hand-edited baseline of 2,152). 225 E347 cross-utterance mismatches remain.
+**Limitation:** Purely temporal — does not consider content similarity,
+intonation, or discourse structure.
+
+### H2: Top vs bottom assignment (who is "first")
+
+**Rule:** First speaker in document order within each overlap set is the top.
+**Accuracy:** Correct by definition for the TRN format (the speaker whose
+bracket appears first in the file was speaking first).
+**Limitation:** Document order ≠ temporal order in rare cases where TRN lines
+are not sorted by start time.
+
+### H3: Truncation terminator (`--` → `+/.` vs `+...`)
+
+**Algorithm:** Temporal gap analysis.
+- gap < 0 (next speaker started before `--`): `+/.` (interruption)
+- gap ≥ 0 (this speaker stopped before next speaker): `+...` (trail off)
+
+**Accuracy:** Principled but imperfect. Produces ~28% `+/.` and ~72% `+...`
+on SBC002, vs Brian's ~52%/~49%. The discrepancy is because Brian's decisions
+incorporated audio perception, not just timing.
+**Manual review needed:** Cases where gap ≈ 0 are genuinely ambiguous.
+
+### H4: Alignment edge computation (indentation correspondence)
+
+**Algorithm:** For each Open bracket with `char_offset > 0` (indented), search
+backward up to 5 lines for a different-speaker Open bracket within 2 columns.
+**Coverage:** 5,269 edges found across 24,514 open brackets (21.5%).
+**Limitation:** Only detects indentation-based alignment. Many legitimate
+overlap correspondences have no indentation cue.
+
+### H5: Same-speaker set splitting
+
+**Algorithm:** After union-find grouping, any connected component with multiple
+pairs from the same speaker is split greedily by document order.
+**Accuracy:** Prevents self-overlap (E704) but may create artificial set
+boundaries within genuine multi-utterance overlaps.
+
+### H6: Utterance boundary placement
+
+**Rule:** Split at TRN terminators (`.`, `?`, `--`) and at speaker changes.
+**Limitation:** This is the source of E348 within-utterance pairing errors
+(2,140). Bracket pairs that span terminators have their open and close on
+different CHAT utterances. This is inherent to SBCSAE's data and matches the
+hand-edited baseline.
+
+### H7: Compatible index matching
+
+**Rule:** Unnumbered brackets only group with unnumbered; `[2` only with `[2`.
+**Exception:** Alignment edges override this — if indentation shows an
+unnumbered bracket aligns with a numbered one, they're grouped.
+**Limitation:** May under-group in cases where a top is numbered but the
+bottom is unnumbered (or vice versa) without an alignment edge.
 
 ## Known Limitations
 
