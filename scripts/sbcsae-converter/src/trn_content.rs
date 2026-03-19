@@ -129,13 +129,47 @@ pub fn parse_trn_content(
     }
 
     // Post-process: apply lengthening (= → :) and glottal (% → ʔ) in words.
-    for elem in &mut elements {
+    // Also split words that end with a long feature close label+> (e.g., "wordX>" → "word" + LongFeatureEnd("X")).
+    let mut processed = Vec::new();
+    for elem in elements {
         if let TrnElement::Word(w) = elem {
-            *w = w.replace('=', ":").replace('%', "ʔ");
+            let w = w.replace('=', ":").replace('%', "ʔ");
+            // Check for trailing LABEL> pattern (known long feature labels).
+            if let Some((word_part, label)) = split_trailing_long_feature_end(&w) {
+                if !word_part.is_empty() {
+                    processed.push(TrnElement::Word(word_part));
+                }
+                processed.push(TrnElement::LongFeatureEnd(label));
+            } else {
+                processed.push(TrnElement::Word(w));
+            }
+        } else {
+            processed.push(elem);
         }
     }
 
-    elements
+    processed
+}
+
+/// Check if a word ends with a known long feature label followed by >.
+/// Returns (word_part, label) if found, None otherwise.
+fn split_trailing_long_feature_end(word: &str) -> Option<(String, String)> {
+    // Known single-char labels that commonly appear concatenated with words.
+    // Also handle multi-char labels like VOX, HUMMING, etc.
+    if !word.ends_with('>') {
+        return None;
+    }
+    let without_gt = &word[..word.len() - 1];
+    // Try known labels from longest to shortest.
+    let labels = ["HUMMING", "VOX", "MRC", "SING", "FOOD", "READ", "PAR", "YWN",
+                  "SM", "HI", "WH", "FF", "PP", "BR", "L2", "F", "P", "Q", "X", "@", "%"];
+    for label in labels {
+        if without_gt.ends_with(label) {
+            let word_part = without_gt[..without_gt.len() - label.len()].to_string();
+            return Some((word_part, label.to_string()));
+        }
+    }
+    None
 }
 
 /// Determine how many chars an overlap bracket token spans at the given char offset.
