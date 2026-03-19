@@ -45,9 +45,12 @@ pub enum TrnElement {
 pub struct ParseContext<'a> {
     /// (char_offset, role, real_index) for brackets on this line.
     pub brackets: &'a [(usize, OverlapRole, usize)],
-    /// Current byte offset in the input (tracked manually since winnow
-    /// doesn't expose position in &str mode easily).
+    /// Total byte length of the preprocessed string.
     pub start_len: usize,
+    /// Map from char index to byte offset in preprocessed string.
+    pub char_to_byte: &'a [usize],
+    /// Total number of chars.
+    pub total_chars: usize,
 }
 
 /// Parse TRN raw content into elements.
@@ -55,48 +58,55 @@ pub fn parse_trn_content(
     raw: &str,
     bracket_classifications: &[(usize, OverlapRole, usize)],
 ) -> Vec<TrnElement> {
-    // Pre-process: replace bracket tokens with placeholder \x01/\x02 so the
+    // Pre-process: replace bracket tokens with placeholder chars so the
     // winnow parser doesn't need to coordinate with bracket offsets.
-    let mut chars: Vec<u8> = raw.bytes().collect();
+    // Work with chars (not bytes) since bracket.rs uses char offsets.
+    let mut char_vec: Vec<char> = raw.chars().collect();
     let mut bracket_at: Vec<(usize, OverlapRole, usize)> = Vec::new();
 
-    for &(offset, role, real_index) in bracket_classifications {
-        if offset >= chars.len() {
+    for &(char_offset, role, real_index) in bracket_classifications {
+        if char_offset >= char_vec.len() {
             continue;
         }
-        // Determine how many bytes this bracket token spans.
-        let span = bracket_span(&chars, offset);
-        // Replace with \x01 (open) or \x02 (close) + spaces for remaining bytes.
+        // Determine how many chars this bracket token spans.
+        let span = bracket_char_span(&char_vec, char_offset);
+        // Replace with \x01 (open) or \x02 (close) + spaces for remaining chars.
         let marker = match role {
-            OverlapRole::TopBegin | OverlapRole::BottomBegin => b'\x01',
-            OverlapRole::TopEnd | OverlapRole::BottomEnd => b'\x02',
+            OverlapRole::TopBegin | OverlapRole::BottomBegin => '\x01',
+            OverlapRole::TopEnd | OverlapRole::BottomEnd => '\x02',
         };
-        chars[offset] = marker;
+        char_vec[char_offset] = marker;
         for i in 1..span {
-            if offset + i < chars.len() {
-                chars[offset + i] = b' ';
+            if char_offset + i < char_vec.len() {
+                char_vec[char_offset + i] = ' ';
             }
         }
-        bracket_at.push((offset, role, real_index));
+        bracket_at.push((char_offset, role, real_index));
     }
 
-    let preprocessed = String::from_utf8_lossy(&chars);
+    let preprocessed: String = char_vec.iter().collect();
+    // Build a char-offset → byte-offset mapping for the preprocessed string.
+    let char_to_byte: Vec<usize> = preprocessed.char_indices().map(|(i, _)| i).collect();
     let ctx = ParseContext {
         brackets: &bracket_at,
-        start_len: preprocessed.len(),
+        start_len: preprocessed.len(), // byte length
+        char_to_byte: &char_to_byte,
+        total_chars: char_vec.len(),
     };
     let mut elements = Vec::new();
     let mut input: &str = &preprocessed;
 
     while !input.is_empty() {
-        let offset = ctx.start_len - input.len();
+        let byte_offset = ctx.start_len - input.len();
+        // Convert byte offset to char offset for bracket lookup.
+        let char_offset = ctx.char_to_byte.iter().position(|&b| b == byte_offset).unwrap_or(0);
 
         // Check for bracket placeholders (\x01 = open, \x02 = close).
         if input.starts_with('\x01') || input.starts_with('\x02') {
-            if let Some(&(_off, role, real_index)) = ctx.brackets.iter().find(|(o, _, _)| *o == offset) {
+            if let Some(&(_off, role, real_index)) = ctx.brackets.iter().find(|(o, _, _)| *o == char_offset) {
                 elements.push(TrnElement::Overlap { role, real_index });
             }
-            // Skip the placeholder byte.
+            // Skip the placeholder char.
             input = &input[1..];
             continue;
         }
@@ -128,39 +138,36 @@ pub fn parse_trn_content(
     elements
 }
 
-/// Determine how many bytes an overlap bracket token spans at the given offset.
-fn bracket_span(bytes: &[u8], offset: usize) -> usize {
-    if offset >= bytes.len() {
+/// Determine how many chars an overlap bracket token spans at the given char offset.
+fn bracket_char_span(chars: &[char], offset: usize) -> usize {
+    if offset >= chars.len() {
         return 1;
     }
-    match bytes[offset] {
-        b'[' => {
-            // [ or [N
-            if offset + 1 < bytes.len() && bytes[offset + 1] >= b'2' && bytes[offset + 1] <= b'9' {
+    match chars[offset] {
+        '[' => {
+            if offset + 1 < chars.len() && chars[offset + 1] >= '2' && chars[offset + 1] <= '9' {
                 2
             } else {
                 1
             }
         }
-        b'2'..=b'9' => {
-            // N] or N$]
-            if offset + 1 < bytes.len() && bytes[offset + 1] == b']' {
+        '2'..='9' => {
+            if offset + 1 < chars.len() && chars[offset + 1] == ']' {
                 2
-            } else if offset + 2 < bytes.len() && bytes[offset + 1] == b'$' && bytes[offset + 2] == b']' {
+            } else if offset + 2 < chars.len() && chars[offset + 1] == '$' && chars[offset + 2] == ']' {
                 3
             } else {
                 1
             }
         }
-        b'$' => {
-            // $]
-            if offset + 1 < bytes.len() && bytes[offset + 1] == b']' {
+        '$' => {
+            if offset + 1 < chars.len() && chars[offset + 1] == ']' {
                 2
             } else {
                 1
             }
         }
-        b']' => 1,
+        ']' => 1,
         _ => 1,
     }
 }
