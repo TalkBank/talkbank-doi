@@ -576,8 +576,11 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         });
     }
 
-    // Stage 7: Validate long feature label matching.
+    // Stage 7: Validate TRN structure.
     validate_long_feature_labels(&utterances, diag);
+    validate_nonvocal_labels(&utterances, diag);
+    validate_timestamp_monotonicity(&lines, diag);
+    validate_vocalism_names(&utterances, diag);
 
     // Stage 8: Compute alignment edges.
     let alignment_edges = compute_alignment_edges(&all_brackets, 2, 5);
@@ -675,6 +678,113 @@ fn validate_long_feature_labels(utterances: &[TrnUtterance], diag: &mut Diagnost
             crate::types::DiagnosticCode::IncompleteTop, // Reusing code
             format!("Long feature open '<{label}' was never closed with '{label}>'"),
         );
+    }
+}
+
+/// Validate nonvocal label matching: <<LABEL...LABEL>> open matches close.
+/// Note: crossing nonvocals (<<A...B>>) are legitimate — different events
+/// can overlap. This only reports genuinely orphaned opens/closes.
+fn validate_nonvocal_labels(utterances: &[TrnUtterance], diag: &mut Diagnostics) {
+    use crate::types::DiagnosticCode;
+
+    let mut stack: Vec<(String, usize)> = Vec::new(); // (label, source_line)
+
+    for utt in utterances {
+        for elem in &utt.elements {
+            match elem {
+                ContentElement::NonvocalBegin(label) => {
+                    stack.push((label.clone(), utt.source_lines.first));
+                }
+                ContentElement::NonvocalEnd(label) => {
+                    // Allow crossing: find matching label anywhere in stack.
+                    let found = stack.iter().rposition(|(l, _)| l == label);
+                    if let Some(idx) = found {
+                        stack.remove(idx);
+                    }
+                    // Orphan closes are OK for nonvocals (different events cross).
+                }
+                _ => {}
+            }
+        }
+    }
+
+    // Report unclosed opens (these are genuine — the event started but never ended).
+    for (label, source_line) in &stack {
+        diag.warn(
+            *source_line,
+            None,
+            DiagnosticCode::IncompleteTop,
+            format!("Nonvocal open '<<{label}' was never closed with '{label}>>'"),
+        );
+    }
+}
+
+/// Validate timestamp monotonicity within same-speaker continuation turns.
+fn validate_timestamp_monotonicity(lines: &[crate::types::TrnLine], diag: &mut Diagnostics) {
+    use crate::types::DiagnosticCode;
+
+    let mut prev_start = -1.0_f64;
+
+    for line in lines {
+        if line.speaker.is_some() {
+            // New speaker — reset.
+            prev_start = line.start_time;
+            continue;
+        }
+
+        // Continuation line — check monotonicity.
+        if line.start_time > 0.0 && prev_start > 0.0
+            && line.start_time < prev_start - 0.05
+        {
+            diag.warn(
+                line.line_number,
+                None,
+                DiagnosticCode::TimestampAnomaly,
+                format!(
+                    "Continuation line starts at {:.2}s, before previous line at {:.2}s (delta={:.2}s)",
+                    line.start_time, prev_start, line.start_time - prev_start
+                ),
+            );
+        }
+
+        prev_start = line.start_time;
+    }
+}
+
+/// Validate vocalism names — check for known typos and malformed names.
+fn validate_vocalism_names(utterances: &[TrnUtterance], diag: &mut Diagnostics) {
+    use crate::types::DiagnosticCode;
+
+    let known_vocalisms = [
+        "H", "Hx", "HX", "TSK", "SNIFF", "THROAT", "COUGH", "SWALLOW",
+        "GASP", "SIGH", "YAWN", "DRINK", "KISS", "GRUNT", "WHISTLE",
+        "SNORT", "HUMMING", "MURMUR", "BLOW", "LAUGHTER", "laugh",
+    ];
+
+    for utt in utterances {
+        for elem in &utt.elements {
+            if let ContentElement::Vocalism(name) = elem {
+                // Check for digits in vocalism name (likely typo).
+                if name.chars().any(|c| c.is_ascii_digit()) {
+                    diag.warn(
+                        utt.source_lines.first,
+                        None,
+                        DiagnosticCode::BracketIndexMismatch, // Reuse for malformed name
+                        format!("Vocalism '({name})' contains digit — possible typo"),
+                    );
+                }
+
+                // Check for very long names (likely parsing error).
+                if name.len() > 30 {
+                    diag.warn(
+                        utt.source_lines.first,
+                        None,
+                        DiagnosticCode::BracketIndexMismatch,
+                        format!("Vocalism '({name})' is unusually long — possible parsing error"),
+                    );
+                }
+            }
+        }
     }
 }
 
