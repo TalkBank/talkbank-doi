@@ -204,6 +204,20 @@ fn group_into_sets(pairs: &[BracketPair], doc: &TrnDocument) -> Vec<OverlapSet> 
         component_map.entry(root).or_default().push(i);
     }
 
+    // Post-process: split components that have multiple pairs from the same
+    // speaker into separate sets. In a valid overlap set, each speaker
+    // should appear at most once (one bracket pair per speaker per set).
+    let mut split_components: Vec<Vec<usize>> = Vec::new();
+    for (_, members) in &component_map {
+        let sub_sets = split_same_speaker(members, pairs);
+        split_components.extend(sub_sets);
+    }
+    let component_map: HashMap<usize, Vec<usize>> = split_components
+        .into_iter()
+        .enumerate()
+        .map(|(i, members)| (i, members))
+        .collect();
+
     let mut sets: Vec<OverlapSet> = component_map
         .into_values()
         .enumerate()
@@ -219,6 +233,34 @@ fn group_into_sets(pairs: &[BracketPair], doc: &TrnDocument) -> Vec<OverlapSet> 
     }
 
     sets
+}
+
+/// Split a connected component into sub-sets where each speaker appears at most once.
+/// Uses a greedy approach: iterate pairs in document order, assign each to the
+/// first sub-set that doesn't already have that speaker.
+fn split_same_speaker(members: &[usize], pairs: &[BracketPair]) -> Vec<Vec<usize>> {
+    let mut sub_sets: Vec<Vec<usize>> = Vec::new();
+    let mut sub_set_speakers: Vec<Vec<String>> = Vec::new();
+
+    for &idx in members {
+        let speaker = &pairs[idx].speaker;
+        // Find the first sub-set that doesn't have this speaker.
+        let mut placed = false;
+        for (si, ss) in sub_set_speakers.iter_mut().enumerate() {
+            if !ss.contains(speaker) {
+                sub_sets[si].push(idx);
+                ss.push(speaker.clone());
+                placed = true;
+                break;
+            }
+        }
+        if !placed {
+            sub_sets.push(vec![idx]);
+            sub_set_speakers.push(vec![speaker.clone()]);
+        }
+    }
+
+    sub_sets
 }
 
 fn compatible_indices(a: Option<u8>, b: Option<u8>) -> bool {
