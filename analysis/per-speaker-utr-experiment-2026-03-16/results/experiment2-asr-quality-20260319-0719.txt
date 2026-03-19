@@ -1,0 +1,19 @@
+========================================
+Experiment 2: ASR Quality (WER) per Language
+Date: Thu Mar 19 08:10:02 EDT 2026
+========================================
+
+file                 lang   WER
+----                 ----   ---
+01                   hak      RESULTS: 0 succeeded, 1 failed (of 1 files)
+02                   hak      RESULTS: 0 succeeded, 1 failed (of 1 files)
+03                   hak      RESULTS: 0 succeeded, 1 failed (of 1 files)
+10                   hak      RESULTS: 0 succeeded, 1 failed (of 1 files)
+12                   hak      RESULTS: 0 succeeded, 1 failed (of 1 files)
+fusser12             cym      RESULTS: 0 succeeded, 1 failed (of 1 files)
+german050814         deu    (see log)
+mle28                fra      RESULTS: 0 succeeded, 1 failed (of 1 files)
+patagonia30          cym    (see log)
+serbian030005        srp      RESULTS: 0 succeeded, 1 failed (of 1 files)
+tbi_n22              eng      RESULTS: 0 succeeded, 1 failed (of 1 files)
+tbi_tb23             eng    (see log)

@@ -1,0 +1,9 @@
+warning: manual server on port 8001 has a different build (1.0.0-43a80b07-dirty-1773876912). Restart with `batchalign3 serve stop && batchalign3 serve start`.
+Found 1 file(s) to process.
+
+Submitting to local daemon at http://127.0.0.1:8001...
+Job 88eb9cd7-42d submitted (1 file(s))
+Dashboard: http://127.0.0.1:8001/dashboard/jobs/88eb9cd7-42d
+
+
+All done! 1 file(s) written to /private/var/folders/52/w_b_t1zd2fj7t3ml_5165l7h0000gn/T/tmp.1IeEDGYqfC

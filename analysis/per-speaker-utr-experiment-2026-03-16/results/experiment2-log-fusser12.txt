@@ -1,0 +1,14 @@
+Found 1 file(s) to process.
+
+Submitting to local daemon at http://127.0.0.1:8001...
+Job 746be990-fc9 submitted (1 file(s))
+Dashboard: http://127.0.0.1:8001/dashboard/jobs/746be990-fc9
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RESULTS: 0 succeeded, 1 failed (of 1 files)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✗ fusser12.mp3: Benchmark failed for fusser12.mp3: Benchmark failed: validation error: morphotag pre-validation failed: [L0] File has 2 parse error(s); input may be malformed
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+error: job 746be990-fc9 finished with status failed: fusser12.mp3: Benchmark failed for fusser12.mp3: Benchmark failed: validation error: morphotag pre-validation failed: [L0] File has 2 parse error(s); input may be malformed

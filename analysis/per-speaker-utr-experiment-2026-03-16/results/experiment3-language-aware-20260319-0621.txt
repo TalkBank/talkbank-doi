@@ -1,0 +1,55 @@
+========================================
+Experiment 3: Language-Aware Strategy Selection
+Date: Thu Mar 19 07:19:06 EDT 2026
+========================================
+
+Strategy mapping:
+  eng → auto
+  srp → global
+  deu → global
+  fra → global
+  cym → global
+  hak → global
+
+file                      lang   strategy   lang-aware     
+----                      ----   --------   ----------     
+
+--- TaiwanHakka ---
+01                        hak    global     415/449        
+02                        hak    global     494/648        
+03                        hak    global     508/650        
+10                        hak    global     619/627        
+12                        hak    global     286/287        
+
+--- Multilang (non-English) ---
+fusser12                  cym    global     1502/2190      
+german050814              deu    global     1229/1341      
+
+--- SBCSAE (English) ---
+sbcsae_06                 eng    auto       807/1069       
+sbcsae_08                 eng    auto       724/851        
+sbcsae_09                 eng    auto       431/495        
+sbcsae_13                 eng    auto       1328/1851      
+sbcsae_15                 eng    auto       1033/1337      
+sbcsae_28                 eng    auto       802/1010       
+sbcsae_32                 eng    auto       1001/1305      
+sbcsae_36                 eng    auto       1025/1281      
+sbcsae_38                 eng    auto       329/359        
+sbcsae_49                 eng    auto       746/982        
+  SBCSAE total: 8226/10540
+
+--- Jefferson (English) ---
+jeff_08assassination2     eng    auto       398/451        
+jeff_10blinddate          eng    auto       377/425        
+jeff_21swimnude           eng    auto       947/953        
+jeff_24meatless           eng    auto       374/375        
+jeff_25powertools         eng    auto       275/357        
+  Jefferson total: 2371/2561
+
+Compare with Phase 6 results:
+  SBCSAE global:  7776/10540 (73.8%)
+  SBCSAE auto:    8226/10540 (78.0%)
+  Jefferson global: 2274/2561 (88.8%)
+  Jefferson auto:   2371/2561 (92.6%)
+  TaiwanHakka global: 2322/2661 (87.3%)
+  TaiwanHakka auto:   2246/2661 (84.4%)

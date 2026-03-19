@@ -1,0 +1,30 @@
+========================================
+Experiment 1: Best-of-Both per Non-English File
+Date: Wed Mar 18 21:15:15 EDT 2026
+========================================
+
+file                 lang   global          two-pass        auto            winner    
+----                 ----   ------          --------        ----            ------    
+01                   hak    415/449         415/449         415/449         tie       
+02                   hak    548/648         294/648         294/648         global    
+03                   hak    508/650         632/650         632/650         two-pass  
+10                   hak    619/627         619/627         619/627         tie       
+12                   hak    286/287         286/287         286/287         tie       
+fusser12             cym    1502/2190       1475/2190       1476/2190       global    
+german050814         deu    1229/1341       621/1341        942/1341        global    
+
+Ground truth coverage (for reference):
+file                 lang   ground-truth   
+----                 ----   ------------   
+01                   hak    0
+0/449        
+02                   hak    0
+0/648        
+03                   hak    0
+0/650        
+10                   hak    0
+0/627        
+12                   hak    0
+0/287        
+fusser12             cym    2190/2190      
+german050814         deu    725/1341       

@@ -1,0 +1,15 @@
+warning: manual server on port 8001 has a different build (1.0.0-43a80b07-dirty-1773876912). Restart with `batchalign3 serve stop && batchalign3 serve start`.
+Found 1 file(s) to process.
+
+Submitting to local daemon at http://127.0.0.1:8001...
+Job 537ffb57-426 submitted (1 file(s))
+Dashboard: http://127.0.0.1:8001/dashboard/jobs/537ffb57-426
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RESULTS: 0 succeeded, 1 failed (of 1 files)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✗ serbian030005.mp3: Benchmark failed for serbian030005.mp3 due to an internal error. Try restarting the job. If the problem persists, please contact your administrator.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+error: job 537ffb57-426 finished with status failed: serbian030005.mp3: Benchmark failed for serbian030005.mp3 due to an internal error. Try restarting the job. If the problem persists, please contact your administrator.

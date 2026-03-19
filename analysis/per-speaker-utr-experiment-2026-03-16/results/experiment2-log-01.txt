@@ -1,0 +1,16 @@
+Starting local daemon...
+local daemon ready on port 8001 (PID 8927)
+Found 1 file(s) to process.
+
+Submitting to local daemon at http://127.0.0.1:8001...
+Job 79b033cf-44a submitted (1 file(s))
+Dashboard: http://127.0.0.1:8001/dashboard/jobs/79b033cf-44a
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RESULTS: 0 succeeded, 1 failed (of 1 files)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✗ 01.mp3: Benchmark failed for 01.mp3: Benchmark failed: validation error: Rev.AI returned HTTP 400: {"parameters":{"options.language":["'ha' is not a supported ISO language code. Allowed values are ['ar', 'bg', 'ca', 'hr', 'cs', 'da', 'nl', 'fi', 'fr', 'de', 'el', 'hi', 'hu', 'it', 'ja', 'ko', 'lv', 'lt', 'ms', 'cmn', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'es', 'sv', 'tr', 'fa', 'he', 'id', 'ta', 'te', 'en', 'en-us', 'en-gb', 'en/es', 'af', 'sq', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'my', 'et', 'gl', 'ka', 'gu', 'ht', 'is', 'kn', 'kk', 'km', 'lo', 'mk', 'mg', 'ml', 'mt', 'mr', 'ne', 'pa', 'sr', 'si', 'su', 'sw', 'tl', 'tg', 'th', 'uk', 'ur', 'uz', 'vi', 'cy', 'yi', 'auto']."]},"type":"https://www.rev.ai/api/v1/errors/invalid-parameters","title":"Your request parameters didn't validate","status":400,"extensions":{}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+error: job 79b033cf-44a finished with status failed: 01.mp3: Benchmark failed for 01.mp3: Benchmark failed: validation error: Rev.AI returned HTTP 400: {"parameters":{"options.language":["'ha' is not a supported ISO language code. Allowed values are ['ar', 'bg', 'ca', 'hr', 'cs', 'da', 'nl', 'fi', 'fr', 'de', 'el', 'hi', 'hu', 'it', 'ja', 'ko', 'lv', 'lt', 'ms', 'cmn', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'es', 'sv', 'tr', 'fa', 'he', 'id', 'ta', 'te', 'en', 'en-us', 'en-gb', 'en/es', 'af', 'sq', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'my', 'et', 'gl', 'ka', 'gu', 'ht', 'is', 'kn', 'kk', 'km', 'lo', 'mk', 'mg', 'ml', 'mt', 'mr', 'ne', 'pa', 'sr', 'si', 'su', 'sw', 'tl', 'tg', 'th', 'uk', 'ur', 'uz', 'vi', 'cy', 'yi', 'auto']."]},"type":"https://www.rev.ai/api/v1/errors/invalid-parameters","title":"Your request parameters didn't validate","status":400,"extensions":{}}

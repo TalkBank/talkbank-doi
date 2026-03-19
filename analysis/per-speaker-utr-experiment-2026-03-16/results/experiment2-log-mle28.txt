@@ -1,0 +1,15 @@
+warning: manual server on port 8001 has a different build (1.0.0-43a80b07-dirty-1773876912). Restart with `batchalign3 serve stop && batchalign3 serve start`.
+Found 1 file(s) to process.
+
+Submitting to local daemon at http://127.0.0.1:8001...
+Job db746cb6-9a6 submitted (1 file(s))
+Dashboard: http://127.0.0.1:8001/dashboard/jobs/db746cb6-9a6
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RESULTS: 0 succeeded, 1 failed (of 1 files)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✗ mle28.mp3: Benchmark failed for mle28.mp3: Benchmark failed: validation error: Failed to parse raw Stanza output for item 3: sentence 0 word 0: missing field `lemma`
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+error: job db746cb6-9a6 finished with status failed: mle28.mp3: Benchmark failed for mle28.mp3: Benchmark failed: validation error: Failed to parse raw Stanza output for item 3: sentence 0 word 0: missing field `lemma`

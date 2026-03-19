@@ -1,0 +1,19 @@
+========================================
+Experiment 2: ASR Quality (WER) per Language
+Date: Wed Mar 18 21:23:56 EDT 2026
+========================================
+
+file                 lang   WER
+----                 ----   ---
+01                   hak    (see log)
+02                   hak    (see log)
+03                   hak    (see log)
+10                   hak    (see log)
+12                   hak    (see log)
+fusser12             cym    (see log)
+german050814         deu    (see log)
+mle28                fra    (see log)
+patagonia30          cym    (see log)
+serbian030005        srp    (see log)
+tbi_n22              eng    (see log)
+tbi_tb23             eng    (see log)

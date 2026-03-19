@@ -1,0 +1,8 @@
+Found 1 file(s) to process.
+
+Submitting to local daemon at http://127.0.0.1:8001...
+Job 6cd4b8da-1f3 submitted (1 file(s))
+Dashboard: http://127.0.0.1:8001/dashboard/jobs/6cd4b8da-1f3
+
+
+All done! 1 file(s) written to /private/var/folders/52/w_b_t1zd2fj7t3ml_5165l7h0000gn/T/tmp.1EVYVR9L24

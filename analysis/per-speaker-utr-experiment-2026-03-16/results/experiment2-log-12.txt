@@ -1,0 +1,14 @@
+Found 1 file(s) to process.
+
+Submitting to local daemon at http://127.0.0.1:8001...
+Job ff7a77ed-07b submitted (1 file(s))
+Dashboard: http://127.0.0.1:8001/dashboard/jobs/ff7a77ed-07b
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  RESULTS: 0 succeeded, 1 failed (of 1 files)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✗ 12.mp3: Benchmark failed for 12.mp3: Benchmark failed: validation error: Rev.AI returned HTTP 400: {"parameters":{"options.language":["'ha' is not a supported ISO language code. Allowed values are ['ar', 'bg', 'ca', 'hr', 'cs', 'da', 'nl', 'fi', 'fr', 'de', 'el', 'hi', 'hu', 'it', 'ja', 'ko', 'lv', 'lt', 'ms', 'cmn', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'es', 'sv', 'tr', 'fa', 'he', 'id', 'ta', 'te', 'en', 'en-us', 'en-gb', 'en/es', 'af', 'sq', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'my', 'et', 'gl', 'ka', 'gu', 'ht', 'is', 'kn', 'kk', 'km', 'lo', 'mk', 'mg', 'ml', 'mt', 'mr', 'ne', 'pa', 'sr', 'si', 'su', 'sw', 'tl', 'tg', 'th', 'uk', 'ur', 'uz', 'vi', 'cy', 'yi', 'auto']."]},"type":"https://www.rev.ai/api/v1/errors/invalid-parameters","title":"Your request parameters didn't validate","status":400,"extensions":{}}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+error: job ff7a77ed-07b finished with status failed: 12.mp3: Benchmark failed for 12.mp3: Benchmark failed: validation error: Rev.AI returned HTTP 400: {"parameters":{"options.language":["'ha' is not a supported ISO language code. Allowed values are ['ar', 'bg', 'ca', 'hr', 'cs', 'da', 'nl', 'fi', 'fr', 'de', 'el', 'hi', 'hu', 'it', 'ja', 'ko', 'lv', 'lt', 'ms', 'cmn', 'no', 'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'es', 'sv', 'tr', 'fa', 'he', 'id', 'ta', 'te', 'en', 'en-us', 'en-gb', 'en/es', 'af', 'sq', 'hy', 'az', 'eu', 'be', 'bn', 'bs', 'my', 'et', 'gl', 'ka', 'gu', 'ht', 'is', 'kn', 'kk', 'km', 'lo', 'mk', 'mg', 'ml', 'mt', 'mr', 'ne', 'pa', 'sr', 'si', 'su', 'sw', 'tl', 'tg', 'th', 'uk', 'ur', 'uz', 'vi', 'cy', 'yi', 'auto']."]},"type":"https://www.rev.ai/api/v1/errors/invalid-parameters","title":"Your request parameters didn't validate","status":400,"extensions":{}}
