@@ -576,7 +576,10 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         });
     }
 
-    // Stage 7: Compute alignment edges.
+    // Stage 7: Validate long feature label matching.
+    validate_long_feature_labels(&utterances, diag);
+
+    // Stage 8: Compute alignment edges.
     let alignment_edges = compute_alignment_edges(&all_brackets, 2, 5);
 
     Some(TrnDocument {
@@ -628,6 +631,50 @@ fn resolve_terminator(raw: Option<RawTerminator>, gap_to_next_seconds: f64) -> T
         }
         Some(RawTerminator::Linker) => Terminator::SelfCompletion,
         None => Terminator::Implicit,
+    }
+}
+
+/// Validate that long feature labels are properly paired (open matches close).
+/// Reports diagnostics for mismatched, orphaned, and unclosed labels.
+fn validate_long_feature_labels(utterances: &[TrnUtterance], diag: &mut Diagnostics) {
+    use crate::types::DiagnosticCode;
+
+    // Stack of open labels: (label, utterance_index, source_line)
+    let mut stack: Vec<(String, usize, usize)> = Vec::new();
+
+    for utt in utterances {
+        for elem in &utt.elements {
+            match elem {
+                ContentElement::LongFeatureBegin(label) => {
+                    stack.push((label.clone(), utt.index, utt.source_lines.first));
+                }
+                ContentElement::LongFeatureEnd(label) => {
+                    // Allow crossing: search backward for matching label, not just top of stack.
+                    let found = stack.iter().rposition(|(l, _, _)| l == label);
+                    if let Some(idx) = found {
+                        stack.remove(idx);
+                    } else {
+                        diag.warn(
+                            utt.source_lines.first,
+                            None,
+                            DiagnosticCode::BracketIndexMismatch, // Reusing code for label mismatch
+                            format!("Long feature close '{label}>' has no matching open '<{label}'"),
+                        );
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+
+    // Report unclosed opens.
+    for (label, _, source_line) in &stack {
+        diag.warn(
+            *source_line,
+            None,
+            crate::types::DiagnosticCode::IncompleteTop, // Reusing code
+            format!("Long feature open '<{label}' was never closed with '{label}>'"),
+        );
     }
 }
 
