@@ -365,3 +365,67 @@ utterances with ⌊ markers are now treated as overlap candidates (same as `+<`)
 
 See `results/onset-accuracy-summary.md` for full analysis and
 `results/ca-overlap-audit-summary.md` for the audit results.
+
+---
+
+## Phase 7: Non-English Regression Diagnosis (2026-03-19)
+
+Phase 6 showed a non-English regression: TaiwanHakka dropped -2.9pp with
+`auto` compared to `global`. Three experiments diagnosed the cause and
+validated a language-aware fix.
+
+### Experiment 1: Best-of-Both per Non-English File
+
+Ran 7 non-English files × 3 strategies (global, two-pass, auto):
+
+| File | Lang | Global | Two-pass | Auto | Winner |
+|------|------|--------|----------|------|--------|
+| 01 | hak | 415/449 | 415/449 | 415/449 | tie |
+| 02 | hak | 548/648 | 294/648 | 294/648 | **global** |
+| 03 | hak | 508/650 | 632/650 | 632/650 | **two-pass** |
+| 10 | hak | 619/627 | 619/627 | 619/627 | tie |
+| 12 | hak | 286/287 | 286/287 | 286/287 | tie |
+| fusser12 | cym | 1502/2190 | 1475/2190 | 1476/2190 | **global** |
+| german050814 | deu | 1229/1341 | 621/1341 | 942/1341 | **global** |
+
+**Finding:** Global wins for non-English overall. German is dramatic: global
+gets 1229 timed vs two-pass 621. The Hakka regression from Phase 6 was
+driven by file 02 (global 548 vs auto 294 — a 254 utterance swing). Auto
+never picks global for Hakka, indicating the best-of-both heuristic doesn't
+detect that global is better for some non-English files.
+
+### Experiment 2: ASR WER Audit
+
+Blocked by two issues:
+1. **Rev.AI rejects Hakka** — ISO 639-3 `hak` was truncated to `ha` by a
+   regression bug in the Rust Rev.AI code mapping (now fixed)
+2. **Stale server binary** — `benchmark` submitted jobs to a running daemon
+   with an older grammar, causing false parse errors on fusser12/tbi_n22
+
+### Experiment 3: Language-Aware Strategy Selection
+
+Tested `eng → auto`, all others → `global`:
+
+| Corpus | Language-Aware | Phase 6 Global | Phase 6 Auto | vs Global | vs Auto |
+|--------|---------------|----------------|--------------|-----------|---------|
+| SBCSAE (eng) | 8226/10540 (78.0%) | 7776 (73.8%) | 8226 (78.0%) | **+4.3pp** | tie |
+| Jefferson (eng) | 2371/2561 (92.6%) | 2274 (88.8%) | 2371 (92.6%) | **+3.8pp** | tie |
+| TaiwanHakka (hak) | 2322/2661 (87.3%) | 2322 (87.3%) | 2246 (84.4%) | tie | **+2.9pp** |
+| fusser12 (cym) | 1502/2190 | 1502 | 1476 | tie | +26 |
+| german050814 (deu) | 1229/1341 | 1229 | 942 | tie | +287 |
+
+**Conclusion:** Language-aware auto gives best of both worlds — full English
+gains, zero non-English regression. Implemented in `resolve_strategy()` in
+`crates/batchalign-app/src/runner/dispatch/utr.rs`.
+
+### Implementation (shipped 2026-03-19)
+
+1. **Language-aware UTR** — `auto` strategy gates on language: non-English →
+   GlobalUtr, English → select_strategy() (inspects for overlap markers)
+2. **Rev.AI language code fix** — replaced `&other[..2]` truncation with ~75
+   explicit entries + `"auto"` fallback with warning
+3. **Whisper hard error** — `iso3_to_language_name()` now raises `ValueError`
+   for unrecognized codes instead of silently falling back to English
+4. **Job-submission language validation** — `validate_language_support()` in
+   `JobSubmission::validate()` rejects unsupported Rev.AI languages at
+   submission time with alternatives
