@@ -1,0 +1,85 @@
+========================================
+Experiment 4: TaiwanHakka Regression Decomposition
+Date: Thu Mar 19 09:36:33 EDT 2026
+========================================
+
+file     global          two-pass        delta     
+----     ------          --------        -----     
+01       415/449         415/449         0         
+02       494/648         294/648         -200      
+03       508/650         632/650         +124      
+10       619/627         619/627         0         
+12       286/287         286/287         0         
+
+=== Debug artifact inventory ===
+
+--- global ---
+  01: 5 debug files
+    01_fa_output.cha
+    01_utr_output.cha
+    01_utr_result.json
+    01_utr_tokens.json
+    01_utr_input.cha
+  02: 5 debug files
+    02_utr_output.cha
+    02_utr_tokens.json
+    02_fa_output.cha
+    02_utr_input.cha
+    02_utr_result.json
+  03: 5 debug files
+    03_utr_input.cha
+    03_utr_output.cha
+    03_utr_tokens.json
+    03_utr_result.json
+    03_fa_output.cha
+  10: 5 debug files
+    10_utr_output.cha
+    10_utr_input.cha
+    10_utr_result.json
+    10_fa_output.cha
+    10_utr_tokens.json
+  12: 5 debug files
+    12_fa_output.cha
+    12_utr_tokens.json
+    12_utr_output.cha
+    12_utr_result.json
+    12_utr_input.cha
+
+--- two-pass ---
+  01: 5 debug files
+    01_fa_output.cha
+    01_utr_output.cha
+    01_utr_result.json
+    01_utr_tokens.json
+    01_utr_input.cha
+  02: 5 debug files
+    02_utr_output.cha
+    02_utr_tokens.json
+    02_fa_output.cha
+    02_utr_input.cha
+    02_utr_result.json
+  03: 5 debug files
+    03_utr_input.cha
+    03_utr_output.cha
+    03_utr_tokens.json
+    03_utr_result.json
+    03_fa_output.cha
+  10: 5 debug files
+    10_utr_output.cha
+    10_utr_input.cha
+    10_utr_result.json
+    10_fa_output.cha
+    10_utr_tokens.json
+  12: 5 debug files
+    12_fa_output.cha
+    12_utr_tokens.json
+    12_utr_output.cha
+    12_utr_result.json
+    12_utr_input.cha
+
+=== FA group analysis ===
+(Inspect debug dirs manually for detailed FA group/UTR comparisons)
+
+Debug dirs:
+  Global:   data/experiment4/debug-global/
+  Two-pass: data/experiment4/debug-two-pass/
