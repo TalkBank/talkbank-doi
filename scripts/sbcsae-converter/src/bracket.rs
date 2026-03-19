@@ -24,11 +24,8 @@ pub fn tokenize_brackets(
             continue;
         }
 
-        // Skip <<...>> nonvocal sounds.
-        if chars[i] == '<' && i + 1 < len && chars[i + 1] == '<' {
-            i = skip_double_angle(&chars, i);
-            continue;
-        }
+        // Note: do NOT skip <<...>> nonvocal sounds — overlap brackets can
+        // appear inside them (e.g., <<CLAP +[4++++ CLAP>>4]).
 
         // Open bracket: [ or [N
         if chars[i] == '[' {
