@@ -33,11 +33,9 @@ struct ChatMarker {
 
 /// A TRN bracket with its assigned index.
 struct TrnEntry {
-    bracket_id: u32,
     speaker: String,
     role: OverlapRole,
     display_index: u8,
-    /// Content near this bracket in the TRN.
     context_text: String,
 }
 
@@ -256,7 +254,6 @@ fn build_trn_entries(doc: &TrnDocument, assignment: &OverlapAssignment) -> Vec<T
             };
 
             entries.push(TrnEntry {
-                bracket_id: bracket.id,
                 speaker: bracket.speaker.clone(),
                 role: role.role,
                 display_index: (role.real_index % 9) as u8 + 1,
@@ -273,12 +270,6 @@ fn normalize_for_matching(text: &str) -> String {
     let mut s = text.to_lowercase();
     // Remove CHAT-specific markers.
     s = s.replace("&=in", "").replace("&=ex", "").replace("&=tsk", "");
-    // Remove &{l=X, &}l=X patterns.
-    let re_patterns = [r"&\{[ln]=[A-Za-z@%]+", r"&\}[ln]=[A-Za-z@%]+", r"\[%[^\]]*\]"];
-    for pat in &re_patterns {
-        // Simple removal without regex (avoid dependency).
-        // Just strip common patterns.
-    }
     // Remove overlap markers.
     s = s.replace('⌈', "").replace('⌉', "").replace('⌊', "").replace('⌋', "");
     // Remove digits that are overlap indices.
@@ -366,59 +357,6 @@ fn align_markers(
     result
 }
 
-/// Propagate indices from open markers to their paired close markers.
-/// For each ⌈ with an assigned index, find the matching ⌉ on the same line
-/// and give it the same index. Same for ⌊→⌋.
-fn propagate_close_indices(
-    lines: &[&str],
-    open_indices: &HashMap<(usize, usize), u8>,
-) -> HashMap<(usize, usize), u8> {
-    let mut result = open_indices.clone();
-
-    for (line_idx, line) in lines.iter().enumerate() {
-        let chars: Vec<char> = line.chars().collect();
-        // Track open markers and their indices on this line.
-        let mut open_stack: Vec<(char, u8)> = Vec::new(); // (open_char, index)
-
-        let mut i = 0;
-        while i < chars.len() {
-            if chars[i] == '⌈' || chars[i] == '⌊' {
-                let close_char = if chars[i] == '⌈' { '⌉' } else { '⌋' };
-                // Check for existing index digit.
-                let has_digit = i + 1 < chars.len() && chars[i + 1] >= '2' && chars[i + 1] <= '9';
-                if has_digit {
-                    let idx = (chars[i + 1] as u8) - b'0';
-                    open_stack.push((close_char, idx));
-                    i += 2;
-                } else if let Some(&idx) = result.get(&(line_idx, i)) {
-                    open_stack.push((close_char, idx));
-                    i += 1;
-                } else {
-                    open_stack.push((close_char, 1)); // Default: unnumbered = 1
-                    i += 1;
-                }
-            } else if chars[i] == '⌉' || chars[i] == '⌋' {
-                let has_digit = i + 1 < chars.len() && chars[i + 1] >= '2' && chars[i + 1] <= '9';
-                if !has_digit {
-                    // Find matching open on the stack.
-                    if let Some(pos) = open_stack.iter().rposition(|(c, _)| *c == chars[i]) {
-                        let (_, idx) = open_stack.remove(pos);
-                        result.insert((line_idx, i), idx);
-                    }
-                }
-                i += 1;
-                if has_digit { i += 1; }
-            } else {
-                i += 1;
-            }
-        }
-    }
-
-    result
-}
-
-/// DP sequence alignment: find the best 1-to-1 matching between two sequences
-/// of strings, allowing insertions/deletions (unmatched items) but not
 /// transpositions. Returns pairs of (chat_idx, trn_idx).
 fn dp_align(chat: &[&str], trn: &[&str]) -> Vec<(usize, usize)> {
     let m = chat.len();
@@ -432,27 +370,28 @@ fn dp_align(chat: &[&str], trn: &[&str]) -> Vec<(usize, usize)> {
     // Higher = better match. 0 = no match.
     let similarity = |a: &str, b: &str| -> i32 {
         if a.is_empty() && b.is_empty() {
-            return 10; // Both empty — match.
+            return 10;
         }
         if a.is_empty() || b.is_empty() {
             return 0;
         }
         if a == b {
-            return 100; // Exact match.
+            return 100;
         }
-        // Check substring containment.
+        // Substring containment.
         if a.contains(b) || b.contains(a) {
             return 80;
         }
-        // Count common words.
+        // Word overlap.
         let a_words: std::collections::HashSet<&str> = a.split_whitespace().collect();
         let b_words: std::collections::HashSet<&str> = b.split_whitespace().collect();
         let common = a_words.intersection(&b_words).count() as i32;
         let total = a_words.len().max(b_words.len()) as i32;
-        if total == 0 {
-            return 0;
+        if total > 0 && common > 0 {
+            (common * 60) / total
+        } else {
+            0
         }
-        (common * 60) / total
     };
 
     // DP table: dp[i][j] = best score for aligning chat[0..i] with trn[0..j].
