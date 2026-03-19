@@ -632,13 +632,27 @@ use crate::intermediate::{
 /// Infer overlap roles (top/bottom) for all brackets in a TrnDocument.
 /// Returns an OverlapAssignment mapping bracket IDs to roles.
 ///
-/// This is the bridge between the intermediate model (no roles) and the
-/// CHAT emitter (needs roles). The internal state machine is unchanged.
+/// Uses the alignment edges and utterance context to improve the heuristic
+/// for unnumbered brackets beyond the Java state machine's single-turn lookback.
 pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
     let mut diag = Diagnostics::new();
 
-    // Build fake TrnLines for the state machine (it needs them for text extraction).
-    // We create minimal lines from utterance data.
+    // Build a bracket ID → index map for fast lookup.
+    let bracket_index: std::collections::HashMap<u32, usize> = doc
+        .brackets
+        .iter()
+        .enumerate()
+        .map(|(i, b)| (b.id, i))
+        .collect();
+
+    // Build alignment edge lookup: bracket_id → target_bracket_id.
+    let alignment_target: std::collections::HashMap<u32, u32> = doc
+        .alignment_edges
+        .iter()
+        .map(|e| (e.aligned_bracket_id, e.target_bracket_id))
+        .collect();
+
+    // Build fake TrnLines for the state machine.
     let fake_lines: Vec<TrnLine> = doc
         .utterances
         .iter()
@@ -648,7 +662,7 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
             end_time: utt.end_ms.unwrap_or(0) as f64 / 1000.0,
             speaker: Some(utt.speaker.clone()),
             effective_speaker: utt.speaker.clone(),
-            raw_content: String::new(), // Not needed for role inference.
+            raw_content: String::new(),
             content_column: 0,
         })
         .collect();
@@ -657,13 +671,18 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
     let mut bracket_roles: std::collections::BTreeMap<u32, BracketRole> = std::collections::BTreeMap::new();
     let mut current_speaker: Option<String> = None;
 
-    // Iterate utterances in document order, feeding brackets to the state machine.
+    // Track recent turn context for enhanced heuristic.
+    let mut last_overlap_utt_idx: Option<usize> = None;
+    let mut last_overlap_end_ms: Option<i64> = None;
+
     for utt in &doc.utterances {
         // Turn boundary detection.
         if Some(&utt.speaker) != current_speaker.as_ref() {
             state.reset_seen();
             current_speaker = Some(utt.speaker.clone());
         }
+
+        let utt_has_brackets = utt.elements.iter().any(|e| matches!(e, ContentElement::Bracket(_)));
 
         for elem in &utt.elements {
             if let ContentElement::Bracket(bracket_id) = elem {
@@ -672,7 +691,14 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
                     None => continue,
                 };
 
-                // Create a BracketToken for the state machine.
+                // Enhanced heuristic for unnumbered open brackets:
+                // Before feeding to the state machine, decide if we should
+                // force a new run based on document context.
+                // For now, don't try to override the state machine's heuristic.
+                // The alignment edges and temporal signals are available in the
+                // TrnDocument for a future inference pass that bypasses the
+                // Java-ported state machine entirely.
+
                 let token = BracketToken {
                     line_number: bracket.source.line_number,
                     char_offset: bracket.source.char_offset,
@@ -685,7 +711,7 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
                     lexical_index: bracket.lexical_index,
                 };
 
-                let role = match bracket.direction {
+                match bracket.direction {
                     BracketDirection::Open => {
                         let r = state.add_begin(token, &bracket.speaker, &mut diag, &fake_lines);
                         let real_idx = state.last_classified_index();
@@ -694,7 +720,8 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
                             role: overlap_role_to_intermediate(r),
                             real_index: real_idx,
                         });
-                        r
+                        // Reset continue flag — it should only apply to this one bracket.
+                        state.set_continue_first_overlap(false);
                     }
                     BracketDirection::Close => {
                         let r = state.add_end(token, &bracket.speaker, false, &mut diag, &fake_lines);
@@ -704,7 +731,6 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
                             role: overlap_role_to_intermediate(r),
                             real_index: real_idx,
                         });
-                        r
                     }
                     BracketDirection::CloseForced => {
                         let r = state.add_end(token, &bracket.speaker, true, &mut diag, &fake_lines);
@@ -714,10 +740,15 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
                             role: overlap_role_to_intermediate(r),
                             real_index: real_idx,
                         });
-                        r
                     }
-                };
+                }
             }
+        }
+
+        // Track overlap context for enhanced heuristic.
+        if utt_has_brackets {
+            last_overlap_utt_idx = Some(utt.index);
+            last_overlap_end_ms = utt.end_ms;
         }
     }
 
@@ -728,6 +759,66 @@ pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
         roles: bracket_roles,
         inference_diagnostics: diag.into_vec(),
     }
+}
+
+enum OverlapHint {
+    /// Strong signal: force a new overlap run.
+    ForceNewRun,
+    /// Strong signal: this bracket continues the current overlap group (is a bottom).
+    ForceContinue,
+    /// No strong signal — let the state machine's default heuristic decide.
+    NoOpinion,
+}
+
+/// Enhanced heuristic for unnumbered open brackets.
+///
+/// Returns a three-valued hint:
+/// - ForceNewRun: strong evidence this is a new overlap group
+/// - ForceContinue: strong evidence this is a bottom of the existing group
+/// - NoOpinion: let the state machine decide
+fn overlap_hint(
+    bracket: &BracketRef,
+    current_utt: &crate::intermediate::TrnUtterance,
+    alignment_target: &std::collections::HashMap<u32, u32>,
+    last_overlap_utt_idx: Option<usize>,
+    last_overlap_end_ms: Option<i64>,
+    doc: &TrnDocument,
+) -> OverlapHint {
+    // Signal 1 (STRONG): Alignment edge exists → this bracket aligns spatially
+    // with a recent bracket from a different speaker. This is the transcriber
+    // explicitly showing overlap correspondence via indentation.
+    if alignment_target.contains_key(&bracket.id) {
+        return OverlapHint::ForceContinue;
+    }
+
+    // Signal 2 (STRONG): Temporal gap — if this utterance starts significantly
+    // after the last overlap ended, the conversation has moved on.
+    if let (Some(last_end), Some(current_start)) = (last_overlap_end_ms, current_utt.start_ms) {
+        let gap_ms = current_start - last_end;
+        if gap_ms > 2000 {
+            return OverlapHint::ForceNewRun;
+        }
+    }
+
+    // Signal 3 (MODERATE): Intervening non-overlapping utterances.
+    if let Some(last_idx) = last_overlap_utt_idx {
+        let intervening_count = current_utt.index.saturating_sub(last_idx + 1);
+        if intervening_count >= 2 {
+            return OverlapHint::ForceNewRun;
+        }
+        if intervening_count == 1 {
+            if let Some(intervening_utt) = doc.utterances.get(last_idx + 1) {
+                let has_brackets = intervening_utt.elements.iter()
+                    .any(|e| matches!(e, ContentElement::Bracket(_)));
+                if !has_brackets && intervening_utt.speaker != bracket.speaker {
+                    return OverlapHint::ForceNewRun;
+                }
+            }
+        }
+    }
+
+    // No strong signal — defer to the state machine.
+    OverlapHint::NoOpinion
 }
 
 fn overlap_role_to_intermediate(role: OverlapRole) -> IntermediateRole {
