@@ -418,6 +418,31 @@ Tested `eng → auto`, all others → `global`:
 gains, zero non-English regression. Implemented in `resolve_strategy()` in
 `crates/batchalign-app/src/runner/dispatch/utr.rs`.
 
+### Experiment 4: Hakka File 02 Deep Dive
+
+Debug artifacts from `--debug-dir` reveal the -200 utterance gap is a **FA
+pipeline issue**, not a UTR issue:
+
+| Stage | Global | Two-pass |
+|-------|--------|----------|
+| UTR injected | 2 | **4** (more!) |
+| ASR tokens | 81 | 81 (same) |
+| Timed after UTR | 2 | 4 |
+| **Timed after FA** | **494** | **294** (-200) |
+
+Two-pass actually injects MORE timing bullets at the UTR stage (4 vs 2).
+The 200-utterance loss happens during FA processing: utterances that have
+word-level timing in `%wor` (identical in both outputs) lose their
+utterance-level timing bullets in the two-pass FA output. The `%wor` tiers
+are identical between strategies — timing data exists but isn't propagated
+to the main tier bullet.
+
+**Root cause:** FA does not properly reconstruct utterance-level timing for
+utterances where the two-pass UTR strategy changed the bullet distribution.
+The different initial timing context (4 bullets vs 2) causes FA to produce
+different groupings, and some groups fail to propagate timing back to the
+utterance level.
+
 ### Implementation (shipped 2026-03-19)
 
 1. **Language-aware UTR** — `auto` strategy gates on language: non-English →
