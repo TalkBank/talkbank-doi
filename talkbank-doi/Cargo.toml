@@ -1,0 +1,15 @@
+[package]
+name = "talkbank-doi"
+version = "0.1.0"
+edition = "2024"
+description = "TalkBank DOI management: mint, sync, and validate DOIs at DataCite"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+clap = { version = "4", features = ["derive"] }
+reqwest = { version = "0.12", features = ["json", "blocking"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+walkdir = "2"
+csv = "1"
