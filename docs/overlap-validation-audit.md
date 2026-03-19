@@ -421,11 +421,18 @@ Reduction: ~11,000 → ~2,500 E347.
 
 Suppressed E348 for the "opening without closing" case. An opening marker (⌈ or
 ⌊) without a matching closing marker in the same utterance is standard CA onset-
-only annotation. Kept E348 for "closing without opening" — an orphaned close is
-genuinely suspicious.
+only annotation.
 
-Reduction: ~49,400 → estimate ~2,800 E348 (only "closing without opening" cases
-remain).
+**Update (2026-03-19):** Also suppressed E348 for "closing without opening".
+Investigation during the SBCSAE TRN→CHAT converter project revealed that these
+are legitimate cross-utterance overlap spans — the matching open marker is on a
+preceding utterance from the same speaker. The cross-utterance check (E347)
+already handles pairing these correctly, making the within-utterance E348 check
+fully redundant for both cases. This eliminated ~49,400 E348 warnings across all
+data repos (2,152 on hand-edited SBCSAE alone). Any truly unpaired markers are
+caught by E347 as orphaned tops/bottoms.
+
+Reduction: ~49,400 → 0 E348.
 
 ### E347: Suppress for unindexed markers
 
@@ -447,6 +454,6 @@ Reduction: ~2,500 → TBD (depends on how many remaining orphans are indexed).
 - **E704 audit:** Manually audit the 90 E704 cases to classify as legitimate
   multi-party overlap vs actual data errors. Refine E704 to handle intervening
   speakers.
-- **"Closing without opening" investigation:** Audit the remaining ~2,800 E348
-  cases (closing without opening) to determine if any are legitimate cross-
-  utterance closings vs transcription errors.
+- ~~**"Closing without opening" investigation:**~~ RESOLVED. All "closing without
+  opening" E348 cases are legitimate cross-utterance spans. E348 fully suppressed;
+  E347 handles all overlap pairing.

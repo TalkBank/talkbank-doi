@@ -57,9 +57,15 @@ largest indexed overlap corpus in TalkBank.
 
 ## Current Status
 
-SBCSAE overlap errors are suppressed (E347 for unindexed markers is not reported,
-per `docs/overlap-validation-audit.md`). This is correct for now — the data is
-not wrong, just under-specified.
+**E348 suppressed (2026-03-19):** Cross-utterance overlap spans are now recognized
+as legitimate. When a `⌈` appears without a matching `⌉` on the same utterance
+(or vice versa), the within-utterance check (E348) defers to the cross-utterance
+check (E347), which pairs markers across utterances from the same speaker. This
+eliminated 2,152 false positives on the hand-edited SBCSAE CHAT and 2,139 on the
+converter-generated CHAT. See `talkbank-tools` commit `ff9e41e`.
+
+**E347 for unindexed markers:** Suppressed per `docs/overlap-validation-audit.md`.
+The data is not wrong, just under-specified.
 
 ## Source Data
 

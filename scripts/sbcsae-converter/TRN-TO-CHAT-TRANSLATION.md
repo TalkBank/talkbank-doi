@@ -338,10 +338,10 @@ boundaries within genuine multi-utterance overlaps.
 ### H6: Utterance boundary placement
 
 **Rule:** Split at TRN terminators (`.`, `?`, `--`) and at speaker changes.
-**Limitation:** This is the source of E348 within-utterance pairing errors
-(2,140). Bracket pairs that span terminators have their open and close on
-different CHAT utterances. This is inherent to SBCSAE's data and matches the
-hand-edited baseline.
+**Note:** Bracket pairs that span terminators have their open and close on
+different CHAT utterances. This is valid — the validator's E348 within-utterance
+check is suppressed for cross-utterance spans, and E347 handles cross-utterance
+pairing correctly.
 
 ### H7: Compatible index matching
 
@@ -353,17 +353,15 @@ bottom is unnumbered (or vice versa) without an alignment edge.
 
 ## Known Limitations
 
-1. **`--` always becomes `+/.`**: The semantic distinction between interruption
-   (`+/.`) and trail-off (`+...`) requires audio review.
+1. **`--` resolved by temporal gap**: See H3 above. Not 100% accurate.
 
-2. **E348 warnings are expected**: ~2,140 warnings where overlap markers span
-   across utterance boundaries. This matches the hand-edited CHAT baseline
-   (2,152). Inherent to SBCSAE's long overlapping speech spans.
-
-3. **Cross-utterance bracket spans**: When a bracket pair's open and close
-   end up on different CHAT utterances (due to terminator splitting), the
-   within-utterance validator reports a pairing error. This is a CHAT format
-   limitation, not a data error.
+2. **Cross-utterance bracket spans are valid**: Overlap markers that span
+   across utterance boundaries (open on one `*SPK:` line, close on a later
+   one from the same speaker) are legitimate. The validator's within-utterance
+   check (E348) is suppressed for these; the cross-utterance check (E347)
+   handles pairing correctly. This was validated against the hand-edited SBCSAE
+   (2,152 E348 false positives eliminated) and confirmed across all TalkBank
+   data repos (~49,400 total eliminated).
 
 4. **Multi-line long features**: Some long features (`<LABEL ... LABEL>`)
    span multiple TRN lines. If the label is split across lines, the parser

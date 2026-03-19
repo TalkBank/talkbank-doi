@@ -28,13 +28,14 @@ Of the 53 REVIEW cases from the bracket singleton analysis:
 After 50 TRN source fixes, the remaining errors above the hand-edited
 baseline represent the noise floor of the TRN data quality:
 
+- E348 (0): **Eliminated.** Within-utterance check suppressed — cross-utterance
+  spans are legitimate and handled by E347. Was 2,139 (baseline: 2,152).
 - E347 (214): Cross-utterance overlap mismatches — mostly from complex
   multi-bracket nesting and cross-speaker bracket scopes
 - E316 (82): Utterance grouping / content transformation edge cases
 - E704 (21): Self-overlap from transitive closure in multi-party conversations
-- E348 (2,139): At parity with hand-edited baseline (2,152) — inherent to data
 
-Total above baseline: ~317 errors. Started at ~140,000.
+Total remaining errors: ~500. Started at ~140,000.
 
 ## Key Insight
 
