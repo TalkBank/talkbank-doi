@@ -6,6 +6,7 @@
 
 use crate::types::OverlapRole;
 use winnow::combinator::{alt, opt, peek, repeat};
+use winnow::error::StrContext;
 use winnow::prelude::*;
 use winnow::token::{any, one_of, take_while};
 
@@ -112,19 +113,37 @@ pub fn parse_trn_content(
         }
 
         // Try each element parser in priority order.
-        if let Ok((rest, elem)) = parse_element.parse_peek(input) {
-            elements.push(elem);
-            input = rest;
-        } else {
-            // Fallback: consume one char as part of a word.
-            let ch = input.chars().next().unwrap();
-            // Merge into previous word if possible.
-            if let Some(TrnElement::Word(w)) = elements.last_mut() {
-                w.push(ch);
-            } else {
-                elements.push(TrnElement::Word(ch.to_string()));
+        match parse_element.parse_peek(input) {
+            Ok((rest, elem)) => {
+                elements.push(elem);
+                input = rest;
             }
-            input = &input[ch.len_utf8()..];
+            Err(err) => {
+                // Fallback: consume one char as part of a word.
+                let ch = input.chars().next().unwrap();
+
+                // Log the parse error context for debugging (only for non-trivial chars).
+                if !ch.is_ascii_alphanumeric() && ch != ' ' && ch != '\t'
+                    && ch != '-' && ch != '\'' && ch != '_'
+                {
+                    #[cfg(debug_assertions)]
+                    eprintln!(
+                        "  [trn_content] fallback: char '{}' (U+{:04X}) at byte offset {}, err: {}",
+                        ch.escape_debug(),
+                        ch as u32,
+                        ctx.start_len - input.len(),
+                        err,
+                    );
+                }
+
+                // Merge into previous word if possible.
+                if let Some(TrnElement::Word(w)) = elements.last_mut() {
+                    w.push(ch);
+                } else {
+                    elements.push(TrnElement::Word(ch.to_string()));
+                }
+                input = &input[ch.len_utf8()..];
+            }
         }
     }
 
@@ -233,34 +252,35 @@ fn parse_bracket_close(input: &mut &str) -> ModalResult<()> {
 fn parse_element(input: &mut &str) -> ModalResult<TrnElement> {
     alt((
         alt((
-            parse_space,
-            parse_comment,
-            parse_nonvocal,
-            parse_long_feature,
-            parse_timed_pause,
+            parse_space.context(StrContext::Label("space")),
+            parse_comment.context(StrContext::Label("environmental comment ((...))"))  ,
+            parse_nonvocal.context(StrContext::Label("nonvocal <<...>>")),
+            parse_long_feature.context(StrContext::Label("long feature <LABEL...LABEL>")),
+            parse_timed_pause.context(StrContext::Label("timed pause ...(N.N)")),
         )),
         alt((
-            parse_medium_pause,
-            parse_short_pause,
-            parse_truncation,
-            parse_vocalism,
-            parse_laughs,
+            parse_medium_pause.context(StrContext::Label("medium pause ...")),
+            parse_short_pause.context(StrContext::Label("short pause ..")),
+            parse_truncation.context(StrContext::Label("truncation --")),
+            parse_vocalism.context(StrContext::Label("vocalism (NAME)")),
+            parse_laughs.context(StrContext::Label("multiple laughs @@@")),
         )),
         alt((
-            parse_laugh_or_word,
-            parse_phonological,
-            parse_linker,
-            parse_nonvocal_beat,
-            parse_glottal,
+            parse_laugh_or_word.context(StrContext::Label("laugh @ or @word")),
+            parse_phonological.context(StrContext::Label("phonological fragment /.../")),
+            parse_linker.context(StrContext::Label("continuation linker &")),
+            parse_nonvocal_beat.context(StrContext::Label("nonvocal beat +")),
+            parse_glottal.context(StrContext::Label("glottal stop %")),
         )),
         alt((
-            parse_question,
-            parse_period,
-            parse_comma,
-            parse_pseudograph,
-            parse_word,
+            parse_question.context(StrContext::Label("question mark")),
+            parse_period.context(StrContext::Label("period")),
+            parse_comma.context(StrContext::Label("comma")),
+            parse_pseudograph.context(StrContext::Label("pseudograph ~!#")),
+            parse_word.context(StrContext::Label("word")),
         )),
     ))
+    .context(StrContext::Label("TRN content element"))
     .parse_next(input)
 }
 
@@ -271,9 +291,11 @@ fn parse_space(input: &mut &str) -> ModalResult<TrnElement> {
 
 /// `((NAME))` — environmental comment.
 fn parse_comment(input: &mut &str) -> ModalResult<TrnElement> {
-    "((". parse_next(input)?;
-    let name: String = take_while(1.., |c: char| c != ')').parse_next(input)?.to_string();
-    "))".parse_next(input)?;
+    "((".parse_next(input)?;
+    let name: String = take_while(1.., |c: char| c != ')')
+        .context(StrContext::Label("comment name"))
+        .parse_next(input)?.to_string();
+    "))".context(StrContext::Label("closing ))")).parse_next(input)?;
     Ok(TrnElement::Comment(name))
 }
 
@@ -281,6 +303,7 @@ fn parse_comment(input: &mut &str) -> ModalResult<TrnElement> {
 fn parse_nonvocal(input: &mut &str) -> ModalResult<TrnElement> {
     "<<".parse_next(input)?;
     let label: String = take_while(1.., |c: char| c.is_ascii_uppercase() || c == '_' || c == '-')
+        .context(StrContext::Label("nonvocal label after <<"))
         .parse_next(input)?
         .to_string();
     // Check for simple close >>.
@@ -300,7 +323,6 @@ fn parse_long_feature(input: &mut &str) -> ModalResult<TrnElement> {
 fn parse_long_feature_begin(input: &mut &str) -> ModalResult<TrnElement> {
     // < not followed by < (that's nonvocal).
     '<'.parse_next(input)?;
-    // Peek: must not be <.
     if input.starts_with('<') {
         return Err(winnow::error::ErrMode::Backtrack(
             winnow::error::ContextError::new(),
@@ -308,6 +330,7 @@ fn parse_long_feature_begin(input: &mut &str) -> ModalResult<TrnElement> {
     }
     let label: String =
         take_while(1.., |c: char| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '@' || c == '%')
+            .context(StrContext::Label("long feature label after <"))
             .parse_next(input)?
             .to_string();
     Ok(TrnElement::LongFeatureBegin(label))
@@ -318,10 +341,11 @@ fn parse_long_feature_begin(input: &mut &str) -> ModalResult<TrnElement> {
 fn parse_long_feature_end(input: &mut &str) -> ModalResult<TrnElement> {
     let label: String =
         take_while(1.., |c: char| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '@' || c == '%' || c == '_' || c == '-')
+            .context(StrContext::Label("long feature/nonvocal end label"))
             .parse_next(input)?
             .to_string();
     // Must be followed by > or >>.
-    '>'.parse_next(input)?;
+    '>'.context(StrContext::Label("closing > after label")).parse_next(input)?;
     if input.starts_with('>') {
         '>'.parse_next(input)?;
         return Ok(TrnElement::NonvocalEnd(label));
@@ -333,17 +357,16 @@ fn parse_long_feature_end(input: &mut &str) -> ModalResult<TrnElement> {
 fn parse_timed_pause(input: &mut &str) -> ModalResult<TrnElement> {
     "...(".parse_next(input)?;
     let val: String = take_while(1.., |c: char| c.is_ascii_digit() || c == '.')
+        .context(StrContext::Label("timed pause duration"))
         .parse_next(input)?
         .to_string();
-    ')'.parse_next(input)?;
+    ')'.context(StrContext::Label("closing ) for timed pause")).parse_next(input)?;
     Ok(TrnElement::PauseTimed(val))
 }
 
 /// `...` — medium pause (not followed by `(` + digit, which is timed pause).
 fn parse_medium_pause(input: &mut &str) -> ModalResult<TrnElement> {
     "...".parse_next(input)?;
-    // Must not be followed by ( + digit (that's timed pause `...(1.2)`).
-    // But ...(H) is medium pause + vocalism, not timed pause.
     if input.starts_with('(') {
         let after_paren = input.get(1..2).unwrap_or("");
         if after_paren.starts_with(|c: char| c.is_ascii_digit()) {
@@ -358,7 +381,6 @@ fn parse_medium_pause(input: &mut &str) -> ModalResult<TrnElement> {
 /// `..` — short pause.
 fn parse_short_pause(input: &mut &str) -> ModalResult<TrnElement> {
     "..".parse_next(input)?;
-    // Must not be followed by . (that's medium pause).
     if input.starts_with('.') {
         return Err(winnow::error::ErrMode::Backtrack(
             winnow::error::ContextError::new(),
@@ -376,16 +398,16 @@ fn parse_truncation(input: &mut &str) -> ModalResult<TrnElement> {
 /// `(H)`, `(H)=`, `(Hx)`, `(TSK)`, or `(NAME)` — vocalism.
 fn parse_vocalism(input: &mut &str) -> ModalResult<TrnElement> {
     '('.parse_next(input)?;
-    // Must not be ( (that's comment).
     if input.starts_with('(') {
         return Err(winnow::error::ErrMode::Backtrack(
             winnow::error::ContextError::new(),
         ));
     }
     let inner: String = take_while(1.., |c: char| c != ')')
+        .context(StrContext::Label("vocalism name"))
         .parse_next(input)?
         .to_string();
-    ')'.parse_next(input)?;
+    ')'.context(StrContext::Label("closing ) for vocalism")).parse_next(input)?;
 
     let elem = match inner.as_str() {
         "H" => {
@@ -428,9 +450,10 @@ fn parse_laugh_or_word(input: &mut &str) -> ModalResult<TrnElement> {
 fn parse_phonological(input: &mut &str) -> ModalResult<TrnElement> {
     '/'.parse_next(input)?;
     let word: String = take_while(1.., |c: char| c != '/')
+        .context(StrContext::Label("phonological fragment content"))
         .parse_next(input)?
         .to_string();
-    '/'.parse_next(input)?;
+    '/'.context(StrContext::Label("closing / for phonological fragment")).parse_next(input)?;
     Ok(TrnElement::PhonologicalFragment(word))
 }
 
@@ -482,7 +505,6 @@ fn parse_comma(input: &mut &str) -> ModalResult<TrnElement> {
 /// `~word`, `!word`, `#word` — pseudograph prefix (stripped).
 fn parse_pseudograph(input: &mut &str) -> ModalResult<TrnElement> {
     one_of(['~', '!', '#']).parse_next(input)?;
-    // Must be followed by a letter (the proper name).
     if !input.starts_with(|c: char| c.is_ascii_alphabetic()) {
         return Err(winnow::error::ErrMode::Backtrack(
             winnow::error::ContextError::new(),
