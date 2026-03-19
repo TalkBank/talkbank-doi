@@ -3,6 +3,8 @@ mod diagnostics;
 mod emit_chat;
 mod encoding;
 mod format;
+mod infer;
+mod intermediate;
 mod overlap;
 mod speakers;
 mod trn_content;
@@ -120,10 +122,10 @@ fn main() {
         }
 
         if cli.doc_chat {
-            // New pipeline: TrnDocument → OverlapAssignment → CHAT.
+            // New pipeline: TrnDocument → global inference → CHAT.
             let mut diag = Diagnostics::new();
             if let Some(doc) = intermediate::build_document(path, &mut diag) {
-                let assignment = overlap::infer_overlaps(&doc);
+                let assignment = infer::infer_overlaps_global(&doc);
                 let num = stem.trim_start_matches("SBC").trim_start_matches('0');
                 let chat_file_stem = if num.is_empty() { "00" } else { num };
                 let chat = emit_chat::emit_chat_from_doc(chat_file_stem, &doc, &assignment);
@@ -349,4 +351,3 @@ fn collect_trn_files(inputs: &[PathBuf]) -> Vec<PathBuf> {
     files.sort();
     files
 }
-mod intermediate;
