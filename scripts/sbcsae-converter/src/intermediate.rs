@@ -681,40 +681,36 @@ fn validate_long_feature_labels(utterances: &[TrnUtterance], diag: &mut Diagnost
     }
 }
 
-/// Validate nonvocal label matching: <<LABEL...LABEL>> open matches close.
-/// Note: crossing nonvocals (<<A...B>>) are legitimate — different events
-/// can overlap. This only reports genuinely orphaned opens/closes.
+/// Validate nonvocal spans: each <<LABEL begin should have a LABEL>> end.
+/// Unlike long features, nonvocal labels CAN differ between open and close
+/// (e.g., <<MACHINE_STARTS...MACHINE_STOPS>>) — this describes an event's
+/// lifecycle. So we just check that every begin has SOME end, regardless
+/// of label.
 fn validate_nonvocal_labels(utterances: &[TrnUtterance], diag: &mut Diagnostics) {
     use crate::types::DiagnosticCode;
 
-    let mut stack: Vec<(String, usize)> = Vec::new(); // (label, source_line)
+    let mut open_count: usize = 0;
+    let mut close_count: usize = 0;
 
     for utt in utterances {
         for elem in &utt.elements {
             match elem {
-                ContentElement::NonvocalBegin(label) => {
-                    stack.push((label.clone(), utt.source_lines.first));
-                }
-                ContentElement::NonvocalEnd(label) => {
-                    // Allow crossing: find matching label anywhere in stack.
-                    let found = stack.iter().rposition(|(l, _)| l == label);
-                    if let Some(idx) = found {
-                        stack.remove(idx);
-                    }
-                    // Orphan closes are OK for nonvocals (different events cross).
-                }
+                ContentElement::NonvocalBegin(_) => open_count += 1,
+                ContentElement::NonvocalEnd(_) => close_count += 1,
                 _ => {}
             }
         }
     }
 
-    // Report unclosed opens (these are genuine — the event started but never ended).
-    for (label, source_line) in &stack {
+    if open_count > close_count {
         diag.warn(
-            *source_line,
+            0,
             None,
             DiagnosticCode::IncompleteTop,
-            format!("Nonvocal open '<<{label}' was never closed with '{label}>>'"),
+            format!(
+                "{} nonvocal opens (<<LABEL) without matching closes (LABEL>>)",
+                open_count - close_count
+            ),
         );
     }
 }
