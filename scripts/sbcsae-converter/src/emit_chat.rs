@@ -152,13 +152,28 @@ fn emit_element(elem: &TrnElement) -> (String, bool, bool) {
         TrnElement::InhalationLengthened => ("&=in &=lengthened".to_string(), true, true),
         TrnElement::Exhalation => ("&=ex".to_string(), true, true),
         TrnElement::Click => ("&=tsk".to_string(), true, true),
-        TrnElement::Vocalism(name) => (format!("&={}", name.to_lowercase()), true, true),
+        TrnElement::Vocalism(name) => {
+            // Handle % prefix: (%Hx) → ʔuh &=ex, (%NAME) → ʔuh &=NAME
+            if let Some(rest) = name.strip_prefix('%') {
+                let vocalism = match rest {
+                    "Hx" | "HX" => "&=ex".to_string(),
+                    _ => format!("&={}", rest.to_lowercase()),
+                };
+                (format!("ʔuh {vocalism}"), true, true)
+            } else {
+                (format!("&={}", name.to_lowercase()), true, true)
+            }
+        }
         TrnElement::Laugh => ("&=laugh".to_string(), true, true),
         TrnElement::Laughs(n) => {
             let text = (0..*n).map(|_| "&=laugh").collect::<Vec<_>>().join(" ");
             (text, true, true)
         }
-        TrnElement::Comment(name) => (format!("&={name}"), true, true),
+        TrnElement::Comment(name) => {
+            // Sanitize: commas → _AND_, periods → _POINT_ (matching Brian's convention).
+            let sanitized = name.replace(',', "_AND").replace('.', "_POINT_");
+            (format!("&={sanitized}"), true, true)
+        }
         TrnElement::LongFeatureBegin(label) => (format!("&{{l={label}"), true, true),
         TrnElement::LongFeatureEnd(label) => (format!("&}}l={label}"), true, true),
         TrnElement::NonvocalBegin(label) => (format!("&{{n={label}"), true, true),
@@ -233,6 +248,12 @@ pub fn group_into_utterances(
     let mut current_end_ms: Option<i64> = None;
 
     for (line, elements) in lines.iter().zip(line_elements.iter()) {
+        // Skip zero-timestamp annotator comment lines ($ lines).
+        if line.start_time == 0.0 && line.end_time == 0.0
+            && line.raw_content.trim_start().starts_with('$')
+        {
+            continue;
+        }
         let is_new_speaker = line.speaker.is_some()
             && line.speaker.as_deref() != current_speaker.as_deref();
 
