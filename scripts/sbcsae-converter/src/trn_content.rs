@@ -55,62 +55,48 @@ pub fn parse_trn_content(
     raw: &str,
     bracket_classifications: &[(usize, OverlapRole, usize)],
 ) -> Vec<TrnElement> {
+    // Pre-process: replace bracket tokens with placeholder \x01/\x02 so the
+    // winnow parser doesn't need to coordinate with bracket offsets.
+    let mut chars: Vec<u8> = raw.bytes().collect();
+    let mut bracket_at: Vec<(usize, OverlapRole, usize)> = Vec::new();
+
+    for &(offset, role, real_index) in bracket_classifications {
+        if offset >= chars.len() {
+            continue;
+        }
+        // Determine how many bytes this bracket token spans.
+        let span = bracket_span(&chars, offset);
+        // Replace with \x01 (open) or \x02 (close) + spaces for remaining bytes.
+        let marker = match role {
+            OverlapRole::TopBegin | OverlapRole::BottomBegin => b'\x01',
+            OverlapRole::TopEnd | OverlapRole::BottomEnd => b'\x02',
+        };
+        chars[offset] = marker;
+        for i in 1..span {
+            if offset + i < chars.len() {
+                chars[offset + i] = b' ';
+            }
+        }
+        bracket_at.push((offset, role, real_index));
+    }
+
+    let preprocessed = String::from_utf8_lossy(&chars);
     let ctx = ParseContext {
-        brackets: bracket_classifications,
-        start_len: raw.len(),
+        brackets: &bracket_at,
+        start_len: preprocessed.len(),
     };
     let mut elements = Vec::new();
-    let mut input = raw;
+    let mut input: &str = &preprocessed;
 
     while !input.is_empty() {
         let offset = ctx.start_len - input.len();
 
-        // Try overlap bracket at this position.
-        // Check both current offset and offset+1 (for N] where N is at current pos).
-        let bracket_match = ctx.brackets.iter().find(|(o, _, _)| *o == offset);
-        if let Some(&(_off, role, real_index)) = bracket_match {
-            if let Ok((rest, _)) = parse_bracket_open.parse_peek(input) {
+        // Check for bracket placeholders (\x01 = open, \x02 = close).
+        if input.starts_with('\x01') || input.starts_with('\x02') {
+            if let Some(&(_off, role, real_index)) = ctx.brackets.iter().find(|(o, _, _)| *o == offset) {
                 elements.push(TrnElement::Overlap { role, real_index });
-                input = rest;
-                continue;
             }
-            if let Ok((rest, _)) = parse_bracket_close.parse_peek(input) {
-                elements.push(TrnElement::Overlap { role, real_index });
-                input = rest;
-                continue;
-            }
-        }
-        // Also check: is the NEXT position a bracket? If so, this char might be a
-        // close-bracket digit (e.g., '2' in '2]'). Don't let the word parser eat it.
-        if input.len() >= 2 {
-            let next_offset = offset + 1;
-            if ctx.brackets.iter().any(|(o, _, _)| *o == offset) {
-                // Already handled above.
-            } else if let Some(ch) = input.chars().next() {
-                if ch.is_ascii_digit() && ch >= '2' && ch <= '9' {
-                    // Check if this is a bracket close digit.
-                    let rest = &input[1..];
-                    if rest.starts_with(']') || rest.starts_with("$]") {
-                        // This digit is part of a bracket close. Check if it's classified.
-                        if let Some(&(_, role, real_index)) = ctx.brackets.iter().find(|(o, _, _)| *o == offset) {
-                            if let Ok((rest2, _)) = parse_bracket_close.parse_peek(input) {
-                                elements.push(TrnElement::Overlap { role, real_index });
-                                input = rest2;
-                                continue;
-                            }
-                        } else {
-                            // Unclassified bracket close — skip it.
-                            if let Ok((rest2, _)) = parse_bracket_close.parse_peek(input) {
-                                input = rest2;
-                                continue;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        // Also skip bare ] that isn't classified.
-        if input.starts_with(']') && bracket_match.is_none() {
+            // Skip the placeholder byte.
             input = &input[1..];
             continue;
         }
@@ -140,6 +126,43 @@ pub fn parse_trn_content(
     }
 
     elements
+}
+
+/// Determine how many bytes an overlap bracket token spans at the given offset.
+fn bracket_span(bytes: &[u8], offset: usize) -> usize {
+    if offset >= bytes.len() {
+        return 1;
+    }
+    match bytes[offset] {
+        b'[' => {
+            // [ or [N
+            if offset + 1 < bytes.len() && bytes[offset + 1] >= b'2' && bytes[offset + 1] <= b'9' {
+                2
+            } else {
+                1
+            }
+        }
+        b'2'..=b'9' => {
+            // N] or N$]
+            if offset + 1 < bytes.len() && bytes[offset + 1] == b']' {
+                2
+            } else if offset + 2 < bytes.len() && bytes[offset + 1] == b'$' && bytes[offset + 2] == b']' {
+                3
+            } else {
+                1
+            }
+        }
+        b'$' => {
+            // $]
+            if offset + 1 < bytes.len() && bytes[offset + 1] == b']' {
+                2
+            } else {
+                1
+            }
+        }
+        b']' => 1,
+        _ => 1,
+    }
 }
 
 /// Skip a bracket open token: [ or [N (digit 2-9).
