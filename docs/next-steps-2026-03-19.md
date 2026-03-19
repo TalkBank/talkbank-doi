@@ -41,17 +41,33 @@ language-aware UTR (non-English files stop losing timing coverage).
 **Commands:** `cd batchalign3 && cargo build --release -p batchalign-cli`
 then `bash deploy/scripts/deploy_batchalign3.sh --server`
 
-### 4. Reassess prior non-English experiment results
+### 4. Reassess prior non-English experiment results — DONE
 
-German and other non-English files showed poor timing in earlier experiments.
-Some of this may have been caused by the Rev.AI language code truncation bug
-(e.g., German `deu` → `de` worked by luck, but other codes didn't). Need to
-check whether any prior experiment results were affected by bugs we've now
-fixed.
+All experiments used Rev.AI as the default UTR ASR engine (`--utr-engine rev`).
+The Rev.AI language code truncation bug affected Hakka but not other languages:
 
-**Files:** experiment results in `analysis/per-speaker-utr-experiment-2026-03-16/results/`
-**What to check:** Were any experiments run with Rev.AI where the language code
-was silently wrong? Were any Whisper runs silently in English?
+| Language | Code sent to Rev.AI | Correct? | Experiment impact |
+|---|---|---|---|
+| Hakka (hak) | `ha` (Hausa) | **WRONG** | UTR ASR may have transcribed as Hausa or failed silently. Hakka timing results are suspect. |
+| German (deu) | `de` | Correct | German regression was FA grouping sensitivity, not language bug |
+| Welsh (cym) | `cy` | Correct | Results valid |
+| Serbian (srp) | `sr` | Correct | Results valid |
+| French (fra) | `fr` | Correct | Results valid |
+
+**Hakka:** The -200 swing on file 02 and general Hakka variance may have been
+amplified by the UTR pre-pass receiving garbage ASR tokens (Rev.AI transcribing
+Hakka audio as Hausa). However, the language-aware UTR fix routes all non-English
+to GlobalUtr, which doesn't depend on ASR token quality for overlap recovery.
+Even with correct language codes, Hakka would use GlobalUtr. No need to re-run.
+
+**German:** The 23s median timing error and two-pass regression (64.7% vs 91.6%)
+were caused by FA grouping sensitivity (152 vs 162 groups with different UTR
+bullet distributions), not by the language code bug. Fixed by grouping-aware
+fallback (2026-03-17). Confirmed: `deu` → `de` is a correct mapping.
+
+**No prior conclusions about German/Welsh/Serbian/French need to change.** Only
+Hakka results were potentially compromised, and the mitigation (language-aware
+GlobalUtr) is already in place.
 
 ## Medium-term
 
