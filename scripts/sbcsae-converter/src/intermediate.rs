@@ -305,6 +305,293 @@ pub fn compute_alignment_edges(
     edges
 }
 
+// ── Document Builder ────────────────────────────────────────────────────────
+
+use std::path::Path;
+
+use crate::bracket::tokenize_brackets;
+use crate::diagnostics::Diagnostics;
+use crate::emit_chat::time_to_ms;
+use crate::format::{detect_format, parse_lines};
+use crate::speakers::build_speaker_map;
+use crate::trn_content::{parse_trn_content, TrnElement};
+use crate::types::BracketKind;
+
+/// Build a TrnDocument from a TRN file. This is stages 1–7 of the pipeline:
+/// read, decode, parse lines, tokenize brackets, parse content, map speakers,
+/// group utterances, compute alignment edges. NO overlap inference.
+pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument> {
+    let filename = path.file_name()?.to_str()?.to_string();
+
+    // Stage 1: Read and decode.
+    let text = match crate::encoding::read_and_decode(path, diag) {
+        Ok(t) => t,
+        Err(e) => {
+            eprintln!("Error reading {}: {e}", path.display());
+            return None;
+        }
+    };
+
+    // Stage 2: Detect format and parse lines.
+    let first_line = text.lines().find(|l| !l.trim().is_empty()).unwrap_or("");
+    let variant = detect_format(first_line);
+    let lines = parse_lines(&text, variant, diag);
+    let total_lines = lines.len();
+
+    // Stage 3: Tokenize brackets (positions only, no role inference).
+    // Collect all bracket tokens per line for content parsing.
+    let mut all_bracket_tokens = Vec::new();
+    for line in &lines {
+        let tokens = tokenize_brackets(&line.raw_content, line.line_number, line.content_column);
+        all_bracket_tokens.push(tokens);
+    }
+
+    // Stage 4: Parse TRN content into elements.
+    // Pass bracket positions (char offsets only) so the content parser can
+    // replace them with placeholders. No role information at this stage.
+    let line_elements: Vec<Vec<TrnElement>> = lines
+        .iter()
+        .zip(all_bracket_tokens.iter())
+        .map(|(line, tokens)| {
+            // Build position-only bracket list for content parser.
+            // Use dummy role/index — these won't be used by the intermediate model.
+            let positions: Vec<(usize, crate::types::OverlapRole, usize)> = tokens
+                .iter()
+                .map(|t| (t.char_offset, crate::types::OverlapRole::TopBegin, 0))
+                .collect();
+            parse_trn_content(&line.raw_content, &positions)
+        })
+        .collect();
+
+    // Stage 5: Build speaker map.
+    let mut seen = std::collections::HashSet::new();
+    let speakers: Vec<String> = lines
+        .iter()
+        .filter_map(|l| l.speaker.clone())
+        .filter(|s| seen.insert(s.clone()))
+        .collect();
+    let speaker_map = build_speaker_map(&speakers, diag);
+
+    // Stage 6: Group into utterances and assign bracket IDs.
+    let mut utterances = Vec::new();
+    let mut all_brackets = Vec::new();
+    let mut bracket_id_counter: u32 = 0;
+
+    let mut current_elements: Vec<ContentElement> = Vec::new();
+    let mut current_speaker: Option<String> = None;
+    let mut current_start_ms: Option<i64> = None;
+    let mut current_end_ms: Option<i64> = None;
+    let mut current_first_line: usize = 1;
+
+    for (line_idx, (line, (trn_elements, bracket_tokens))) in lines
+        .iter()
+        .zip(line_elements.iter().zip(all_bracket_tokens.iter()))
+        .enumerate()
+    {
+        // Skip zero-timestamp annotator comment lines.
+        if line.start_time == 0.0 && line.end_time == 0.0
+            && line.raw_content.trim_start().starts_with('$')
+        {
+            continue;
+        }
+
+        let is_new_speaker = line.speaker.is_some()
+            && line.speaker.as_deref() != current_speaker.as_deref();
+
+        if is_new_speaker {
+            // Flush previous utterance.
+            if !current_elements.is_empty() {
+                let term = extract_terminator_from_elements(&mut current_elements);
+                let utt_idx = utterances.len();
+                // Fix up bracket utterance_index for all brackets in this utterance.
+                for elem in &current_elements {
+                    if let ContentElement::Bracket(bid) = elem {
+                        if let Some(br) = all_brackets.iter_mut().find(|b: &&mut BracketRef| b.id == *bid) {
+                            br.utterance_index = utt_idx;
+                        }
+                    }
+                }
+                utterances.push(TrnUtterance {
+                    index: utt_idx,
+                    speaker: current_speaker.clone().unwrap_or_default(),
+                    elements: std::mem::take(&mut current_elements),
+                    terminator: term,
+                    start_ms: current_start_ms,
+                    end_ms: current_end_ms,
+                    source_lines: LineRange {
+                        first: current_first_line,
+                        last: line.line_number.saturating_sub(1).max(current_first_line),
+                    },
+                });
+            }
+            current_speaker = line.speaker.clone();
+            current_start_ms = Some(time_to_ms(line.start_time));
+            current_end_ms = Some(time_to_ms(line.end_time));
+            current_first_line = line.line_number;
+        } else {
+            // Continuation — check for internal terminators to split.
+            let has_terminator = current_elements.iter().any(|e| matches!(
+                e,
+                ContentElement::Word(w) if false, // placeholder — check terminators below
+            ));
+            // Check actual TRN terminators.
+            let has_trn_terminator = trn_elements.iter().any(|e| matches!(
+                e,
+                TrnElement::Period | TrnElement::QuestionMark | TrnElement::Truncation
+            ));
+
+            if has_trn_terminator && !current_elements.is_empty() {
+                // Flush at terminator boundary.
+                let term = extract_terminator_from_elements(&mut current_elements);
+                let utt_idx = utterances.len();
+                for elem in &current_elements {
+                    if let ContentElement::Bracket(bid) = elem {
+                        if let Some(br) = all_brackets.iter_mut().find(|b: &&mut BracketRef| b.id == *bid) {
+                            br.utterance_index = utt_idx;
+                        }
+                    }
+                }
+                utterances.push(TrnUtterance {
+                    index: utt_idx,
+                    speaker: current_speaker.clone().unwrap_or_default(),
+                    elements: std::mem::take(&mut current_elements),
+                    terminator: term,
+                    start_ms: current_start_ms,
+                    end_ms: current_end_ms,
+                    source_lines: LineRange {
+                        first: current_first_line,
+                        last: line.line_number,
+                    },
+                });
+                current_start_ms = Some(time_to_ms(line.start_time));
+                current_first_line = line.line_number;
+            }
+
+            current_end_ms = Some(time_to_ms(line.end_time));
+        }
+
+        // Convert TrnElements to ContentElements, creating BracketRefs.
+        let mut bracket_token_idx = 0;
+        for elem in trn_elements {
+            match elem {
+                TrnElement::Overlap { .. } => {
+                    // This is a bracket placeholder — create a BracketRef.
+                    let bt = if bracket_token_idx < bracket_tokens.len() {
+                        &bracket_tokens[bracket_token_idx]
+                    } else {
+                        bracket_token_idx += 1;
+                        continue;
+                    };
+                    bracket_token_idx += 1;
+
+                    let direction = match bt.kind {
+                        BracketKind::Open => BracketDirection::Open,
+                        BracketKind::Close => BracketDirection::Close,
+                        BracketKind::CloseForced => BracketDirection::CloseForced,
+                    };
+
+                    let bracket_ref = BracketRef {
+                        id: bracket_id_counter,
+                        direction,
+                        lexical_index: bt.lexical_index,
+                        utterance_index: 0, // Will be fixed up when utterance is flushed.
+                        element_position: current_elements.len(),
+                        speaker: line.effective_speaker.clone(),
+                        source: BracketSource {
+                            line_number: bt.line_number,
+                            char_offset: bt.char_offset,
+                            column: bt.column,
+                            time_range: (line.start_time, line.end_time),
+                        },
+                    };
+
+                    current_elements.push(ContentElement::Bracket(bracket_id_counter));
+                    all_brackets.push(bracket_ref);
+                    bracket_id_counter += 1;
+                }
+                TrnElement::Word(w) => {
+                    current_elements.push(ContentElement::Word(w.clone()));
+                }
+                TrnElement::PauseShort => current_elements.push(ContentElement::PauseShort),
+                TrnElement::PauseMedium => current_elements.push(ContentElement::PauseMedium),
+                TrnElement::PauseTimed(v) => current_elements.push(ContentElement::PauseTimed(v.clone())),
+                TrnElement::Inhalation => current_elements.push(ContentElement::Inhalation),
+                TrnElement::InhalationLengthened => current_elements.push(ContentElement::InhalationLengthened),
+                TrnElement::Exhalation => current_elements.push(ContentElement::Exhalation),
+                TrnElement::Click => current_elements.push(ContentElement::Click),
+                TrnElement::Vocalism(n) => current_elements.push(ContentElement::Vocalism(n.clone())),
+                TrnElement::Laugh => current_elements.push(ContentElement::Vocalism("laugh".to_string())),
+                TrnElement::Laughs(n) => current_elements.push(ContentElement::Laughs(*n)),
+                TrnElement::Comment(n) => current_elements.push(ContentElement::Vocalism(n.clone())),
+                TrnElement::LongFeatureBegin(l) => current_elements.push(ContentElement::LongFeatureBegin(l.clone())),
+                TrnElement::LongFeatureEnd(l) => current_elements.push(ContentElement::LongFeatureEnd(l.clone())),
+                TrnElement::NonvocalBegin(l) => current_elements.push(ContentElement::NonvocalBegin(l.clone())),
+                TrnElement::NonvocalEnd(l) => current_elements.push(ContentElement::NonvocalEnd(l.clone())),
+                TrnElement::NonvocalSimple(l) => current_elements.push(ContentElement::NonvocalSimple(l.clone())),
+                TrnElement::NonvocalBeat => current_elements.push(ContentElement::NonvocalBeat),
+                TrnElement::PhonologicalFragment(f) => current_elements.push(ContentElement::PhonologicalFragment(f.clone())),
+                TrnElement::Glottal => current_elements.push(ContentElement::Glottal),
+                TrnElement::Comma => current_elements.push(ContentElement::Comma),
+                // Structural elements consumed during utterance grouping:
+                TrnElement::Period | TrnElement::QuestionMark
+                | TrnElement::Truncation | TrnElement::Linker
+                | TrnElement::Space => {}
+            }
+        }
+    }
+
+    // Flush final utterance.
+    if !current_elements.is_empty() {
+        let term = extract_terminator_from_elements(&mut current_elements);
+        let utt_idx = utterances.len();
+        for elem in &current_elements {
+            if let ContentElement::Bracket(bid) = elem {
+                if let Some(br) = all_brackets.iter_mut().find(|b: &&mut BracketRef| b.id == *bid) {
+                    br.utterance_index = utt_idx;
+                }
+            }
+        }
+        utterances.push(TrnUtterance {
+            index: utt_idx,
+            speaker: current_speaker.unwrap_or_default(),
+            elements: current_elements,
+            terminator: term,
+            start_ms: current_start_ms,
+            end_ms: current_end_ms,
+            source_lines: LineRange {
+                first: current_first_line,
+                last: lines.last().map_or(1, |l| l.line_number),
+            },
+        });
+    }
+
+    // Stage 7: Compute alignment edges.
+    let alignment_edges = compute_alignment_edges(&all_brackets, 2, 5);
+
+    Some(TrnDocument {
+        filename,
+        format_variant: variant,
+        total_lines,
+        speaker_map,
+        speakers,
+        utterances,
+        brackets: all_brackets,
+        alignment_edges,
+        parse_diagnostics: diag.drain(),
+    })
+}
+
+/// Extract a terminator from the end of a ContentElement list.
+/// Looks for trailing Comma (→ Period) or returns Implicit.
+fn extract_terminator_from_elements(elements: &mut Vec<ContentElement>) -> Terminator {
+    // Remove trailing commas — they become period terminators.
+    if let Some(ContentElement::Comma) = elements.last() {
+        elements.pop();
+        return Terminator::Period;
+    }
+    Terminator::Implicit
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

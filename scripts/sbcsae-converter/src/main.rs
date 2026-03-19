@@ -37,6 +37,10 @@ struct Cli {
     #[arg(long)]
     chat: bool,
 
+    /// Emit intermediate TrnDocument as JSON (no overlap inference).
+    #[arg(long)]
+    intermediate: bool,
+
     /// Print progress to stderr.
     #[arg(short, long)]
     verbose: bool,
@@ -87,6 +91,29 @@ fn main() {
         }
 
         let stem = path.file_stem().unwrap().to_str().unwrap();
+
+        if cli.intermediate {
+            // Emit TrnDocument JSON — no overlap inference.
+            let mut diag = Diagnostics::new();
+            if let Some(doc) = intermediate::build_document(path, &mut diag) {
+                let json = serde_json::to_string_pretty(&doc).expect("JSON serialization failed");
+                match cli.output_dir {
+                    Some(ref dir) => {
+                        let out_path = dir.join(format!("{stem}.doc.json"));
+                        std::fs::write(&out_path, &json).expect("Failed to write output");
+                        if cli.verbose {
+                            eprintln!(
+                                "  {} → {} ({} utterances, {} brackets, {} alignment edges)",
+                                path.display(), out_path.display(),
+                                doc.utterances.len(), doc.brackets.len(), doc.alignment_edges.len(),
+                            );
+                        }
+                    }
+                    None => println!("{json}"),
+                }
+            }
+            continue;
+        }
 
         if cli.chat {
             let chat = &result.chat_output;

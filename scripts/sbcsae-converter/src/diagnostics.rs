@@ -35,6 +35,11 @@ impl Diagnostics {
         self.items
     }
 
+    /// Drain all diagnostics, leaving the collector empty.
+    pub fn drain(&mut self) -> Vec<Diagnostic> {
+        std::mem::take(&mut self.items)
+    }
+
     pub fn len(&self) -> usize {
         self.items.len()
     }
