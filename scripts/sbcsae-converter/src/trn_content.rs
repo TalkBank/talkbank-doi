@@ -4,17 +4,17 @@
 //! The parser handles context-sensitive tokens (%, @, =) correctly
 //! by trying alternatives in priority order.
 
-use crate::types::OverlapRole;
-use winnow::combinator::{alt, opt, peek, repeat};
+use winnow::combinator::alt;
 use winnow::error::StrContext;
 use winnow::prelude::*;
-use winnow::token::{any, one_of, take_while};
+use winnow::token::{one_of, take_while};
 
 /// A single element of TRN content.
 #[derive(Debug, Clone)]
 pub enum TrnElement {
     Word(String),
-    Overlap { role: OverlapRole, real_index: usize },
+    /// Bracket placeholder — direction (open/close) preserved, no role assigned.
+    Bracket { is_open: bool },
     PauseShort,
     PauseMedium,
     PauseTimed(String),
@@ -44,45 +44,41 @@ pub enum TrnElement {
 
 /// State passed through the parser for overlap bracket context.
 pub struct ParseContext<'a> {
-    /// (char_offset, role, real_index) for brackets on this line.
-    pub brackets: &'a [(usize, OverlapRole, usize)],
+    /// (char_offset, is_open) for brackets on this line.
+    pub brackets: &'a [(usize, bool)],
     /// Total byte length of the preprocessed string.
     pub start_len: usize,
     /// Map from char index to byte offset in preprocessed string.
     pub char_to_byte: &'a [usize],
-    /// Total number of chars.
-    pub total_chars: usize,
 }
 
 /// Parse TRN raw content into elements.
+///
+/// `bracket_positions` is a list of (char_offset, is_open) for overlap brackets
+/// on this line, from the bracket tokenizer. No role information at this stage.
 pub fn parse_trn_content(
     raw: &str,
-    bracket_classifications: &[(usize, OverlapRole, usize)],
+    bracket_positions: &[(usize, bool)],
 ) -> Vec<TrnElement> {
     // Pre-process: replace bracket tokens with placeholder chars so the
     // winnow parser doesn't need to coordinate with bracket offsets.
     // Work with chars (not bytes) since bracket.rs uses char offsets.
     let mut char_vec: Vec<char> = raw.chars().collect();
-    let mut bracket_at: Vec<(usize, OverlapRole, usize)> = Vec::new();
+    let mut bracket_at: Vec<(usize, bool)> = Vec::new();
 
-    for &(char_offset, role, real_index) in bracket_classifications {
+    for &(char_offset, is_open) in bracket_positions {
         if char_offset >= char_vec.len() {
             continue;
         }
-        // Determine how many chars this bracket token spans.
         let span = bracket_char_span(&char_vec, char_offset);
-        // Replace with \x01 (open) or \x02 (close) + spaces for remaining chars.
-        let marker = match role {
-            OverlapRole::TopBegin | OverlapRole::BottomBegin => '\x01',
-            OverlapRole::TopEnd | OverlapRole::BottomEnd => '\x02',
-        };
+        let marker = if is_open { '\x01' } else { '\x02' };
         char_vec[char_offset] = marker;
         for i in 1..span {
             if char_offset + i < char_vec.len() {
                 char_vec[char_offset + i] = ' ';
             }
         }
-        bracket_at.push((char_offset, role, real_index));
+        bracket_at.push((char_offset, is_open));
     }
 
     let preprocessed: String = char_vec.iter().collect();
@@ -90,9 +86,8 @@ pub fn parse_trn_content(
     let char_to_byte: Vec<usize> = preprocessed.char_indices().map(|(i, _)| i).collect();
     let ctx = ParseContext {
         brackets: &bracket_at,
-        start_len: preprocessed.len(), // byte length
+        start_len: preprocessed.len(),
         char_to_byte: &char_to_byte,
-        total_chars: char_vec.len(),
     };
     let mut elements = Vec::new();
     let mut input: &str = &preprocessed;
@@ -104,8 +99,8 @@ pub fn parse_trn_content(
 
         // Check for bracket placeholders (\x01 = open, \x02 = close).
         if input.starts_with('\x01') || input.starts_with('\x02') {
-            if let Some(&(_off, role, real_index)) = ctx.brackets.iter().find(|(o, _, _)| *o == char_offset) {
-                elements.push(TrnElement::Overlap { role, real_index });
+            if let Some(&(_off, is_open)) = ctx.brackets.iter().find(|(o, _)| *o == char_offset) {
+                elements.push(TrnElement::Bracket { is_open });
             }
             // Skip the placeholder char.
             input = &input[1..];
@@ -223,28 +218,6 @@ fn bracket_char_span(chars: &[char], offset: usize) -> usize {
         ']' => 1,
         _ => 1,
     }
-}
-
-/// Skip a bracket open token: [ or [N (digit 2-9).
-fn parse_bracket_open(input: &mut &str) -> ModalResult<()> {
-    '['.parse_next(input)?;
-    opt(one_of('2'..='9')).parse_next(input)?;
-    Ok(())
-}
-
-/// Skip a bracket close token: ], N], $], or N$].
-fn parse_bracket_close(input: &mut &str) -> ModalResult<()> {
-    alt((
-        // N$]
-        (one_of('2'..='9'), '$', ']').void(),
-        // $]
-        ('$', ']').void(),
-        // N]
-        (one_of('2'..='9'), ']').void(),
-        // bare ]
-        ']'.void(),
-    ))
-    .parse_next(input)
 }
 
 /// Parse one TRN content element (not overlap brackets — those are handled separately).

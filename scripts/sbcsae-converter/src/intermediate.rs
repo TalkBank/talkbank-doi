@@ -354,10 +354,9 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         .zip(all_bracket_tokens.iter())
         .map(|(line, tokens)| {
             // Build position-only bracket list for content parser.
-            // Use dummy role/index — these won't be used by the intermediate model.
-            let positions: Vec<(usize, crate::types::OverlapRole, usize)> = tokens
+            let positions: Vec<(usize, bool)> = tokens
                 .iter()
-                .map(|t| (t.char_offset, crate::types::OverlapRole::TopBegin, 0))
+                .map(|t| (t.char_offset, t.kind == crate::types::BracketKind::Open))
                 .collect();
             parse_trn_content(&line.raw_content, &positions)
         })
@@ -478,7 +477,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         let mut bracket_token_idx = 0;
         for elem in trn_elements {
             match elem {
-                TrnElement::Overlap { .. } => {
+                TrnElement::Bracket { .. } => {
                     // This is a bracket placeholder — create a BracketRef.
                     let bt = if bracket_token_idx < bracket_tokens.len() {
                         &bracket_tokens[bracket_token_idx]

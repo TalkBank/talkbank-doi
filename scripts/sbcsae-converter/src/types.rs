@@ -1,5 +1,4 @@
 use serde::Serialize;
-use std::collections::BTreeMap;
 
 /// Format variant detected from file structure.
 #[derive(Debug, Clone, Copy, Serialize, serde::Deserialize)]
@@ -50,79 +49,6 @@ pub enum BracketKind {
     Close,
     /// `$]` or `N$]` (force bottom end)
     CloseForced,
-}
-
-/// Classification after overlap inference.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
-pub enum OverlapRole {
-    TopBegin,
-    TopEnd,
-    BottomBegin,
-    BottomEnd,
-}
-
-/// How the index appears in the source file.
-#[derive(Debug, Clone, Serialize)]
-#[serde(rename_all = "snake_case")]
-pub enum DisplayIndex {
-    Unnumbered,
-    Numbered(u8),
-}
-
-/// Location of a bracket in the source file.
-#[derive(Debug, Clone, Serialize)]
-pub struct BracketLocation {
-    pub line_number: usize,
-    /// Offset within the line's content field.
-    pub char_offset: usize,
-    /// Absolute column in the original line.
-    pub column: usize,
-    /// Timestamp range of the line this bracket appears on.
-    pub time_range: (f64, f64),
-}
-
-/// One participant's bracket span within an overlap set.
-#[derive(Debug, Clone, Serialize)]
-pub struct OverlapParticipant {
-    /// TRN speaker name (full, e.g., "JAMIE").
-    pub speaker: String,
-    pub begin: Option<BracketLocation>,
-    pub end: Option<BracketLocation>,
-    /// Text between `[` and `]` for this participant.
-    pub bracketed_text: Option<String>,
-}
-
-/// An overlap set: one top speaker paired with one or more bottom speakers.
-#[derive(Debug, Clone, Serialize)]
-pub struct OverlapSetOutput {
-    /// 0-based sequential index within the run.
-    pub real_index: usize,
-    pub display_index: DisplayIndex,
-    pub top: OverlapParticipant,
-    pub bottoms: Vec<OverlapParticipant>,
-    /// True if all begins and ends are matched.
-    pub complete: bool,
-}
-
-/// A complete overlap run (resets between non-overlapping stretches).
-#[derive(Debug, Clone, Serialize)]
-pub struct OverlapRunOutput {
-    pub run_id: usize,
-    pub sets: Vec<OverlapSetOutput>,
-    pub first_line: usize,
-    pub last_line: usize,
-}
-
-/// Per-file output.
-#[derive(Debug, Clone, Serialize)]
-pub struct FileOutput {
-    pub filename: String,
-    pub format_variant: FormatVariant,
-    pub total_lines: usize,
-    /// TRN full name → CHAT truncated ID.
-    pub speaker_map: BTreeMap<String, String>,
-    pub overlap_runs: Vec<OverlapRunOutput>,
-    pub diagnostics: Vec<Diagnostic>,
 }
 
 /// A diagnostic message.
