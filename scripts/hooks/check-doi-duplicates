@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Check for duplicate DOIs across all sibling *-data repos.
+# Rejects push if any two repos share the same DOI value.
+
+set -euo pipefail
+
+REPO_ROOT="$1"
+PARENT_DIR="$(dirname "$REPO_ROOT")"
+
+# Find all sibling *-data repos
+find_dois() {
+    for repo in "$PARENT_DIR"/*-data; do
+        if [ ! -d "$repo/.git" ]; then
+            continue
+        fi
+        find "$repo" -name '0metadata.cdc' -not -path '*/.git/*' -print0 | \
+            xargs -0 grep -h '^DOI:' 2>/dev/null | \
+            sed 's/^DOI:[[:space:]]*//' | \
+            sed 's/^doi://' | \
+            while read -r doi; do
+                if [ -n "$doi" ]; then
+                    echo "$doi	$repo"
+                fi
+            done
+    done
+}
+
+# Check for duplicates
+duplicates=$(find_dois | sort | awk -F'\t' '
+    {
+        if ($1 in seen) {
+            if (!(seen[$1] " + " $2 in printed)) {
+                print "  DOI " $1 ":"
+                print "    " seen[$1]
+                print "    " $2
+                printed[seen[$1] " + " $2] = 1
+            }
+        } else {
+            seen[$1] = $2
+        }
+    }
+')
+
+if [ -n "$duplicates" ]; then
+    echo "[pre-push] ERROR: Duplicate DOIs found across data repos:"
+    echo "$duplicates"
+    exit 1
+fi

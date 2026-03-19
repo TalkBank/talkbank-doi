@@ -68,6 +68,15 @@ for repo in "${REPOS[@]}"; do
     else
         echo "  clone $repo..."
         if git clone "git@github.com:${GITHUB_ORG}/${repo}.git" "$TARGET/$repo" 2>/dev/null; then
+            # Install pre-push hook if hooks directory exists alongside this script
+            SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+            HOOK_SRC="$SCRIPT_DIR/hooks/pre-push"
+            if [ -f "$HOOK_SRC" ]; then
+                cp "$HOOK_SRC" "$TARGET/$repo/.git/hooks/pre-push"
+                chmod +x "$TARGET/$repo/.git/hooks/pre-push"
+                # Also symlink the hooks directory for the hook scripts to find
+                ln -sf "$SCRIPT_DIR/hooks" "$TARGET/$repo/.git/talkbank-hooks"
+            fi
             cloned=$((cloned + 1))
         else
             echo "  FAILED to clone $repo"

@@ -1,21 +1,42 @@
 # GitLab-to-GitHub Migration: Implementation Plan
 
-**Status:** Draft
-**Last updated:** 2026-03-18
+**Status:** Phases 1+2 COMPLETE (2026-03-19). Phase 3 in progress.
+**Last updated:** 2026-03-19
 
-Ordered sequence of steps. Each step has prerequisites, what to do, how to verify, and rollback.
+Ordered sequence of steps. Phases 1 and 2 were executed in a single window on 2026-03-19, going straight to GitHub (skipping the planned GitLab intermediate step).
 
 Supporting docs:
 - [gitlab-to-github-research.md](gitlab-to-github-research.md) — facts, decisions, open questions
 - [dependency-map.md](dependency-map.md) — what breaks, what works, dead code, conventions
+- [phase3-plan.md](phase3-plan.md) — decommission git-talkbank, pre-commit hooks, GitHub Actions
+- [phase4-succession.md](phase4-succession.md) — succession planning
 
 ---
 
-## Phase 1: Split Repos on GitLab
+## Phases 1+2: Split Repos and Migrate to GitHub (COMPLETE)
 
-**Goal:** Split 4 large repos into 12 new repos. Update all scripts so the deploy pipeline works with 24 repos instead of 16. Everything still on GitLab, nothing public-facing changes.
+**Completed:** 2026-03-19 in a single migration window.
 
-**Migration window:** Tell Brian and Davida to pause pushes for ~2 hours during Steps 1.3–1.5. They can resume once Step 1.6 verifies the deploy pipeline works.
+**What was done:**
+1. Split 4 large repos into 12 new repos on git-talkbank (verified: all file counts match)
+2. Created fresh `git init` for all 12 unsplit repos (no history bloat)
+3. Pushed all 24 repos to GitHub (`ca-candor-data` needed batched push due to 2 GB limit)
+4. Cleaned config.py: removed 666 lines of dead code (Apache, SSL, *-site, mor, screencasts, GitBucket)
+5. Rewrote tasks.py: `build_data()` now iterates `BANK_TO_DATA_REPOS` for multi-repo merges
+6. Fixed rsync `--delete` bug (was deleting previous repos' files during merge)
+7. Set up brian, davida, study machines with 24 fresh GitHub clones
+8. Created `sync-staging.sh` (rsync replaces GitLab push/pull for staging)
+9. GitLab purged from git-talkbank
+
+**Original plan below preserved for reference** (steps were adapted during execution).
+
+---
+
+## Phase 1 (original plan): Split Repos on GitLab
+
+**Goal:** Split 4 large repos into 12 new repos. Update all scripts so the deploy pipeline works with 24 repos instead of 16.
+
+**Migration window:** Brian and Davida paused pushes for ~1 hour.
 
 ---
 

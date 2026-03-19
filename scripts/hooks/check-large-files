@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# Reject pushes containing files over 50 MB.
+# Prevents accidental media commits that bloat the repo.
+
+set -euo pipefail
+
+REPO_ROOT="$1"
+MAX_SIZE_KB=51200  # 50 MB in KB
+
+# Check staged files in the commits being pushed
+large_files=$(git -C "$REPO_ROOT" diff --cached --name-only --diff-filter=ACM 2>/dev/null | while read -r file; do
+    filepath="$REPO_ROOT/$file"
+    if [ -f "$filepath" ]; then
+        size_kb=$(du -k "$filepath" 2>/dev/null | cut -f1)
+        if [ "$size_kb" -gt "$MAX_SIZE_KB" ]; then
+            echo "  $file ($(( size_kb / 1024 )) MB)"
+        fi
+    fi
+done)
+
+# Also check all files in the most recent commit (in case they committed before hook was installed)
+large_in_head=$(git -C "$REPO_ROOT" ls-files | while read -r file; do
+    filepath="$REPO_ROOT/$file"
+    if [ -f "$filepath" ]; then
+        size_kb=$(du -k "$filepath" 2>/dev/null | cut -f1)
+        if [ "$size_kb" -gt "$MAX_SIZE_KB" ]; then
+            echo "  $file ($(( size_kb / 1024 )) MB)"
+        fi
+    fi
+done)
+
+if [ -n "$large_files" ] || [ -n "$large_in_head" ]; then
+    echo "[pre-push] ERROR: Large files detected (> 50 MB):"
+    [ -n "$large_files" ] && echo "$large_files"
+    [ -n "$large_in_head" ] && echo "$large_in_head"
+    echo ""
+    echo "These files should be in .gitignore (media, .cex files, etc.)"
+    echo "Run: git rm --cached <file> && echo '<pattern>' >> .gitignore"
+    exit 1
+fi

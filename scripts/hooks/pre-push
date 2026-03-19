@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+# Pre-push hook for TalkBank data repos.
+# Installed by setup-data-workspace.sh into each *-data repo.
+#
+# Runs before `git push`. Rejects push if checks fail.
+# On success, may create additional commits (e.g., @Types updates).
+
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+REPO_NAME="$(basename "$REPO_ROOT")"
+HOOKS_DIR="$(dirname "$(readlink -f "$0")")/../talkbank-hooks"
+
+# If hooks directory doesn't exist, skip silently (not installed)
+if [ ! -d "$HOOKS_DIR" ]; then
+    exit 0
+fi
+
+echo "[pre-push] Running checks for $REPO_NAME..."
+
+# ── Hook 1: Check for large files ──
+if [ -x "$HOOKS_DIR/check-large-files" ]; then
+    "$HOOKS_DIR/check-large-files" "$REPO_ROOT" || exit 1
+fi
+
+# ── Hook 2: Check duplicate DOIs ──
+if [ -x "$HOOKS_DIR/check-doi-duplicates" ]; then
+    "$HOOKS_DIR/check-doi-duplicates" "$REPO_ROOT" || exit 1
+fi
+
+# ── Hook 3: Update @Types headers ──
+if [ -x "$HOOKS_DIR/update-types" ]; then
+    "$HOOKS_DIR/update-types" "$REPO_ROOT"
+fi
+
+echo "[pre-push] All checks passed."

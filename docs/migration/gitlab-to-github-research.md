@@ -1,9 +1,9 @@
 # GitLab-to-GitHub Migration: Research & Facts
 
-**Status:** Draft
-**Last updated:** 2026-03-18
+**Status:** Historical (migration complete 2026-03-19)
+**Last updated:** 2026-03-19
 
-This document collects verified facts, decisions, and open questions for the migration of all 16 data repos from GitLab to GitHub and the decommissioning of the git-talkbank cloud VM.
+Research document for the migration of 16 data repos from GitLab to 24 repos on GitHub. **Migration completed 2026-03-19.** Phases 1+2 executed in a single window. GitLab purged. See `implementation-plan.md` for what was done, `phase3-plan.md` for next steps.
 
 ---
 

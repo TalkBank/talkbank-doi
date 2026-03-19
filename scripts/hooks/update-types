@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# Update @Types headers in .cha files based on 0types.txt.
+# If any files change, creates a new commit before the push proceeds.
+#
+# Requires: python3 and update_chat_types.py accessible.
+
+set -euo pipefail
+
+REPO_ROOT="$1"
+SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
+
+# Try to find update_chat_types.py in known locations
+UPDATE_SCRIPT=""
+for candidate in \
+    "$SCRIPT_DIR/../../staging/scripts/update_chat_types.py" \
+    "$HOME/staging/scripts/update_chat_types.py" \
+    "$(command -v update_chat_types.py 2>/dev/null)"; do
+    if [ -f "$candidate" ]; then
+        UPDATE_SCRIPT="$candidate"
+        break
+    fi
+done
+
+if [ -z "$UPDATE_SCRIPT" ]; then
+    echo "[pre-push] WARNING: update_chat_types.py not found, skipping @Types update"
+    exit 0
+fi
+
+# Run the updater
+output=$(python3 "$UPDATE_SCRIPT" --chatdir "$REPO_ROOT" 2>&1)
+num_updated=$(echo "$output" | grep -oP '\d+ files updated' | grep -oP '\d+' || echo "0")
+
+if [ "$num_updated" -gt 0 ]; then
+    echo "[pre-push] Updated @Types in $num_updated files"
+    git -C "$REPO_ROOT" add -A
+    git -C "$REPO_ROOT" commit -m "Automatically update @Types headers"
+    echo "[pre-push] Created commit for @Types updates"
+fi
