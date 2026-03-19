@@ -44,8 +44,16 @@ pub fn emit_chat_file(
     // @Media
     writeln!(out, "@Media:\t{file_stem}, audio").unwrap();
 
+    // Sort utterances by start time for monotonic timestamps.
+    let mut sorted_utterances: Vec<&ChatUtterance> = utterances.iter().collect();
+    sorted_utterances.sort_by(|a, b| {
+        let a_start = a.start_ms.unwrap_or(0);
+        let b_start = b.start_ms.unwrap_or(0);
+        a_start.cmp(&b_start)
+    });
+
     // Utterances.
-    for utt in utterances {
+    for utt in &sorted_utterances {
         let chat_id = speaker_map
             .get(&utt.speaker)
             .map(|s| s.as_str())
