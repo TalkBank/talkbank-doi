@@ -622,6 +622,123 @@ fn extract_bracketed_text(
     }
 }
 
+// ── Document-level inference ────────────────────────────────────────────────
+
+use crate::intermediate::{
+    BracketDirection, BracketRef, ContentElement, OverlapAssignment, OverlapRole as IntermediateRole,
+    BracketRole, TrnDocument,
+};
+
+/// Infer overlap roles (top/bottom) for all brackets in a TrnDocument.
+/// Returns an OverlapAssignment mapping bracket IDs to roles.
+///
+/// This is the bridge between the intermediate model (no roles) and the
+/// CHAT emitter (needs roles). The internal state machine is unchanged.
+pub fn infer_overlaps(doc: &TrnDocument) -> OverlapAssignment {
+    let mut diag = Diagnostics::new();
+
+    // Build fake TrnLines for the state machine (it needs them for text extraction).
+    // We create minimal lines from utterance data.
+    let fake_lines: Vec<TrnLine> = doc
+        .utterances
+        .iter()
+        .map(|utt| TrnLine {
+            line_number: utt.source_lines.first,
+            start_time: utt.start_ms.unwrap_or(0) as f64 / 1000.0,
+            end_time: utt.end_ms.unwrap_or(0) as f64 / 1000.0,
+            speaker: Some(utt.speaker.clone()),
+            effective_speaker: utt.speaker.clone(),
+            raw_content: String::new(), // Not needed for role inference.
+            content_column: 0,
+        })
+        .collect();
+
+    let mut state = OverlapState::new();
+    let mut bracket_roles: std::collections::BTreeMap<u32, BracketRole> = std::collections::BTreeMap::new();
+    let mut current_speaker: Option<String> = None;
+
+    // Iterate utterances in document order, feeding brackets to the state machine.
+    for utt in &doc.utterances {
+        // Turn boundary detection.
+        if Some(&utt.speaker) != current_speaker.as_ref() {
+            state.reset_seen();
+            current_speaker = Some(utt.speaker.clone());
+        }
+
+        for elem in &utt.elements {
+            if let ContentElement::Bracket(bracket_id) = elem {
+                let bracket = match doc.brackets.iter().find(|b| b.id == *bracket_id) {
+                    Some(b) => b,
+                    None => continue,
+                };
+
+                // Create a BracketToken for the state machine.
+                let token = BracketToken {
+                    line_number: bracket.source.line_number,
+                    char_offset: bracket.source.char_offset,
+                    column: bracket.source.column,
+                    kind: match bracket.direction {
+                        BracketDirection::Open => BracketKind::Open,
+                        BracketDirection::Close => BracketKind::Close,
+                        BracketDirection::CloseForced => BracketKind::CloseForced,
+                    },
+                    lexical_index: bracket.lexical_index,
+                };
+
+                let role = match bracket.direction {
+                    BracketDirection::Open => {
+                        let r = state.add_begin(token, &bracket.speaker, &mut diag, &fake_lines);
+                        let real_idx = state.last_classified_index();
+                        bracket_roles.insert(*bracket_id, BracketRole {
+                            bracket_id: *bracket_id,
+                            role: overlap_role_to_intermediate(r),
+                            real_index: real_idx,
+                        });
+                        r
+                    }
+                    BracketDirection::Close => {
+                        let r = state.add_end(token, &bracket.speaker, false, &mut diag, &fake_lines);
+                        let real_idx = lexical_index_value(bracket.lexical_index);
+                        bracket_roles.insert(*bracket_id, BracketRole {
+                            bracket_id: *bracket_id,
+                            role: overlap_role_to_intermediate(r),
+                            real_index: real_idx,
+                        });
+                        r
+                    }
+                    BracketDirection::CloseForced => {
+                        let r = state.add_end(token, &bracket.speaker, true, &mut diag, &fake_lines);
+                        let real_idx = lexical_index_value(bracket.lexical_index);
+                        bracket_roles.insert(*bracket_id, BracketRole {
+                            bracket_id: *bracket_id,
+                            role: overlap_role_to_intermediate(r),
+                            real_index: real_idx,
+                        });
+                        r
+                    }
+                };
+            }
+        }
+    }
+
+    let _runs = state.finish(&mut diag, &fake_lines);
+
+    OverlapAssignment {
+        filename: doc.filename.clone(),
+        roles: bracket_roles,
+        inference_diagnostics: diag.into_vec(),
+    }
+}
+
+fn overlap_role_to_intermediate(role: OverlapRole) -> IntermediateRole {
+    match role {
+        OverlapRole::TopBegin => IntermediateRole::TopBegin,
+        OverlapRole::TopEnd => IntermediateRole::TopEnd,
+        OverlapRole::BottomBegin => IntermediateRole::BottomBegin,
+        OverlapRole::BottomEnd => IntermediateRole::BottomEnd,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -41,6 +41,10 @@ struct Cli {
     #[arg(long)]
     intermediate: bool,
 
+    /// Emit CHAT via the new pipeline: TrnDocument → OverlapAssignment → CHAT.
+    #[arg(long)]
+    doc_chat: bool,
+
     /// Print progress to stderr.
     #[arg(short, long)]
     verbose: bool,
@@ -110,6 +114,34 @@ fn main() {
                         }
                     }
                     None => println!("{json}"),
+                }
+            }
+            continue;
+        }
+
+        if cli.doc_chat {
+            // New pipeline: TrnDocument → OverlapAssignment → CHAT.
+            let mut diag = Diagnostics::new();
+            if let Some(doc) = intermediate::build_document(path, &mut diag) {
+                let assignment = overlap::infer_overlaps(&doc);
+                let num = stem.trim_start_matches("SBC").trim_start_matches('0');
+                let chat_file_stem = if num.is_empty() { "00" } else { num };
+                let chat = emit_chat::emit_chat_from_doc(chat_file_stem, &doc, &assignment);
+
+                match cli.output_dir {
+                    Some(ref dir) => {
+                        let chat_name = format!("{:02}.cha", num.parse::<u32>().unwrap_or(0));
+                        let out_path = dir.join(&chat_name);
+                        std::fs::write(&out_path, &chat).expect("Failed to write CHAT output");
+                        if cli.verbose {
+                            eprintln!(
+                                "  {} → {} ({} brackets, {} roles assigned)",
+                                path.display(), out_path.display(),
+                                doc.brackets.len(), assignment.roles.len(),
+                            );
+                        }
+                    }
+                    None => print!("{chat}"),
                 }
             }
             continue;

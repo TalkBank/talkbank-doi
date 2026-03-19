@@ -382,6 +382,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
     let mut current_start_ms: Option<i64> = None;
     let mut current_end_ms: Option<i64> = None;
     let mut current_first_line: usize = 1;
+    let mut last_terminator: Option<Terminator> = None;
 
     for (line_idx, (line, (trn_elements, bracket_tokens))) in lines
         .iter()
@@ -401,7 +402,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         if is_new_speaker {
             // Flush previous utterance.
             if !current_elements.is_empty() {
-                let term = extract_terminator_from_elements(&mut current_elements);
+                let term = last_terminator.take().unwrap_or_else(|| extract_terminator_from_elements(&mut current_elements));
                 let utt_idx = utterances.len();
                 // Fix up bracket utterance_index for all brackets in this utterance.
                 for elem in &current_elements {
@@ -429,20 +430,19 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
             current_end_ms = Some(time_to_ms(line.end_time));
             current_first_line = line.line_number;
         } else {
-            // Continuation — check for internal terminators to split.
-            let has_terminator = current_elements.iter().any(|e| matches!(
-                e,
-                ContentElement::Word(w) if false, // placeholder — check terminators below
-            ));
-            // Check actual TRN terminators.
-            let has_trn_terminator = trn_elements.iter().any(|e| matches!(
-                e,
-                TrnElement::Period | TrnElement::QuestionMark | TrnElement::Truncation
-            ));
+            // Continuation — check if previous line's TRN elements had a terminator.
+            // We look at the previous line's elements (not current_elements, which
+            // has already absorbed them as ContentElements minus terminators).
+            let prev_line_idx = if line_idx > 0 { line_idx - 1 } else { 0 };
+            let has_trn_terminator = line_elements.get(prev_line_idx)
+                .map_or(false, |elems| elems.iter().any(|e| matches!(
+                    e,
+                    TrnElement::Period | TrnElement::QuestionMark | TrnElement::Truncation
+                )));
 
             if has_trn_terminator && !current_elements.is_empty() {
                 // Flush at terminator boundary.
-                let term = extract_terminator_from_elements(&mut current_elements);
+                let term = last_terminator.take().unwrap_or_else(|| extract_terminator_from_elements(&mut current_elements));
                 let utt_idx = utterances.len();
                 for elem in &current_elements {
                     if let ContentElement::Bracket(bid) = elem {
@@ -532,17 +532,19 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
                 TrnElement::PhonologicalFragment(f) => current_elements.push(ContentElement::PhonologicalFragment(f.clone())),
                 TrnElement::Glottal => current_elements.push(ContentElement::Glottal),
                 TrnElement::Comma => current_elements.push(ContentElement::Comma),
-                // Structural elements consumed during utterance grouping:
-                TrnElement::Period | TrnElement::QuestionMark
-                | TrnElement::Truncation | TrnElement::Linker
-                | TrnElement::Space => {}
+                // Structural elements: record terminator type, don't add to content.
+                TrnElement::Period => { last_terminator = Some(Terminator::Period); }
+                TrnElement::QuestionMark => { last_terminator = Some(Terminator::Question); }
+                TrnElement::Truncation => { last_terminator = Some(Terminator::Interruption); }
+                TrnElement::Linker => { last_terminator = Some(Terminator::SelfCompletion); }
+                TrnElement::Space => {}
             }
         }
     }
 
     // Flush final utterance.
     if !current_elements.is_empty() {
-        let term = extract_terminator_from_elements(&mut current_elements);
+        let term = last_terminator.take().unwrap_or_else(|| extract_terminator_from_elements(&mut current_elements));
         let utt_idx = utterances.len();
         for elem in &current_elements {
             if let ContentElement::Bracket(bid) = elem {
