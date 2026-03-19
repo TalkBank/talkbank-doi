@@ -6,6 +6,7 @@ mod encoding;
 mod format;
 mod infer;
 mod intermediate;
+mod merge;
 mod speakers;
 mod trn_content;
 mod types;
@@ -39,6 +40,14 @@ struct Cli {
     /// Generate bracket annotation report.
     #[arg(long)]
     report: bool,
+
+    /// Merge TRN indices into existing CHAT files. Requires --chat-dir.
+    #[arg(long)]
+    merge: bool,
+
+    /// Directory containing hand-edited CHAT files (for --merge).
+    #[arg(long)]
+    chat_dir: Option<PathBuf>,
 
     /// Print progress to stderr.
     #[arg(short, long)]
@@ -89,6 +98,44 @@ fn main() {
         }
 
         let stem = path.file_stem().unwrap().to_str().unwrap();
+
+        if cli.merge {
+            let chat_dir = cli.chat_dir.as_ref().expect("--merge requires --chat-dir");
+            let assignment = infer::infer_overlaps_global(&doc);
+
+            // Find the corresponding CHAT file.
+            let num = stem.trim_start_matches("SBC").trim_start_matches('0');
+            let chat_name = format!("{:02}.cha", num.parse::<u32>().unwrap_or(0));
+            let chat_path = chat_dir.join(&chat_name);
+
+            if !chat_path.exists() {
+                eprintln!("  SKIP {}: no CHAT file at {}", doc.filename, chat_path.display());
+                continue;
+            }
+
+            match merge::merge_indices(&chat_path, &doc, &assignment) {
+                Ok(result) => {
+                    if cli.verbose {
+                        eprintln!(
+                            "  {} → {}: {} markers ({} indexed, {} already, {} unmatched)",
+                            doc.filename, chat_name,
+                            result.markers_found, result.markers_indexed,
+                            result.markers_already_indexed, result.markers_unmatched,
+                        );
+                    }
+                    match cli.output_dir {
+                        Some(ref dir) => {
+                            let out_path = dir.join(&chat_name);
+                            std::fs::write(&out_path, &result.updated_content)
+                                .expect("Failed to write merged CHAT");
+                        }
+                        None => print!("{}", result.updated_content),
+                    }
+                }
+                Err(e) => eprintln!("  ERROR {}: {}", chat_name, e),
+            }
+            continue;
+        }
 
         if cli.report {
             let assignment = infer::infer_overlaps_global(&doc);
