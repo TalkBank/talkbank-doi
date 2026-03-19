@@ -2,7 +2,7 @@ use serde::Serialize;
 use std::collections::BTreeMap;
 
 /// Format variant detected from file structure.
-#[derive(Debug, Clone, Copy, Serialize)]
+#[derive(Debug, Clone, Copy, Serialize, serde::Deserialize)]
 pub enum FormatVariant {
     /// SBC001–013: space-separated timestamps, TAB, padded speaker, TAB, content.
     A,
@@ -126,7 +126,7 @@ pub struct FileOutput {
 }
 
 /// A diagnostic message.
-#[derive(Debug, Clone, Serialize)]
+#[derive(Debug, Clone, Serialize, serde::Deserialize)]
 pub struct Diagnostic {
     pub severity: Severity,
     pub line_number: usize,
@@ -135,14 +135,14 @@ pub struct Diagnostic {
     pub message: String,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Severity {
     Warning,
     Error,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 pub enum DiagnosticCode {
     NulByte,
     Windows1252Char,

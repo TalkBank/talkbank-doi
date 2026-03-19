@@ -290,3 +290,4 @@ fn collect_trn_files(inputs: &[PathBuf]) -> Vec<PathBuf> {
     files.sort();
     files
 }
+mod intermediate;
