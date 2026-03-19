@@ -382,7 +382,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
     let mut current_start_ms: Option<i64> = None;
     let mut current_end_ms: Option<i64> = None;
     let mut current_first_line: usize = 1;
-    let mut last_terminator: Option<Terminator> = None;
+    let mut last_terminator: Option<RawTerminator> = None;
 
     for (line_idx, (line, (trn_elements, bracket_tokens))) in lines
         .iter()
@@ -402,7 +402,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
         if is_new_speaker {
             // Flush previous utterance.
             if !current_elements.is_empty() {
-                let term = last_terminator.take().unwrap_or_else(|| extract_terminator_from_elements(&mut current_elements));
+                let term = resolve_terminator(last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)), false);
                 let utt_idx = utterances.len();
                 // Fix up bracket utterance_index for all brackets in this utterance.
                 for elem in &current_elements {
@@ -442,7 +442,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
 
             if has_trn_terminator && !current_elements.is_empty() {
                 // Flush at terminator boundary.
-                let term = last_terminator.take().unwrap_or_else(|| extract_terminator_from_elements(&mut current_elements));
+                let term = resolve_terminator(last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)), false);
                 let utt_idx = utterances.len();
                 for elem in &current_elements {
                     if let ContentElement::Bracket(bid) = elem {
@@ -533,10 +533,13 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
                 TrnElement::Glottal => current_elements.push(ContentElement::Glottal),
                 TrnElement::Comma => current_elements.push(ContentElement::Comma),
                 // Structural elements: record terminator type, don't add to content.
-                TrnElement::Period => { last_terminator = Some(Terminator::Period); }
-                TrnElement::QuestionMark => { last_terminator = Some(Terminator::Question); }
-                TrnElement::Truncation => { last_terminator = Some(Terminator::Interruption); }
-                TrnElement::Linker => { last_terminator = Some(Terminator::SelfCompletion); }
+                // Truncation (--) is stored as a placeholder — the actual CHAT
+                // terminator (+/. vs +...) depends on whether the next speaker
+                // is the same or different, resolved at flush time.
+                TrnElement::Period => { last_terminator = Some(RawTerminator::Period); }
+                TrnElement::QuestionMark => { last_terminator = Some(RawTerminator::Question); }
+                TrnElement::Truncation => { last_terminator = Some(RawTerminator::Truncation); }
+                TrnElement::Linker => { last_terminator = Some(RawTerminator::Linker); }
                 TrnElement::Space => {}
             }
         }
@@ -544,7 +547,7 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
 
     // Flush final utterance.
     if !current_elements.is_empty() {
-        let term = last_terminator.take().unwrap_or_else(|| extract_terminator_from_elements(&mut current_elements));
+        let term = resolve_terminator(last_terminator.take().or_else(|| extract_terminator_from_elements(&mut current_elements)), false);
         let utt_idx = utterances.len();
         for elem in &current_elements {
             if let ContentElement::Bracket(bid) = elem {
@@ -583,15 +586,41 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
     })
 }
 
+/// Raw terminator from TRN — resolved to CHAT terminator at flush time.
+#[derive(Debug, Clone, Copy)]
+enum RawTerminator {
+    Period,
+    Question,
+    Truncation, // -- : becomes +/. or +... depending on next speaker
+    Linker,     // & : becomes +,
+}
+
+fn resolve_terminator(raw: Option<RawTerminator>, next_speaker_same: bool) -> Terminator {
+    match raw {
+        Some(RawTerminator::Period) => Terminator::Period,
+        Some(RawTerminator::Question) => Terminator::Question,
+        Some(RawTerminator::Truncation) => {
+            if next_speaker_same {
+                Terminator::TrailOff  // +... (same speaker trails off)
+            } else {
+                Terminator::Interruption  // +/. (different speaker interrupts)
+            }
+        }
+        Some(RawTerminator::Linker) => Terminator::SelfCompletion,
+        None => {
+            Terminator::Implicit
+        }
+    }
+}
+
 /// Extract a terminator from the end of a ContentElement list.
-/// Looks for trailing Comma (→ Period) or returns Implicit.
-fn extract_terminator_from_elements(elements: &mut Vec<ContentElement>) -> Terminator {
-    // Remove trailing commas — they become period terminators.
+/// Looks for trailing Comma (→ Period) or returns None.
+fn extract_terminator_from_elements(elements: &mut Vec<ContentElement>) -> Option<RawTerminator> {
     if let Some(ContentElement::Comma) = elements.last() {
         elements.pop();
-        return Terminator::Period;
+        return Some(RawTerminator::Period);
     }
-    Terminator::Implicit
+    None
 }
 
 #[cfg(test)]
