@@ -300,14 +300,18 @@ fn parse_timed_pause(input: &mut &str) -> ModalResult<TrnElement> {
     Ok(TrnElement::PauseTimed(val))
 }
 
-/// `...` — medium pause (not followed by `(`).
+/// `...` — medium pause (not followed by `(` + digit, which is timed pause).
 fn parse_medium_pause(input: &mut &str) -> ModalResult<TrnElement> {
     "...".parse_next(input)?;
-    // Must not be followed by ( (that's timed pause).
+    // Must not be followed by ( + digit (that's timed pause `...(1.2)`).
+    // But ...(H) is medium pause + vocalism, not timed pause.
     if input.starts_with('(') {
-        return Err(winnow::error::ErrMode::Backtrack(
-            winnow::error::ContextError::new(),
-        ));
+        let after_paren = input.get(1..2).unwrap_or("");
+        if after_paren.starts_with(|c: char| c.is_ascii_digit()) {
+            return Err(winnow::error::ErrMode::Backtrack(
+                winnow::error::ContextError::new(),
+            ));
+        }
     }
     Ok(TrnElement::PauseMedium)
 }
