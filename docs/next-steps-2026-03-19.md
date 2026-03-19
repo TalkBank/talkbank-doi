@@ -69,27 +69,17 @@ fallback (2026-03-17). Confirmed: `deu` → `de` is a correct mapping.
 Hakka results were potentially compromised, and the mitigation (language-aware
 GlobalUtr) is already in place.
 
-### 5. Fix morphotag V2 payload validation on corpus files
+### 5. Fix morphotag V2 payload validation on corpus files — DONE
 
-`morphotag` fails on real bilingual corpus files (Patagonia/30: 117 errors,
-MLE/28: 53 errors) with "validation errors for MorphosyntaxPreparedBatchV2".
-Simple English files work fine. The Rust V2 payload serialization produces
-items that don't match the Python `MorphosyntaxBatchItem` Pydantic model.
-Pre-existing bug, not caused by today's changes. Must fix before bilingual
-testing can proceed.
+Fixed: custom serde serializer for `special_forms` flattens Rust enums to
+`(Option<String>, Option<String>)` for the Python wire format. Validated on
+Patagonia/30 (Welsh/English/Spanish trilingual, 1760 utterances) with
+correct per-language Stanza routing.
 
-**Error:** `InvalidPayload: N validation errors for MorphosyntaxPreparedBatchV2`
+### 6. Add --lang override to morphotag/utseg/translate — DONE
 
-### 6. Add --lang override to morphotag/utseg/translate
-
-Commands that read language from CHAT headers should accept an optional
-`--lang` CLI flag to override the file's `@Languages` header. Useful for:
-- Testing with files that have wrong/missing headers
-- Forcing a specific language model
-- Debugging language routing
-
-This applies to any parameter derived from CHAT internals (language, speaker
-count, etc.). Pattern: CHAT header is default, CLI flag overrides.
+Added `--lang` flag to morphotag, translate, and coref. When set, overrides
+the `@Languages` header from the CHAT file. UtsegArgs already had it.
 
 ## Medium-term
 
