@@ -35,12 +35,8 @@ pub fn merge_indices(
         updated_content: String::with_capacity(content.len() + 1024),
     };
 
-    // Build per-speaker queues of indices from the TRN assignment.
-    // For each speaker, collect the sequence of (direction, index) in document order.
-    let speaker_queues = build_speaker_queues(doc, assignment);
-
-    // Track position per (chat_speaker, direction) as we scan the CHAT.
-    let mut positions: HashMap<(String, MarkerDir), usize> = HashMap::new();
+    // Build per-speaker entry lists with timing from the TRN.
+    let mut speaker_entries = build_speaker_entries(doc, assignment);
 
     for line in content.lines() {
         if !line.starts_with('*') {
@@ -59,8 +55,7 @@ pub fn merge_indices(
         let updated = process_line(
             line,
             &trn_speaker,
-            &speaker_queues,
-            &mut positions,
+            &mut speaker_entries,
             &mut result,
         );
         result.updated_content.push_str(&updated);
@@ -88,14 +83,20 @@ fn marker_to_dir(c: char) -> Option<MarkerDir> {
     }
 }
 
-/// Build per-(speaker, direction) queues of display indices from the TRN.
-fn build_speaker_queues(
+/// An index entry with timing for matching.
+struct IndexEntry {
+    display_index: u8,
+    time_ms: i64, // start time of the bracket's line in ms
+    used: bool,
+}
+
+/// Build per-(speaker, direction) lists of indices with timing from the TRN.
+fn build_speaker_entries(
     doc: &TrnDocument,
     assignment: &OverlapAssignment,
-) -> HashMap<(String, MarkerDir), Vec<u8>> {
-    let mut queues: HashMap<(String, MarkerDir), Vec<u8>> = HashMap::new();
+) -> HashMap<(String, MarkerDir), Vec<IndexEntry>> {
+    let mut entries: HashMap<(String, MarkerDir), Vec<IndexEntry>> = HashMap::new();
 
-    // Iterate brackets in document order.
     for bracket in &doc.brackets {
         if let Some(role) = assignment.roles.get(&bracket.id) {
             let dir = match role.role {
@@ -105,26 +106,29 @@ fn build_speaker_queues(
                 OverlapRole::BottomEnd => MarkerDir::BottomClose,
             };
             let display_index = (role.real_index % 9) as u8 + 1;
-            queues
+            let time_ms = (bracket.source.time_range.0 * 1000.0) as i64;
+            entries
                 .entry((bracket.speaker.clone(), dir))
                 .or_default()
-                .push(display_index);
+                .push(IndexEntry { display_index, time_ms, used: false });
         }
     }
 
-    queues
+    entries
 }
 
 fn process_line(
     line: &str,
     trn_speaker: &str,
-    queues: &HashMap<(String, MarkerDir), Vec<u8>>,
-    positions: &mut HashMap<(String, MarkerDir), usize>,
+    entries: &mut HashMap<(String, MarkerDir), Vec<IndexEntry>>,
     result: &mut MergeResult,
 ) -> String {
     let mut output = String::with_capacity(line.len() + 32);
     let chars: Vec<char> = line.chars().collect();
     let mut i = 0;
+
+    // Extract timing for this line to guide matching.
+    let line_time = extract_timing(line).map(|(s, _)| s);
 
     while i < chars.len() {
         if let Some(dir) = marker_to_dir(chars[i]) {
@@ -139,27 +143,42 @@ fn process_line(
                 continue;
             }
 
-            // Look up the next index for this speaker + direction.
+            // Find the best matching TRN bracket: closest unused entry by timing.
             let key = (trn_speaker.to_string(), dir);
-            let pos = positions.entry(key.clone()).or_insert(0);
-            let queue = queues.get(&key);
-
-            if let Some(indices) = queue {
-                if *pos < indices.len() {
-                    let idx = indices[*pos];
-                    *pos += 1;
-                    output.push(chars[i]);
-                    if idx >= 2 {
-                        output.push(char::from(b'0' + idx));
+            let matched_idx = if let Some(entry_list) = entries.get_mut(&key) {
+                if let Some(chat_time) = line_time {
+                    // Find closest unused entry by timing.
+                    let best: Option<(usize, &IndexEntry)> = entry_list.iter()
+                        .enumerate()
+                        .filter(|(_, e)| !e.used)
+                        .min_by_key(|(_, e)| (e.time_ms - chat_time).abs());
+                    if let Some((idx, _)) = best {
+                        entry_list[idx].used = true;
+                        Some(entry_list[idx].display_index)
+                    } else {
+                        None
                     }
-                    result.markers_indexed += 1;
                 } else {
-                    // Ran out of TRN brackets for this speaker+direction.
-                    output.push(chars[i]);
-                    result.markers_unmatched += 1;
+                    // No timing — use first unused entry (sequential fallback).
+                    let first_unused = entry_list.iter_mut().find(|e| !e.used);
+                    if let Some(entry) = first_unused {
+                        entry.used = true;
+                        Some(entry.display_index)
+                    } else {
+                        None
+                    }
                 }
             } else {
-                // No TRN brackets for this speaker+direction at all.
+                None
+            };
+
+            if let Some(idx) = matched_idx {
+                output.push(chars[i]);
+                if idx >= 2 {
+                    output.push(char::from(b'0' + idx));
+                }
+                result.markers_indexed += 1;
+            } else {
                 output.push(chars[i]);
                 result.markers_unmatched += 1;
             }
@@ -173,6 +192,21 @@ fn process_line(
     }
 
     output
+}
+
+fn extract_timing(line: &str) -> Option<(i64, i64)> {
+    if let Some(start_pos) = line.find('\x15') {
+        let rest = &line[start_pos + 1..];
+        if let Some(end_pos) = rest.find('\x15') {
+            let bullet = &rest[..end_pos];
+            if let Some(underscore) = bullet.find('_') {
+                let start: i64 = bullet[..underscore].parse().ok()?;
+                let end: i64 = bullet[underscore + 1..].parse().ok()?;
+                return Some((start, end));
+            }
+        }
+    }
+    None
 }
 
 fn extract_speaker(line: &str) -> String {
