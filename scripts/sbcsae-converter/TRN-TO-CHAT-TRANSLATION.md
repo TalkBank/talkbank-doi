@@ -286,6 +286,23 @@ TRN uses full names (`JAMIE`, `HAROLD`). CHAT uses truncated IDs (`JAMI`, `HARO`
 
 ---
 
+## CHAT Sanitization Rules
+
+Some TRN content is valid in TRN but illegal in CHAT. The converter
+sanitizes these during emission:
+
+| TRN Content | CHAT Problem | Sanitization |
+|-------------|-------------|--------------|
+| `((J,_M,_P_LAUGHING_7.8_SEC))` | Commas and periods illegal in happening names | `,` → `_AND`, `.` → `_POINT_` |
+| `((OVERHEAD_LIGHT_GOES_ON_BY_ITSELF))` | Very long happening names | Preserved (CHAT allows long names) |
+| Vocalism names with digits: `(YAWN0)` | Digits in vocalism names | Fixed in TRN source (typo) |
+| `<LABEL` crossing `((COMMENT))` | Brackets inside comment names | Fixed in TRN source (bracket repositioned) |
+| `SM@>` (compound label close) | Ambiguous: is `@` part of label or content? | Fixed in TRN: `SM> @>` (spaces added) |
+| `<@Word` (word jammed into label) | Parser can't separate label from content | Fixed in TRN: `<@ Word` (space added) |
+
+The sanitization is applied in `emit_chat.rs` during the CHAT emission stage.
+The TRN source fixes are tracked in `trn/FIXES.md`.
+
 ## Heuristics and Approximations
 
 This section documents every decision in the converter that involves

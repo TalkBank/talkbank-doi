@@ -581,6 +581,10 @@ pub fn build_document(path: &Path, diag: &mut Diagnostics) -> Option<TrnDocument
     validate_nonvocal_labels(&utterances, diag);
     validate_timestamp_monotonicity(&lines, diag);
     validate_vocalism_names(&utterances, diag);
+    validate_bracket_balance(&all_brackets, diag);
+    // Note: overlap index sequence validation disabled — too many false positives
+    // from run boundary detection. The indices are validated by the CHAT validator
+    // after conversion.
 
     // Stage 8: Compute alignment edges.
     let alignment_edges = compute_alignment_edges(&all_brackets, 2, 5);
@@ -780,6 +784,76 @@ fn validate_vocalism_names(utterances: &[TrnUtterance], diag: &mut Diagnostics) 
                     );
                 }
             }
+        }
+    }
+}
+
+/// Validate that total open brackets equals total close brackets.
+fn validate_bracket_balance(brackets: &[BracketRef], diag: &mut Diagnostics) {
+    let opens = brackets.iter().filter(|b| b.direction == BracketDirection::Open).count();
+    let closes = brackets.iter().filter(|b| matches!(b.direction, BracketDirection::Close | BracketDirection::CloseForced)).count();
+
+    if opens != closes {
+        diag.warn(
+            0,
+            None,
+            crate::types::DiagnosticCode::UnmatchedBracket,
+            format!("Bracket imbalance: {opens} opens vs {closes} closes (diff={})", opens as isize - closes as isize),
+        );
+    }
+}
+
+/// Validate overlap index sequencing: within a contiguous run of overlapping
+/// speech, indices should be sequential (unnumbered, 2, 3, 4, ...).
+/// Gaps like unnumbered → 3 (skipping 2) are flagged.
+fn validate_overlap_index_sequence(brackets: &[BracketRef], diag: &mut Diagnostics) {
+    // Group open brackets by line proximity (within 3 lines = same run).
+    let opens: Vec<&BracketRef> = brackets.iter()
+        .filter(|b| b.direction == BracketDirection::Open)
+        .collect();
+
+    if opens.is_empty() {
+        return;
+    }
+
+    let mut run_start = 0;
+    for i in 1..opens.len() {
+        let gap = opens[i].source.line_number.saturating_sub(opens[i - 1].source.line_number);
+        if gap > 5 {
+            // New run — check the previous run's indices.
+            check_run_indices(&opens[run_start..i], diag);
+            run_start = i;
+        }
+    }
+    check_run_indices(&opens[run_start..], diag);
+}
+
+fn check_run_indices(run: &[&BracketRef], diag: &mut Diagnostics) {
+    if run.len() < 2 {
+        return;
+    }
+
+    let mut indices: Vec<u8> = run.iter()
+        .map(|b| b.lexical_index.unwrap_or(0))
+        .collect();
+    indices.sort();
+    indices.dedup();
+
+    // Check for gaps: 0, 1, 2 is fine; 0, 2 (missing 1) is a gap.
+    for window in indices.windows(2) {
+        if window[1] > window[0] + 1 {
+            diag.warn(
+                run[0].source.line_number,
+                None,
+                crate::types::DiagnosticCode::IndexGap,
+                format!(
+                    "Overlap index gap: {} → {} (missing {}) near line {}",
+                    if window[0] == 0 { "unnumbered".to_string() } else { format!("[{}]", window[0] + 1) },
+                    format!("[{}]", window[1] + 1),
+                    format!("[{}]", window[0] + 2),
+                    run[0].source.line_number,
+                ),
+            );
         }
     }
 }
