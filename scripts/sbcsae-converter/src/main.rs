@@ -1,3 +1,4 @@
+mod autonumber;
 mod bracket;
 mod diagnostics;
 mod emit_chat;
@@ -46,6 +47,10 @@ struct Cli {
     /// Emit CHAT via the new pipeline: TrnDocument → OverlapAssignment → CHAT.
     #[arg(long)]
     doc_chat: bool,
+
+    /// Generate bracket annotation report (which brackets need numbering).
+    #[arg(long)]
+    report: bool,
 
     /// Print progress to stderr.
     #[arg(short, long)]
@@ -97,6 +102,19 @@ fn main() {
         }
 
         let stem = path.file_stem().unwrap().to_str().unwrap();
+
+        if cli.report {
+            // Generate bracket annotation report.
+            let mut diag = Diagnostics::new();
+            if let Some(doc) = intermediate::build_document(path, &mut diag) {
+                let assignment = infer::infer_overlaps_global(&doc);
+                let annotations = autonumber::analyze_brackets(&doc, &assignment);
+                let report = autonumber::review_report(&annotations);
+                eprintln!("=== {} ===", doc.filename);
+                eprint!("{report}");
+            }
+            continue;
+        }
 
         if cli.intermediate {
             // Emit TrnDocument JSON — no overlap inference.
