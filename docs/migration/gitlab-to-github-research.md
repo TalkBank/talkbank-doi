@@ -14,10 +14,10 @@ Research document for the migration of 16 data repos from GitLab to 24 repos on 
 - **Cloud VM** on CMU Campus Cloud (Ubuntu)
 - **Tailscale access:** `macw@git-talkbank`
 - **Two distinct services on the same machine:**
-  - **Port 8929:** GitLab EE — hosts all 16 `*-data` repos (`gitlab.talkbank.org:talkbank/*.git`)
+  - **Port 8929:** ~~GitLab EE~~ **DELETED 2026-03-19** (`sudo apt purge gitlab-ee`)
   - **Port 80/443 (`https://git.talkbank.org`):** John Kowalski's Node.js web app — dynamic file serving, NOT GitLab. Intercepts web requests and serves data from `~/staging/build/`.
 - **Also runs:** deploy pipeline (`~/staging/`), build output (`~/staging/build/`)
-- **Goal:** Decommission entirely after migration
+- **Status:** GitLab deleted. Deploy pipeline still runs here. VM still needed for John's app + deploy until Phase 3 completes.
 
 **IMPORTANT:** `https://git.talkbank.org` (no port) is John's Node app, NOT GitLab. `https://git.talkbank.org:8929` is GitLab. These are two completely separate services.
 

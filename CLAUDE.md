@@ -171,17 +171,21 @@ cargo run --release -p talkbank-cli -- validate ../data/ --skip-alignment     # 
 
 ## Batchalign3 Testing
 
-When running `batchalign3 align` or other commands in experiments/testing:
+**LOCAL ML RUNS ARE DANGEROUS.** Each Whisper/Stanza model instance consumes 2–5 GB RAM. The default auto-tuner will spawn multiple concurrent workers that exhaust GPU/system memory, causing **unrecoverable kernel OOM crashes**. This has happened multiple times.
+
+**Rules:**
+- **Process one file at a time** on a developer machine — always smoke-test one file first
+- **For large corpus runs** (>5 files or >1 GB audio), use net (M3 Ultra, 256 GB RAM), not a developer machine
 - **Always pass `--no-open-dashboard`** to prevent browser tab spam
-- **Use at most 4 workers** (`--workers 4`) to avoid OOM crashes — each worker loads ML models consuming several GB RAM
-- **Never run 8+ workers** on a 64 GB machine — this caused a kernel-level crash
+- **WARNING: `--workers N` is currently a no-op** — it is parsed but never wired to the server config. Do not rely on it.
 
 ```bash
-# Correct experiment invocation:
-batchalign3 --no-open-dashboard align input.cha -o output/ --utr-strategy auto -v
+# Correct: single file, local
+batchalign3 --no-open-dashboard transcribe one_file.wav -o output/ --lang eng -v
 
-# Start server with safe worker count:
-batchalign3 serve start --workers 4
+# Correct: full corpus on net (256 GB RAM)
+ssh macw@net
+batchalign3 --no-open-dashboard transcribe /path/to/corpus/ -o output/ --lang auto -v
 ```
 
 ## Deployment
