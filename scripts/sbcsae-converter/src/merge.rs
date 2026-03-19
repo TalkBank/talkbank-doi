@@ -1,42 +1,21 @@
 //! Merge TRN overlap indices into existing hand-edited CHAT files.
 //!
-//! Strategy: content-based matching with DP alignment.
-//! For each speaker, extract the sequence of overlap bracket texts from both
-//! CHAT and TRN, then align them using dynamic programming (edit distance)
-//! to find the best correspondence.
+//! Two-pass strategy:
+//! 1. DP alignment for open markers (⌈, ⌊) — content-based matching
+//! 2. Stack-based propagation for close markers (⌉, ⌋) — inherit index
+//!    from the most recent unmatched open of the same kind
 
 use std::collections::HashMap;
 use std::path::Path;
 
 use crate::intermediate::{OverlapAssignment, OverlapRole, TrnDocument};
 
-/// Result of merging indices into one CHAT file.
 pub struct MergeResult {
     pub markers_found: usize,
     pub markers_indexed: usize,
     pub markers_already_indexed: usize,
     pub markers_unmatched: usize,
     pub updated_content: String,
-}
-
-/// A CHAT overlap marker with its context.
-struct ChatMarker {
-    line_idx: usize,
-    char_idx: usize,
-    marker_char: char,
-    speaker: String,
-    /// Text between this open and its close (if on same line).
-    bracketed_text: String,
-    /// Has an existing index digit.
-    existing_index: Option<u8>,
-}
-
-/// A TRN bracket with its assigned index.
-struct TrnEntry {
-    speaker: String,
-    role: OverlapRole,
-    display_index: u8,
-    context_text: String,
 }
 
 pub fn merge_indices(
@@ -47,19 +26,13 @@ pub fn merge_indices(
     let content = std::fs::read_to_string(chat_path)?;
     let lines: Vec<&str> = content.lines().collect();
 
-    // Step 1: Extract all CHAT markers with their bracketed text.
-    let chat_markers = extract_chat_markers(&lines);
+    // DP alignment for open markers. Close markers stay unindexed —
+    // E347 only validates indexed markers, so unindexed closes don't cause errors.
+    let all_indices = dp_align_opens(&lines, doc, assignment);
 
-    // Step 2: Build TRN entries with context text.
-    let trn_entries = build_trn_entries(doc, assignment);
-
-    // Step 3: For each (speaker, direction), align CHAT markers with TRN entries
-    // using DP-based sequence alignment.
-    let index_map = align_markers(&chat_markers, &trn_entries);
-
-    // Step 4: Apply indices to the CHAT content.
+    // Pass 3: Apply to output.
     let mut result = MergeResult {
-        markers_found: chat_markers.len(),
+        markers_found: 0,
         markers_indexed: 0,
         markers_already_indexed: 0,
         markers_unmatched: 0,
@@ -67,13 +40,13 @@ pub fn merge_indices(
     };
 
     for (line_idx, line) in lines.iter().enumerate() {
-        let mut output = String::with_capacity(line.len() + 32);
         let chars: Vec<char> = line.chars().collect();
+        let mut output = String::with_capacity(line.len() + 32);
         let mut i = 0;
 
         while i < chars.len() {
             if is_overlap_marker(chars[i]) {
-                // Check for existing index.
+                result.markers_found += 1;
                 if i + 1 < chars.len() && chars[i + 1] >= '2' && chars[i + 1] <= '9' {
                     result.markers_already_indexed += 1;
                     output.push(chars[i]);
@@ -81,9 +54,7 @@ pub fn merge_indices(
                     i += 2;
                     continue;
                 }
-
-                // Look up the assigned index.
-                if let Some(&idx) = index_map.get(&(line_idx, i)) {
+                if let Some(&idx) = all_indices.get(&(line_idx, i)) {
                     output.push(chars[i]);
                     if idx >= 2 {
                         output.push(char::from(b'0' + idx));
@@ -107,129 +78,53 @@ pub fn merge_indices(
     Ok(result)
 }
 
-fn is_overlap_marker(c: char) -> bool {
-    matches!(c, '⌈' | '⌉' | '⌊' | '⌋')
-}
+// ── Pass 1: DP alignment for opens ──────────────────────────────────────────
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-enum MarkerDir {
-    TopOpen,
-    TopClose,
-    BottomOpen,
-    BottomClose,
-}
+fn dp_align_opens(
+    lines: &[&str],
+    doc: &TrnDocument,
+    assignment: &OverlapAssignment,
+) -> HashMap<(usize, usize), u8> {
+    let mut result = HashMap::new();
 
-fn marker_to_dir(c: char) -> Option<MarkerDir> {
-    match c {
-        '⌈' => Some(MarkerDir::TopOpen),
-        '⌉' => Some(MarkerDir::TopClose),
-        '⌊' => Some(MarkerDir::BottomOpen),
-        '⌋' => Some(MarkerDir::BottomClose),
-        _ => None,
-    }
-}
-
-fn role_to_dir(role: OverlapRole) -> MarkerDir {
-    match role {
-        OverlapRole::TopBegin => MarkerDir::TopOpen,
-        OverlapRole::TopEnd => MarkerDir::TopClose,
-        OverlapRole::BottomBegin => MarkerDir::BottomOpen,
-        OverlapRole::BottomEnd => MarkerDir::BottomClose,
-    }
-}
-
-/// Extract all overlap markers from CHAT lines with their context.
-fn extract_chat_markers(lines: &[&str]) -> Vec<ChatMarker> {
-    let mut markers = Vec::new();
+    // Extract CHAT open markers per (speaker, direction).
+    let mut chat_opens: HashMap<(String, Dir), Vec<(usize, usize, String)>> = HashMap::new();
     let mut current_speaker = String::new();
-
     for (line_idx, line) in lines.iter().enumerate() {
         if line.starts_with('*') {
             if let Some(colon) = line.find(':') {
                 current_speaker = line[1..colon].to_string();
             }
         }
-        if !line.starts_with('*') {
-            continue;
-        }
+        if !line.starts_with('*') { continue; }
 
         let chars: Vec<char> = line.chars().collect();
         let mut i = 0;
         while i < chars.len() {
-            if is_overlap_marker(chars[i]) {
-                let marker_char = chars[i];
-                let existing_index = if i + 1 < chars.len() && chars[i + 1] >= '2' && chars[i + 1] <= '9' {
-                    Some((chars[i + 1] as u8) - b'0')
-                } else {
-                    None
-                };
-
-                // Extract bracketed text: text from this marker to its matching close.
-                let bracketed = extract_bracketed_text_from_chat(&chars, i);
-
-                markers.push(ChatMarker {
-                    line_idx,
-                    char_idx: i,
-                    marker_char,
-                    speaker: current_speaker.clone(),
-                    bracketed_text: bracketed,
-                    existing_index,
-                });
-
-                i += 1;
-                if existing_index.is_some() {
-                    i += 1;
-                }
-            } else {
-                i += 1;
+            if (chars[i] == '⌈' || chars[i] == '⌊')
+                && !(i + 1 < chars.len() && chars[i + 1] >= '2' && chars[i + 1] <= '9')
+            {
+                let dir = if chars[i] == '⌈' { Dir::TopOpen } else { Dir::BottomOpen };
+                let text = extract_bracketed_text(&chars, i);
+                chat_opens.entry((current_speaker.clone(), dir)).or_default()
+                    .push((line_idx, i, text));
             }
+            i += 1;
         }
     }
 
-    markers
-}
-
-/// Extract the text between an overlap open and its close on the same line.
-fn extract_bracketed_text_from_chat(chars: &[char], start: usize) -> String {
-    let open_char = chars[start];
-    let close_char = match open_char {
-        '⌈' => '⌉',
-        '⌊' => '⌋',
-        '⌉' | '⌋' => return String::new(), // Close markers have no bracketed text.
-        _ => return String::new(),
-    };
-
-    let mut i = start + 1;
-    // Skip index digit.
-    if i < chars.len() && chars[i] >= '2' && chars[i] <= '9' {
-        i += 1;
-    }
-
-    let text_start = i;
-    while i < chars.len() {
-        if chars[i] == close_char {
-            let text: String = chars[text_start..i].iter().collect();
-            return normalize_for_matching(&text);
-        }
-        i += 1;
-    }
-
-    // No close found — extract rest of content (cross-utterance span).
-    let text: String = chars[text_start..].iter().collect();
-    // Remove timing bullet and terminator.
-    let text = text.trim_end();
-    normalize_for_matching(text)
-}
-
-/// Build TRN entries with context text for matching.
-fn build_trn_entries(doc: &TrnDocument, assignment: &OverlapAssignment) -> Vec<TrnEntry> {
-    let mut entries = Vec::new();
-
+    // Build TRN open entries per (speaker, direction).
+    let mut trn_opens: HashMap<(String, Dir), Vec<(u8, String)>> = HashMap::new();
     for bracket in &doc.brackets {
         if let Some(role) = assignment.roles.get(&bracket.id) {
-            // Get context: the utterance content near this bracket.
+            let dir = match role.role {
+                OverlapRole::TopBegin => Dir::TopOpen,
+                OverlapRole::BottomBegin => Dir::BottomOpen,
+                _ => continue,
+            };
+            let display_index = (role.real_index % 9) as u8 + 1;
+
             let context = if let Some(utt) = doc.utterances.get(bracket.utterance_index) {
-                // Extract words near this bracket in the utterance.
                 let mut words = Vec::new();
                 let mut in_bracket = false;
                 for elem in &utt.elements {
@@ -237,215 +132,200 @@ fn build_trn_entries(doc: &TrnDocument, assignment: &OverlapAssignment) -> Vec<T
                         crate::intermediate::ContentElement::Bracket(id) if *id == bracket.id => {
                             in_bracket = true;
                         }
-                        crate::intermediate::ContentElement::Bracket(_) => {
-                            if in_bracket {
-                                break; // Found the close bracket.
-                            }
-                        }
+                        crate::intermediate::ContentElement::Bracket(_) if in_bracket => break,
                         crate::intermediate::ContentElement::Word(w) if in_bracket => {
                             words.push(w.clone());
                         }
                         _ => {}
                     }
                 }
-                normalize_for_matching(&words.join(" "))
+                normalize(&words.join(" "))
             } else {
                 String::new()
             };
 
-            entries.push(TrnEntry {
-                speaker: bracket.speaker.clone(),
-                role: role.role,
-                display_index: (role.real_index % 9) as u8 + 1,
-                context_text: context,
-            });
+            trn_opens.entry((bracket.speaker.clone(), dir)).or_default()
+                .push((display_index, context));
         }
     }
 
-    entries
-}
-
-/// Normalize text for fuzzy matching: lowercase, strip markers, collapse whitespace.
-fn normalize_for_matching(text: &str) -> String {
-    let mut s = text.to_lowercase();
-    // Remove CHAT-specific markers.
-    s = s.replace("&=in", "").replace("&=ex", "").replace("&=tsk", "");
-    // Remove overlap markers.
-    s = s.replace('⌈', "").replace('⌉', "").replace('⌊', "").replace('⌋', "");
-    // Remove digits that are overlap indices.
-    // Remove punctuation except apostrophes.
-    s = s.chars().filter(|c| c.is_alphanumeric() || c.is_whitespace() || *c == '\'').collect();
-    // Collapse whitespace.
-    s.split_whitespace().collect::<Vec<_>>().join(" ")
-}
-
-/// Align CHAT markers with TRN entries using DP per (speaker, direction).
-/// Returns a map of (line_idx, char_idx) → display_index.
-fn align_markers(
-    chat_markers: &[ChatMarker],
-    trn_entries: &[TrnEntry],
-) -> HashMap<(usize, usize), u8> {
-    let mut result = HashMap::new();
-
-    // Map CHAT speaker IDs to TRN speaker names isn't needed here —
-    // both sides use the CHAT speaker ID format.
-
-    // Group by (speaker, direction).
-    let mut chat_by_key: HashMap<(String, MarkerDir), Vec<usize>> = HashMap::new();
-    for (i, m) in chat_markers.iter().enumerate() {
-        if m.existing_index.is_some() {
-            continue; // Already indexed — skip.
-        }
-        if let Some(dir) = marker_to_dir(m.marker_char) {
-            chat_by_key.entry((m.speaker.clone(), dir)).or_default().push(i);
-        }
-    }
-
-    let mut trn_by_key: HashMap<(String, MarkerDir), Vec<usize>> = HashMap::new();
-    for (i, e) in trn_entries.iter().enumerate() {
-        // Map TRN speaker to CHAT ID.
-        let dir = role_to_dir(e.role);
-        trn_by_key.entry((e.speaker.clone(), dir)).or_default().push(i);
-    }
-
-    // For each (speaker, direction), align the sequences.
-    for (key, chat_indices) in &chat_by_key {
-        // Find the TRN speaker name that matches this CHAT speaker ID.
-        let trn_key_candidates: Vec<_> = trn_by_key.keys()
-            .filter(|(_, d)| *d == key.1)
-            .filter(|(s, _)| {
-                // Match: TRN speaker name truncated to 4 chars == CHAT ID.
-                let truncated = if s.len() >= 4 { &s[..4] } else { s.as_str() };
-                truncated == key.0
-            })
-            .cloned()
-            .collect();
-
-        let trn_key = if let Some(k) = trn_key_candidates.first() {
-            k.clone()
-        } else {
-            continue;
+    // For each (speaker, direction), run DP alignment.
+    for (chat_key, chat_items) in &chat_opens {
+        // Find TRN key matching this CHAT speaker.
+        let trn_key = doc.speaker_map.iter()
+            .find(|(_, cid)| cid.as_str() == chat_key.0)
+            .map(|(name, _)| (name.clone(), chat_key.1));
+        let trn_key = match trn_key {
+            Some(k) => k,
+            None => continue,
         };
-
-        let trn_indices = match trn_by_key.get(&trn_key) {
+        let trn_items = match trn_opens.get(&trn_key) {
             Some(v) => v,
             None => continue,
         };
 
-        // Extract text sequences for DP alignment.
-        let chat_texts: Vec<&str> = chat_indices.iter()
-            .map(|&i| chat_markers[i].bracketed_text.as_str())
-            .collect();
-        let trn_texts: Vec<&str> = trn_indices.iter()
-            .map(|&i| trn_entries[i].context_text.as_str())
-            .collect();
+        let chat_texts: Vec<&str> = chat_items.iter().map(|(_, _, t)| t.as_str()).collect();
+        let trn_texts: Vec<&str> = trn_items.iter().map(|(_, t)| t.as_str()).collect();
 
-        // DP alignment: find the best matching between chat_texts and trn_texts.
         let alignment = dp_align(&chat_texts, &trn_texts);
 
-        // Apply the alignment.
-        for (chat_pos, trn_pos) in alignment {
-            let chat_marker = &chat_markers[chat_indices[chat_pos]];
-            let trn_entry = &trn_entries[trn_indices[trn_pos]];
-            result.insert(
-                (chat_marker.line_idx, chat_marker.char_idx),
-                trn_entry.display_index,
-            );
+        for (ci, ti) in alignment {
+            let (line_idx, char_idx, _) = &chat_items[ci];
+            let (display_index, _) = &trn_items[ti];
+            result.insert((*line_idx, *char_idx), *display_index);
         }
     }
 
     result
 }
 
-/// transpositions. Returns pairs of (chat_idx, trn_idx).
+// ── Pass 2: Close propagation ───────────────────────────────────────────────
+
+fn propagate_to_closes(
+    lines: &[&str],
+    open_indices: &HashMap<(usize, usize), u8>,
+) -> HashMap<(usize, usize), u8> {
+    let mut result = open_indices.clone();
+    let mut current_speaker = String::new();
+    // Per-speaker stack: (expected_close_char, index).
+    let mut stacks: HashMap<String, Vec<(char, u8)>> = HashMap::new();
+
+    for (line_idx, line) in lines.iter().enumerate() {
+        if line.starts_with('*') {
+            if let Some(colon) = line.find(':') {
+                current_speaker = line[1..colon].to_string();
+            }
+        }
+        if !line.starts_with('*') { continue; }
+
+        let chars: Vec<char> = line.chars().collect();
+        let mut i = 0;
+        while i < chars.len() {
+            if !is_overlap_marker(chars[i]) { i += 1; continue; }
+
+            let has_digit = i + 1 < chars.len() && chars[i + 1] >= '2' && chars[i + 1] <= '9';
+
+            if chars[i] == '⌈' || chars[i] == '⌊' {
+                let close_char = if chars[i] == '⌈' { '⌉' } else { '⌋' };
+                let idx = if has_digit {
+                    (chars[i + 1] as u8) - b'0'
+                } else if let Some(&idx) = open_indices.get(&(line_idx, i)) {
+                    idx
+                } else {
+                    1 // Default for unmatched opens.
+                };
+                stacks.entry(current_speaker.clone()).or_default()
+                    .push((close_char, idx));
+                i += if has_digit { 2 } else { 1 };
+            } else {
+                // Close marker.
+                if !has_digit {
+                    if let Some(stack) = stacks.get_mut(&current_speaker) {
+                        if let Some(pos) = stack.iter().rposition(|(c, _)| *c == chars[i]) {
+                            let (_, idx) = stack.remove(pos);
+                            result.insert((line_idx, i), idx);
+                        }
+                    }
+                } else {
+                    // Already indexed close — just pop the stack.
+                    let idx = (chars[i + 1] as u8) - b'0';
+                    if let Some(stack) = stacks.get_mut(&current_speaker) {
+                        if let Some(pos) = stack.iter().rposition(|(c, _)| *c == chars[i]) {
+                            stack.remove(pos);
+                        }
+                    }
+                }
+                i += if has_digit { 2 } else { 1 };
+            }
+        }
+    }
+
+    result
+}
+
+// ── DP alignment ────────────────────────────────────────────────────────────
+
 fn dp_align(chat: &[&str], trn: &[&str]) -> Vec<(usize, usize)> {
     let m = chat.len();
     let n = trn.len();
+    if m == 0 || n == 0 { return Vec::new(); }
 
-    if m == 0 || n == 0 {
-        return Vec::new();
-    }
-
-    // Cost function: similarity between two strings.
-    // Higher = better match. 0 = no match.
     let similarity = |a: &str, b: &str| -> i32 {
-        if a.is_empty() && b.is_empty() {
-            return 10;
-        }
-        if a.is_empty() || b.is_empty() {
-            return 0;
-        }
-        if a == b {
-            return 100;
-        }
-        // Substring containment.
-        if a.contains(b) || b.contains(a) {
-            return 80;
-        }
-        // Word overlap.
-        let a_words: std::collections::HashSet<&str> = a.split_whitespace().collect();
-        let b_words: std::collections::HashSet<&str> = b.split_whitespace().collect();
-        let common = a_words.intersection(&b_words).count() as i32;
-        let total = a_words.len().max(b_words.len()) as i32;
-        if total > 0 && common > 0 {
-            (common * 60) / total
-        } else {
-            0
-        }
+        if a.is_empty() && b.is_empty() { return 10; }
+        if a.is_empty() || b.is_empty() { return 0; }
+        if a == b { return 100; }
+        if a.contains(b) || b.contains(a) { return 80; }
+        let aw: std::collections::HashSet<&str> = a.split_whitespace().collect();
+        let bw: std::collections::HashSet<&str> = b.split_whitespace().collect();
+        let common = aw.intersection(&bw).count() as i32;
+        let total = aw.len().max(bw.len()) as i32;
+        if total > 0 && common > 0 { (common * 60) / total } else { 0 }
     };
 
-    // DP table: dp[i][j] = best score for aligning chat[0..i] with trn[0..j].
+    let gap = -5;
     let mut dp = vec![vec![0i32; n + 1]; m + 1];
     let mut from = vec![vec![(0usize, 0usize); n + 1]; m + 1];
 
-    // Gap penalty.
-    let gap = -5;
-
-    for i in 1..=m {
-        dp[i][0] = dp[i - 1][0] + gap;
-        from[i][0] = (i - 1, 0);
-    }
-    for j in 1..=n {
-        dp[0][j] = dp[0][j - 1] + gap;
-        from[0][j] = (0, j - 1);
-    }
+    for i in 1..=m { dp[i][0] = dp[i-1][0] + gap; from[i][0] = (i-1, 0); }
+    for j in 1..=n { dp[0][j] = dp[0][j-1] + gap; from[0][j] = (0, j-1); }
 
     for i in 1..=m {
         for j in 1..=n {
-            let match_score = dp[i - 1][j - 1] + similarity(chat[i - 1], trn[j - 1]);
-            let chat_gap = dp[i - 1][j] + gap;
-            let trn_gap = dp[i][j - 1] + gap;
-
-            if match_score >= chat_gap && match_score >= trn_gap {
-                dp[i][j] = match_score;
-                from[i][j] = (i - 1, j - 1);
-            } else if chat_gap >= trn_gap {
-                dp[i][j] = chat_gap;
-                from[i][j] = (i - 1, j);
+            let ms = dp[i-1][j-1] + similarity(chat[i-1], trn[j-1]);
+            let cg = dp[i-1][j] + gap;
+            let tg = dp[i][j-1] + gap;
+            if ms >= cg && ms >= tg {
+                dp[i][j] = ms; from[i][j] = (i-1, j-1);
+            } else if cg >= tg {
+                dp[i][j] = cg; from[i][j] = (i-1, j);
             } else {
-                dp[i][j] = trn_gap;
-                from[i][j] = (i, j - 1);
+                dp[i][j] = tg; from[i][j] = (i, j-1);
             }
         }
     }
 
-    // Traceback.
     let mut pairs = Vec::new();
-    let mut i = m;
-    let mut j = n;
+    let (mut i, mut j) = (m, n);
     while i > 0 && j > 0 {
         let (pi, pj) = from[i][j];
-        if pi == i - 1 && pj == j - 1 {
-            // Match.
-            let sim = similarity(chat[i - 1], trn[j - 1]);
-            if sim > 0 {
-                pairs.push((i - 1, j - 1));
-            }
+        if pi == i-1 && pj == j-1 && similarity(chat[i-1], trn[j-1]) > 0 {
+            pairs.push((i-1, j-1));
         }
-        i = pi;
-        j = pj;
+        i = pi; j = pj;
     }
-
     pairs.reverse();
     pairs
+}
+
+// ── Utilities ───────────────────────────────────────────────────────────────
+
+fn is_overlap_marker(c: char) -> bool {
+    matches!(c, '⌈' | '⌉' | '⌊' | '⌋')
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+enum Dir { TopOpen, TopClose, BottomOpen, BottomClose }
+
+fn extract_bracketed_text(chars: &[char], start: usize) -> String {
+    let close = match chars[start] {
+        '⌈' => '⌉', '⌊' => '⌋', _ => return String::new(),
+    };
+    let mut i = start + 1;
+    if i < chars.len() && chars[i] >= '2' && chars[i] <= '9' { i += 1; }
+    let text_start = i;
+    while i < chars.len() {
+        if chars[i] == close {
+            return normalize(&chars[text_start..i].iter().collect::<String>());
+        }
+        i += 1;
+    }
+    normalize(&chars[text_start..].iter().collect::<String>())
+}
+
+fn normalize(text: &str) -> String {
+    let mut s = text.to_lowercase();
+    s = s.replace("&=in", "").replace("&=ex", "").replace("&=tsk", "");
+    s = s.replace('⌈', "").replace('⌉', "").replace('⌊', "").replace('⌋', "");
+    s = s.chars().filter(|c| c.is_alphanumeric() || c.is_whitespace() || *c == '\'').collect();
+    s.split_whitespace().collect::<Vec<_>>().join(" ")
 }
