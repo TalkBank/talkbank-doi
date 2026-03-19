@@ -120,6 +120,25 @@ def find_audio_file(lines, input_dir):
     return None
 
 
+def rebase_timing(lines, offset_ms):
+    """Subtract offset_ms from all timing bullets so they're relative to trimmed audio."""
+    rebased = []
+    for line in lines:
+        def rebase_match(m):
+            start = max(0, int(m.group(1)) - offset_ms)
+            end = max(0, int(m.group(2)) - offset_ms)
+            return f"{BULLET}{start}_{end}{BULLET}"
+
+        new_line = re.sub(BULLET + r"(\d+)_(\d+)" + BULLET, rebase_match, line)
+        # Also handle bare timing (no bullet markers) at end of main tier lines
+        if line.startswith("*") and not BULLET in line:
+            new_line = re.sub(r"\b(\d{4,})_(\d{4,})\b",
+                              lambda m: f"{max(0, int(m.group(1)) - offset_ms)}_{max(0, int(m.group(2)) - offset_ms)}",
+                              new_line)
+        rebased.append(new_line)
+    return rebased
+
+
 def build_trimmed_chat(lines, main_indices, start_utt, end_utt):
     """Build a trimmed CHAT file with headers + selected utterances."""
     headers = extract_headers(lines)
@@ -222,6 +241,12 @@ def main():
     if trimmed is None:
         print("ERROR: no utterances found in range")
         sys.exit(1)
+
+    # Rebase timing bullets: subtract the audio trim start offset so bullets
+    # are relative to the trimmed audio (which starts at 0).
+    if time_range:
+        audio_start_ms = max(0, start_ms - args.padding_ms)
+        trimmed = rebase_timing(trimmed, audio_start_ms)
 
     stem = input_path.stem
     chat_out = output_dir / f"{stem}-trimmed.cha"

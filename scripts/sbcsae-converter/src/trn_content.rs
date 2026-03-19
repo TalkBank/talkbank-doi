@@ -1,452 +1,446 @@
-//! TRN content AST — lightweight representation of parsed TRN content elements.
+//! TRN content parser using winnow.
 //!
-//! This is intentionally NOT a CHAT AST. It represents TRN conventions directly,
-//! and a separate pass (`emit_chat.rs`) transforms these into CHAT text.
+//! Parses TRN raw content into a sequence of `TrnElement` values.
+//! The parser handles context-sensitive tokens (%, @, =) correctly
+//! by trying alternatives in priority order.
 
 use crate::types::OverlapRole;
+use winnow::combinator::{alt, opt, peek, repeat};
+use winnow::prelude::*;
+use winnow::token::{any, one_of, take_while};
 
 /// A single element of TRN content.
 #[derive(Debug, Clone)]
 pub enum TrnElement {
-    /// Plain word text.
     Word(String),
-    /// Overlap bracket with classification from the state machine.
-    Overlap {
-        role: OverlapRole,
-        /// 0-based real index from the overlap run.
-        real_index: usize,
-    },
-    /// Short pause `..`
+    Overlap { role: OverlapRole, real_index: usize },
     PauseShort,
-    /// Medium pause `...`
     PauseMedium,
-    /// Timed pause `...(N.N)` — value in seconds.
     PauseTimed(String),
-    /// Lengthening `=` (attached to preceding word, converted during parsing).
-    /// Stored as the word with `=` already replaced by `:`.
-    // (Handled inline in word parsing, not a separate element.)
-
-    /// Inhalation `(H)`
     Inhalation,
-    /// Lengthened inhalation `(H)=`
     InhalationLengthened,
-    /// Exhalation `(Hx)`
     Exhalation,
-    /// Click `(TSK)`
     Click,
-    /// General vocalism `(NAME)` — e.g., SNIFF, THROAT, COUGH.
     Vocalism(String),
-
-    /// Single laugh `@`
     Laugh,
-    /// Multiple laughs `@@@` etc.
     Laughs(usize),
-
-    /// Environmental comment `((NAME))`
     Comment(String),
-
-    /// Long feature begin `<NAME`
     LongFeatureBegin(String),
-    /// Long feature end `NAME>`
     LongFeatureEnd(String),
-
-    /// Nonvocal begin `<<NAME`
     NonvocalBegin(String),
-    /// Nonvocal end `NAME>>`
     NonvocalEnd(String),
-    /// Simple nonvocal `<<NAME>>`
     NonvocalSimple(String),
-    /// Beat within nonvocal scope `+`
     NonvocalBeat,
-
-    /// Truncation `--`
     Truncation,
-
-    /// Continuation linker `&`
     Linker,
-
-    /// Comma `,`
     Comma,
-    /// Period `.`
     Period,
-    /// Question mark `?`
     QuestionMark,
-
-    /// Phonological fragment `/_word_/` or `/word/`
     PhonologicalFragment(String),
-
-    /// Pseudograph prefix on next word: `~`, `!`, or `#`.
-    /// The prefix is stripped; the word follows as a Word element.
-    // (Handled inline — prefix stripped during word parsing.)
-
-    /// Glottal stop `%` — context determines output.
     Glottal,
-
-    /// Whitespace (preserved for spacing).
     Space,
 }
 
-/// Parse TRN raw content into a sequence of TrnElements.
-///
-/// `bracket_classifications` is a list of (char_offset, role, real_index) for
-/// overlap brackets on this line, from the overlap state machine.
+/// State passed through the parser for overlap bracket context.
+pub struct ParseContext<'a> {
+    /// (char_offset, role, real_index) for brackets on this line.
+    pub brackets: &'a [(usize, OverlapRole, usize)],
+    /// Current byte offset in the input (tracked manually since winnow
+    /// doesn't expose position in &str mode easily).
+    pub start_len: usize,
+}
+
+/// Parse TRN raw content into elements.
 pub fn parse_trn_content(
     raw: &str,
     bracket_classifications: &[(usize, OverlapRole, usize)],
 ) -> Vec<TrnElement> {
-    let chars: Vec<char> = raw.chars().collect();
-    let len = chars.len();
-    let mut elements = Vec::new();
-    let mut i = 0;
-    let mut word_buf = String::new();
-
-    let flush_word = |buf: &mut String, elements: &mut Vec<TrnElement>| {
-        if !buf.is_empty() {
-            // Apply lengthening: replace = with : in words.
-            // Apply glottal: replace % with ʔ in words (ʔuh if standalone).
-            let transformed = buf.replace('=', ":").replace('%', "ʔ");
-            elements.push(TrnElement::Word(transformed));
-            buf.clear();
-        }
+    let ctx = ParseContext {
+        brackets: bracket_classifications,
+        start_len: raw.len(),
     };
+    let mut elements = Vec::new();
+    let mut input = raw;
 
-    while i < len {
-        // Check if this position is a classified overlap bracket.
-        if let Some(&(_, role, real_index)) = bracket_classifications.iter().find(|(off, _, _)| *off == i) {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::Overlap { role, real_index });
-            // Skip past the bracket and optional digit.
-            i += 1;
-            if i < len && chars[i].is_ascii_digit() && chars[i] >= '2' && chars[i] <= '9' {
-                i += 1; // Skip index digit after [.
-            }
-            continue;
-        }
+    while !input.is_empty() {
+        let offset = ctx.start_len - input.len();
 
-        // Close bracket: check if classified.
-        if chars[i] == ']' {
-            // Already handled by bracket_classifications for the close position.
-            // If not classified (orphan), skip it.
-            flush_word(&mut word_buf, &mut elements);
-            i += 1;
-            continue;
-        }
-
-        // Digit before ] — part of overlap close, skip.
-        if i + 1 < len && chars[i] >= '2' && chars[i] <= '9' && chars[i + 1] == ']' {
-            if bracket_classifications.iter().any(|(off, _, _)| *off == i) {
-                flush_word(&mut word_buf, &mut elements);
-                elements.push(TrnElement::Overlap {
-                    role: bracket_classifications.iter().find(|(off, _, _)| *off == i).unwrap().1,
-                    real_index: bracket_classifications.iter().find(|(off, _, _)| *off == i).unwrap().2,
-                });
-                i += 2; // digit + ]
+        // Try overlap bracket at this position.
+        // Check both current offset and offset+1 (for N] where N is at current pos).
+        let bracket_match = ctx.brackets.iter().find(|(o, _, _)| *o == offset);
+        if let Some(&(_off, role, real_index)) = bracket_match {
+            if let Ok((rest, _)) = parse_bracket_open.parse_peek(input) {
+                elements.push(TrnElement::Overlap { role, real_index });
+                input = rest;
                 continue;
             }
-            // Unclassified close digit — skip both.
-            flush_word(&mut word_buf, &mut elements);
-            i += 2;
-            continue;
-        }
-
-        // Forced close: $]
-        if chars[i] == '$' && i + 1 < len && chars[i + 1] == ']' {
-            if bracket_classifications.iter().any(|(off, _, _)| *off == i) {
-                flush_word(&mut word_buf, &mut elements);
-                elements.push(TrnElement::Overlap {
-                    role: bracket_classifications.iter().find(|(off, _, _)| *off == i).unwrap().1,
-                    real_index: bracket_classifications.iter().find(|(off, _, _)| *off == i).unwrap().2,
-                });
-            }
-            i += 2;
-            continue;
-        }
-
-        // Timed pause: ...(N.N)
-        if i + 4 < len && chars[i] == '.' && chars[i + 1] == '.' && chars[i + 2] == '.' && chars[i + 3] == '(' {
-            flush_word(&mut word_buf, &mut elements);
-            if let Some(end) = chars[i + 3..].iter().position(|&c| c == ')') {
-                let val: String = chars[i + 4..i + 3 + end].iter().collect();
-                elements.push(TrnElement::PauseTimed(val));
-                i = i + 3 + end + 1;
+            if let Ok((rest, _)) = parse_bracket_close.parse_peek(input) {
+                elements.push(TrnElement::Overlap { role, real_index });
+                input = rest;
                 continue;
             }
         }
-
-        // Medium pause: ...
-        if i + 2 < len && chars[i] == '.' && chars[i + 1] == '.' && chars[i + 2] == '.' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::PauseMedium);
-            i += 3;
-            continue;
-        }
-
-        // Short pause: ..
-        if i + 1 < len && chars[i] == '.' && chars[i + 1] == '.' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::PauseShort);
-            i += 2;
-            continue;
-        }
-
-        // Environmental comment: ((NAME))
-        if i + 1 < len && chars[i] == '(' && chars[i + 1] == '(' {
-            flush_word(&mut word_buf, &mut elements);
-            if let Some(end) = find_double_close(&chars, i + 2, ')') {
-                let name: String = chars[i + 2..end].iter().collect();
-                elements.push(TrnElement::Comment(name));
-                i = end + 2;
-                continue;
-            }
-        }
-
-        // Vocalisms: (H), (Hx), (TSK), (NAME)
-        if chars[i] == '(' && i + 2 < len && chars[i + 1] != '(' {
-            flush_word(&mut word_buf, &mut elements);
-            if let Some(close) = chars[i + 1..].iter().position(|&c| c == ')') {
-                let inner: String = chars[i + 1..i + 1 + close].iter().collect();
-                let element = match inner.as_str() {
-                    "H" => TrnElement::Inhalation,
-                    "Hx" | "HX" => TrnElement::Exhalation,
-                    "TSK" => TrnElement::Click,
-                    _ => TrnElement::Vocalism(inner),
-                };
-                elements.push(element);
-                i = i + 1 + close + 1;
-                // Check for lengthened: (H)=
-                if i < len && chars[i] == '=' {
-                    if let Some(last) = elements.last_mut() {
-                        if matches!(last, TrnElement::Inhalation) {
-                            *last = TrnElement::InhalationLengthened;
+        // Also check: is the NEXT position a bracket? If so, this char might be a
+        // close-bracket digit (e.g., '2' in '2]'). Don't let the word parser eat it.
+        if input.len() >= 2 {
+            let next_offset = offset + 1;
+            if ctx.brackets.iter().any(|(o, _, _)| *o == offset) {
+                // Already handled above.
+            } else if let Some(ch) = input.chars().next() {
+                if ch.is_ascii_digit() && ch >= '2' && ch <= '9' {
+                    // Check if this is a bracket close digit.
+                    let rest = &input[1..];
+                    if rest.starts_with(']') || rest.starts_with("$]") {
+                        // This digit is part of a bracket close. Check if it's classified.
+                        if let Some(&(_, role, real_index)) = ctx.brackets.iter().find(|(o, _, _)| *o == offset) {
+                            if let Ok((rest2, _)) = parse_bracket_close.parse_peek(input) {
+                                elements.push(TrnElement::Overlap { role, real_index });
+                                input = rest2;
+                                continue;
+                            }
+                        } else {
+                            // Unclassified bracket close — skip it.
+                            if let Ok((rest2, _)) = parse_bracket_close.parse_peek(input) {
+                                input = rest2;
+                                continue;
+                            }
                         }
                     }
-                    i += 1;
-                }
-                continue;
-            }
-        }
-
-        // Nonvocal simple: <<NAME>>
-        if i + 3 < len && chars[i] == '<' && chars[i + 1] == '<' {
-            flush_word(&mut word_buf, &mut elements);
-            if let Some(end) = find_double_close(&chars, i + 2, '>') {
-                let name: String = chars[i + 2..end].iter().collect();
-                // Check if this is simple (no content after) or begin.
-                elements.push(TrnElement::NonvocalSimple(name));
-                i = end + 2;
-                continue;
-            }
-            // No close found — treat as begin.
-            let rest: String = chars[i + 2..].iter().take_while(|c| c.is_ascii_uppercase() || **c == '_' || **c == '-').collect();
-            if !rest.is_empty() {
-                elements.push(TrnElement::NonvocalBegin(rest.clone()));
-                i += 2 + rest.len();
-                continue;
-            }
-        }
-
-        // Nonvocal end: NAME>>
-        // This is tricky — we need to look for UPPERCASE>> pattern.
-        // Handled by checking for >> after accumulating a word.
-
-        // Long feature begin: <NAME (single <, not <<)
-        if chars[i] == '<' && (i + 1 >= len || chars[i + 1] != '<') {
-            flush_word(&mut word_buf, &mut elements);
-            let rest: String = chars[i + 1..].iter().take_while(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || **c == '@' || **c == '%').collect();
-            if !rest.is_empty() {
-                elements.push(TrnElement::LongFeatureBegin(rest.clone()));
-                i += 1 + rest.len();
-                continue;
-            }
-            // Not a long feature — pass through.
-            word_buf.push(chars[i]);
-            i += 1;
-            continue;
-        }
-
-        // Long feature end: NAME> or @> (single >, not >>)
-        if chars[i] == '>' && (i + 1 >= len || chars[i + 1] != '>') {
-            // Check if word_buf ends with an uppercase/@ label.
-            if !word_buf.is_empty() {
-                let label_start = word_buf.rfind(|c: char| !c.is_ascii_uppercase() && !c.is_ascii_digit() && c != '@' && c != '%').map_or(0, |p| p + 1);
-                if label_start < word_buf.len() {
-                    let label = word_buf[label_start..].to_string();
-                    word_buf.truncate(label_start);
-                    flush_word(&mut word_buf, &mut elements);
-                    elements.push(TrnElement::LongFeatureEnd(label));
-                    i += 1;
-                    continue;
                 }
             }
-            // Check if last element was a Laugh — it might be the @ of a long feature end.
-            if let Some(TrnElement::Laugh) = elements.last() {
-                flush_word(&mut word_buf, &mut elements);
-                elements.pop(); // Remove the Laugh
-                elements.push(TrnElement::LongFeatureEnd("@".to_string()));
-                i += 1;
-                continue;
+        }
+        // Also skip bare ] that isn't classified.
+        if input.starts_with(']') && bracket_match.is_none() {
+            input = &input[1..];
+            continue;
+        }
+
+        // Try each element parser in priority order.
+        if let Ok((rest, elem)) = parse_element.parse_peek(input) {
+            elements.push(elem);
+            input = rest;
+        } else {
+            // Fallback: consume one char as part of a word.
+            let ch = input.chars().next().unwrap();
+            // Merge into previous word if possible.
+            if let Some(TrnElement::Word(w)) = elements.last_mut() {
+                w.push(ch);
+            } else {
+                elements.push(TrnElement::Word(ch.to_string()));
             }
-            // Bare > — pass through as word char.
-            word_buf.push('>');
-            i += 1;
-            continue;
+            input = &input[ch.len_utf8()..];
         }
-
-        // Truncation: --
-        if i + 1 < len && chars[i] == '-' && chars[i + 1] == '-' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::Truncation);
-            i += 2;
-            continue;
-        }
-
-        // Multiple laughs: @@@ etc.
-        if chars[i] == '@' && (word_buf.is_empty() || word_buf.chars().all(|c| c == '@')) {
-            if word_buf.is_empty() {
-                // Count consecutive @s.
-                let count = chars[i..].iter().take_while(|&&c| c == '@').count();
-                if count > 1 {
-                    elements.push(TrnElement::Laughs(count));
-                    i += count;
-                    continue;
-                }
-                // Single @ — could be laugh or prefix for laughing word.
-                if i + 1 < len && chars[i + 1].is_ascii_alphabetic() {
-                    // @ prefix on word — laughing word. Push @ into word_buf
-                    // and let word accumulation handle it.
-                    word_buf.push('@');
-                    i += 1;
-                    continue;
-                }
-                flush_word(&mut word_buf, &mut elements);
-                elements.push(TrnElement::Laugh);
-                i += 1;
-                continue;
-            }
-        }
-
-        // Glottal %
-        if chars[i] == '%' {
-            // If in a word context, accumulate (in-word glottal → ʔ).
-            if !word_buf.is_empty() {
-                word_buf.push('%');
-                i += 1;
-                continue;
-            }
-            // If followed by > — this is part of a long feature end label (%>).
-            // Accumulate into word buffer so the > handler picks it up.
-            if i + 1 < len && chars[i + 1] == '>' {
-                word_buf.push('%');
-                i += 1;
-                continue;
-            }
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::Glottal);
-            i += 1;
-            continue;
-        }
-
-        // Continuation linker &
-        if chars[i] == '&' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::Linker);
-            i += 1;
-            continue;
-        }
-
-        // Beat + (within nonvocal scope)
-        if chars[i] == '+' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::NonvocalBeat);
-            i += 1;
-            continue;
-        }
-
-        // Terminators / punctuation
-        if chars[i] == '.' && (i + 1 >= len || chars[i + 1] != '.') {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::Period);
-            i += 1;
-            continue;
-        }
-        if chars[i] == '?' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::QuestionMark);
-            i += 1;
-            continue;
-        }
-        if chars[i] == ',' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::Comma);
-            i += 1;
-            continue;
-        }
-
-        // Pseudograph prefixes: ~, !, # — strip and let word accumulate.
-        if (chars[i] == '~' || chars[i] == '!' || chars[i] == '#') && word_buf.is_empty() {
-            // Skip the prefix; next chars will be the word.
-            i += 1;
-            continue;
-        }
-
-        // Space
-        if chars[i] == ' ' || chars[i] == '\t' {
-            flush_word(&mut word_buf, &mut elements);
-            elements.push(TrnElement::Space);
-            // Collapse multiple spaces.
-            while i < len && (chars[i] == ' ' || chars[i] == '\t') {
-                i += 1;
-            }
-            continue;
-        }
-
-        // Phonological fragment: /word/
-        if chars[i] == '/' {
-            flush_word(&mut word_buf, &mut elements);
-            if let Some(close) = chars[i + 1..].iter().position(|&c| c == '/') {
-                let frag: String = chars[i + 1..i + 1 + close].iter().collect();
-                elements.push(TrnElement::PhonologicalFragment(frag));
-                i = i + 1 + close + 1;
-                continue;
-            }
-            // No closing / — accumulate.
-            word_buf.push('/');
-            i += 1;
-            continue;
-        }
-
-        // Check for LABEL>> (nonvocal end) — uppercase word followed by >>.
-        if chars[i] == '>' && i + 1 < len && chars[i + 1] == '>' && !word_buf.is_empty() {
-            // Check if word_buf is all uppercase (a nonvocal label).
-            let label_start = word_buf.rfind(|c: char| !c.is_ascii_uppercase() && c != '_' && c != '-').map_or(0, |p| p + 1);
-            if label_start < word_buf.len() {
-                let label = word_buf[label_start..].to_string();
-                word_buf.truncate(label_start);
-                flush_word(&mut word_buf, &mut elements);
-                elements.push(TrnElement::NonvocalEnd(label));
-                i += 2; // Skip >>
-                continue;
-            }
-        }
-
-        // Default: accumulate into word.
-        word_buf.push(chars[i]);
-        i += 1;
     }
 
-    flush_word(&mut word_buf, &mut elements);
+    // Post-process: apply lengthening (= → :) and glottal (% → ʔ) in words.
+    for elem in &mut elements {
+        if let TrnElement::Word(w) = elem {
+            *w = w.replace('=', ":").replace('%', "ʔ");
+        }
+    }
+
     elements
 }
 
-fn find_double_close(chars: &[char], start: usize, close_char: char) -> Option<usize> {
-    let mut i = start;
-    while i + 1 < chars.len() {
-        if chars[i] == close_char && chars[i + 1] == close_char {
-            return Some(i);
-        }
-        i += 1;
+/// Skip a bracket open token: [ or [N (digit 2-9).
+fn parse_bracket_open(input: &mut &str) -> ModalResult<()> {
+    '['.parse_next(input)?;
+    opt(one_of('2'..='9')).parse_next(input)?;
+    Ok(())
+}
+
+/// Skip a bracket close token: ], N], $], or N$].
+fn parse_bracket_close(input: &mut &str) -> ModalResult<()> {
+    alt((
+        // N$]
+        (one_of('2'..='9'), '$', ']').void(),
+        // $]
+        ('$', ']').void(),
+        // N]
+        (one_of('2'..='9'), ']').void(),
+        // bare ]
+        ']'.void(),
+    ))
+    .parse_next(input)
+}
+
+/// Parse one TRN content element (not overlap brackets — those are handled separately).
+/// Split into nested alt groups to stay within winnow's tuple size limit.
+fn parse_element(input: &mut &str) -> ModalResult<TrnElement> {
+    alt((
+        alt((
+            parse_space,
+            parse_comment,
+            parse_nonvocal,
+            parse_long_feature,
+            parse_timed_pause,
+        )),
+        alt((
+            parse_medium_pause,
+            parse_short_pause,
+            parse_truncation,
+            parse_vocalism,
+            parse_laughs,
+        )),
+        alt((
+            parse_laugh_or_word,
+            parse_phonological,
+            parse_linker,
+            parse_nonvocal_beat,
+            parse_glottal,
+        )),
+        alt((
+            parse_question,
+            parse_period,
+            parse_comma,
+            parse_pseudograph,
+            parse_word,
+        )),
+    ))
+    .parse_next(input)
+}
+
+fn parse_space(input: &mut &str) -> ModalResult<TrnElement> {
+    take_while(1.., |c: char| c == ' ' || c == '\t').parse_next(input)?;
+    Ok(TrnElement::Space)
+}
+
+/// `((NAME))` — environmental comment.
+fn parse_comment(input: &mut &str) -> ModalResult<TrnElement> {
+    "((". parse_next(input)?;
+    let name: String = take_while(1.., |c: char| c != ')').parse_next(input)?.to_string();
+    "))".parse_next(input)?;
+    Ok(TrnElement::Comment(name))
+}
+
+/// `<<LABEL>>` (simple) or `<<LABEL` (begin) — nonvocal.
+fn parse_nonvocal(input: &mut &str) -> ModalResult<TrnElement> {
+    "<<".parse_next(input)?;
+    let label: String = take_while(1.., |c: char| c.is_ascii_uppercase() || c == '_' || c == '-')
+        .parse_next(input)?
+        .to_string();
+    // Check for simple close >>.
+    if input.starts_with(">>") {
+        ">>".parse_next(input)?;
+        Ok(TrnElement::NonvocalSimple(label))
+    } else {
+        Ok(TrnElement::NonvocalBegin(label))
     }
-    None
+}
+
+/// `<LABEL` (begin) or detect `LABEL>` (end) — long feature.
+fn parse_long_feature(input: &mut &str) -> ModalResult<TrnElement> {
+    alt((parse_long_feature_begin, parse_long_feature_end)).parse_next(input)
+}
+
+fn parse_long_feature_begin(input: &mut &str) -> ModalResult<TrnElement> {
+    // < not followed by < (that's nonvocal).
+    '<'.parse_next(input)?;
+    // Peek: must not be <.
+    if input.starts_with('<') {
+        return Err(winnow::error::ErrMode::Backtrack(
+            winnow::error::ContextError::new(),
+        ));
+    }
+    let label: String =
+        take_while(1.., |c: char| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '@' || c == '%')
+            .parse_next(input)?
+            .to_string();
+    Ok(TrnElement::LongFeatureBegin(label))
+}
+
+/// Detect `LABEL>` where LABEL is uppercase/digit/@/% and > is not >>.
+fn parse_long_feature_end(input: &mut &str) -> ModalResult<TrnElement> {
+    let label: String =
+        take_while(1.., |c: char| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '@' || c == '%')
+            .parse_next(input)?
+            .to_string();
+    // Must be followed by > but not >>.
+    '>'.parse_next(input)?;
+    if input.starts_with('>') {
+        // This is >> — backtrack. But we already consumed. Need to handle differently.
+        // Actually, nonvocal end LABEL>> should have been caught by nonvocal parser.
+        // If we're here with >>, push back by treating as nonvocal end.
+        '>'.parse_next(input)?;
+        return Ok(TrnElement::NonvocalEnd(label));
+    }
+    Ok(TrnElement::LongFeatureEnd(label))
+}
+
+/// `...(N.N)` — timed pause.
+fn parse_timed_pause(input: &mut &str) -> ModalResult<TrnElement> {
+    "...(".parse_next(input)?;
+    let val: String = take_while(1.., |c: char| c.is_ascii_digit() || c == '.')
+        .parse_next(input)?
+        .to_string();
+    ')'.parse_next(input)?;
+    Ok(TrnElement::PauseTimed(val))
+}
+
+/// `...` — medium pause (not followed by `(`).
+fn parse_medium_pause(input: &mut &str) -> ModalResult<TrnElement> {
+    "...".parse_next(input)?;
+    // Must not be followed by ( (that's timed pause).
+    if input.starts_with('(') {
+        return Err(winnow::error::ErrMode::Backtrack(
+            winnow::error::ContextError::new(),
+        ));
+    }
+    Ok(TrnElement::PauseMedium)
+}
+
+/// `..` — short pause.
+fn parse_short_pause(input: &mut &str) -> ModalResult<TrnElement> {
+    "..".parse_next(input)?;
+    // Must not be followed by . (that's medium pause).
+    if input.starts_with('.') {
+        return Err(winnow::error::ErrMode::Backtrack(
+            winnow::error::ContextError::new(),
+        ));
+    }
+    Ok(TrnElement::PauseShort)
+}
+
+/// `--` — truncation.
+fn parse_truncation(input: &mut &str) -> ModalResult<TrnElement> {
+    "--".parse_next(input)?;
+    Ok(TrnElement::Truncation)
+}
+
+/// `(H)`, `(H)=`, `(Hx)`, `(TSK)`, or `(NAME)` — vocalism.
+fn parse_vocalism(input: &mut &str) -> ModalResult<TrnElement> {
+    '('.parse_next(input)?;
+    // Must not be ( (that's comment).
+    if input.starts_with('(') {
+        return Err(winnow::error::ErrMode::Backtrack(
+            winnow::error::ContextError::new(),
+        ));
+    }
+    let inner: String = take_while(1.., |c: char| c != ')')
+        .parse_next(input)?
+        .to_string();
+    ')'.parse_next(input)?;
+
+    let elem = match inner.as_str() {
+        "H" => {
+            // Check for lengthened: (H)=
+            if input.starts_with('=') {
+                let _ = '='.parse_next(input)?;
+                TrnElement::InhalationLengthened
+            } else {
+                TrnElement::Inhalation
+            }
+        }
+        "Hx" | "HX" => TrnElement::Exhalation,
+        "TSK" => TrnElement::Click,
+        _ => TrnElement::Vocalism(inner),
+    };
+    Ok(elem)
+}
+
+/// `@@@` — multiple laughs.
+fn parse_laughs(input: &mut &str) -> ModalResult<TrnElement> {
+    let ats: &str = take_while(2.., |c: char| c == '@').parse_next(input)?;
+    Ok(TrnElement::Laughs(ats.len()))
+}
+
+/// `@` alone (laugh) or `@word` (laughing word — @ prefix kept in Word).
+fn parse_laugh_or_word(input: &mut &str) -> ModalResult<TrnElement> {
+    '@'.parse_next(input)?;
+    // If followed by a letter, it's a laughing word — accumulate @+word.
+    if input.starts_with(|c: char| c.is_ascii_alphabetic()) {
+        let word: &str =
+            take_while(1.., |c: char| c.is_ascii_alphanumeric() || c == '-' || c == '\'' || c == '=' || c == '%')
+                .parse_next(input)?;
+        Ok(TrnElement::Word(format!("@{word}")))
+    } else {
+        Ok(TrnElement::Laugh)
+    }
+}
+
+/// `/word/` — phonological fragment.
+fn parse_phonological(input: &mut &str) -> ModalResult<TrnElement> {
+    '/'.parse_next(input)?;
+    let word: String = take_while(1.., |c: char| c != '/')
+        .parse_next(input)?
+        .to_string();
+    '/'.parse_next(input)?;
+    Ok(TrnElement::PhonologicalFragment(word))
+}
+
+/// `&` — continuation linker.
+fn parse_linker(input: &mut &str) -> ModalResult<TrnElement> {
+    '&'.parse_next(input)?;
+    Ok(TrnElement::Linker)
+}
+
+/// `+` — nonvocal beat.
+fn parse_nonvocal_beat(input: &mut &str) -> ModalResult<TrnElement> {
+    '+'.parse_next(input)?;
+    Ok(TrnElement::NonvocalBeat)
+}
+
+/// `%` standalone — glottal stop.
+fn parse_glottal(input: &mut &str) -> ModalResult<TrnElement> {
+    '%'.parse_next(input)?;
+    // If followed by > or by a letter (word context), backtrack — let word parser handle.
+    if input.starts_with('>') || input.starts_with(|c: char| c.is_ascii_alphabetic()) {
+        return Err(winnow::error::ErrMode::Backtrack(
+            winnow::error::ContextError::new(),
+        ));
+    }
+    Ok(TrnElement::Glottal)
+}
+
+fn parse_question(input: &mut &str) -> ModalResult<TrnElement> {
+    '?'.parse_next(input)?;
+    Ok(TrnElement::QuestionMark)
+}
+
+/// `.` not followed by `.` — period terminator.
+fn parse_period(input: &mut &str) -> ModalResult<TrnElement> {
+    '.'.parse_next(input)?;
+    if input.starts_with('.') {
+        return Err(winnow::error::ErrMode::Backtrack(
+            winnow::error::ContextError::new(),
+        ));
+    }
+    Ok(TrnElement::Period)
+}
+
+fn parse_comma(input: &mut &str) -> ModalResult<TrnElement> {
+    ','.parse_next(input)?;
+    Ok(TrnElement::Comma)
+}
+
+/// `~word`, `!word`, `#word` — pseudograph prefix (stripped).
+fn parse_pseudograph(input: &mut &str) -> ModalResult<TrnElement> {
+    one_of(['~', '!', '#']).parse_next(input)?;
+    // Must be followed by a letter (the proper name).
+    if !input.starts_with(|c: char| c.is_ascii_alphabetic()) {
+        return Err(winnow::error::ErrMode::Backtrack(
+            winnow::error::ContextError::new(),
+        ));
+    }
+    let word: &str =
+        take_while(1.., |c: char| c.is_ascii_alphanumeric() || c == '-' || c == '\'' || c == '=' || c == '_')
+            .parse_next(input)?;
+    Ok(TrnElement::Word(word.to_string()))
+}
+
+/// A plain word — letters, digits, hyphens, apostrophes, =, %, underscore, non-ASCII.
+fn parse_word(input: &mut &str) -> ModalResult<TrnElement> {
+    let word: &str = take_while(1.., |c: char| {
+        c.is_ascii_alphanumeric()
+            || c == '-'
+            || c == '\''
+            || c == '='
+            || c == '%'
+            || c == '_'
+            || c > '\x7f' // Allow ISO-8859-1 / non-ASCII chars
+    })
+    .parse_next(input)?;
+    Ok(TrnElement::Word(word.to_string()))
 }
 
 #[cfg(test)]
@@ -458,10 +452,13 @@ mod tests {
     }
 
     fn words(elements: &[TrnElement]) -> Vec<String> {
-        elements.iter().filter_map(|e| match e {
-            TrnElement::Word(w) => Some(w.clone()),
-            _ => None,
-        }).collect()
+        elements
+            .iter()
+            .filter_map(|e| match e {
+                TrnElement::Word(w) => Some(w.clone()),
+                _ => None,
+            })
+            .collect()
     }
 
     #[test]
@@ -481,6 +478,12 @@ mod tests {
         let elems = parse(".. hello ... world");
         assert!(matches!(elems[0], TrnElement::PauseShort));
         assert!(matches!(elems[4], TrnElement::PauseMedium));
+    }
+
+    #[test]
+    fn timed_pause() {
+        let elems = parse("...(1.2)");
+        assert!(matches!(&elems[0], TrnElement::PauseTimed(v) if v == "1.2"));
     }
 
     #[test]
@@ -511,5 +514,87 @@ mod tests {
     fn laughs() {
         let elems = parse("@@@");
         assert!(matches!(elems[0], TrnElement::Laughs(3)));
+    }
+
+    #[test]
+    fn laughing_word() {
+        let elems = parse("@Yeah");
+        assert_eq!(words(&elems), vec!["@Yeah"]);
+    }
+
+    #[test]
+    fn long_feature_pair() {
+        let elems = parse("<X hello X>");
+        assert!(matches!(&elems[0], TrnElement::LongFeatureBegin(s) if s == "X"));
+        assert_eq!(words(&elems), vec!["hello"]);
+        assert!(matches!(&elems[4], TrnElement::LongFeatureEnd(s) if s == "X"));
+    }
+
+    #[test]
+    fn long_feature_with_percent() {
+        // <% word %> — % is a label, not glottal. Spaces separate label from content.
+        let elems = parse("<% word %>");
+        assert!(matches!(&elems[0], TrnElement::LongFeatureBegin(s) if s == "%"));
+        assert_eq!(words(&elems), vec!["word"]);
+        assert!(matches!(&elems[4], TrnElement::LongFeatureEnd(s) if s == "%"));
+    }
+
+    #[test]
+    fn long_feature_with_at() {
+        let elems = parse("<@ laughing @>");
+        assert!(matches!(&elems[0], TrnElement::LongFeatureBegin(s) if s == "@"));
+        assert!(matches!(&elems[4], TrnElement::LongFeatureEnd(s) if s == "@"));
+    }
+
+    #[test]
+    fn nonvocal_simple() {
+        let elems = parse("<<THUMP>>");
+        assert!(matches!(&elems[0], TrnElement::NonvocalSimple(s) if s == "THUMP"));
+    }
+
+    #[test]
+    fn nonvocal_begin_end() {
+        let elems = parse("<<CLAP stuff CLAP>>");
+        assert!(matches!(&elems[0], TrnElement::NonvocalBegin(s) if s == "CLAP"));
+        // The end CLAP>> is parsed as LongFeatureEnd which falls back to NonvocalEnd.
+        let has_end = elems.iter().any(|e| matches!(e, TrnElement::NonvocalEnd(s) if s == "CLAP"));
+        assert!(has_end);
+    }
+
+    #[test]
+    fn phonological_fragment() {
+        let elems = parse("/hello/");
+        assert!(matches!(&elems[0], TrnElement::PhonologicalFragment(s) if s == "hello"));
+    }
+
+    #[test]
+    fn glottal_standalone() {
+        let elems = parse("% --");
+        assert!(matches!(elems[0], TrnElement::Glottal));
+    }
+
+    #[test]
+    fn glottal_in_word() {
+        let elems = parse("a%b");
+        // % in word → ʔ
+        assert_eq!(words(&elems), vec!["aʔb"]);
+    }
+
+    #[test]
+    fn pseudograph_tilde() {
+        let elems = parse("~John");
+        assert_eq!(words(&elems), vec!["John"]);
+    }
+
+    #[test]
+    fn exhalation() {
+        let elems = parse("(Hx)");
+        assert!(matches!(elems[0], TrnElement::Exhalation));
+    }
+
+    #[test]
+    fn click() {
+        let elems = parse("(TSK)");
+        assert!(matches!(elems[0], TrnElement::Click));
     }
 }
