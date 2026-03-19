@@ -279,18 +279,16 @@ fn parse_long_feature_begin(input: &mut &str) -> ModalResult<TrnElement> {
     Ok(TrnElement::LongFeatureBegin(label))
 }
 
-/// Detect `LABEL>` where LABEL is uppercase/digit/@/% and > is not >>.
+/// Detect `LABEL>` or `LABEL>>` where LABEL is uppercase/digit/@/%/_/-.
+/// Single `>` = long feature end. Double `>>` = nonvocal end.
 fn parse_long_feature_end(input: &mut &str) -> ModalResult<TrnElement> {
     let label: String =
-        take_while(1.., |c: char| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '@' || c == '%')
+        take_while(1.., |c: char| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '@' || c == '%' || c == '_' || c == '-')
             .parse_next(input)?
             .to_string();
-    // Must be followed by > but not >>.
+    // Must be followed by > or >>.
     '>'.parse_next(input)?;
     if input.starts_with('>') {
-        // This is >> — backtrack. But we already consumed. Need to handle differently.
-        // Actually, nonvocal end LABEL>> should have been caught by nonvocal parser.
-        // If we're here with >>, push back by treating as nonvocal end.
         '>'.parse_next(input)?;
         return Ok(TrnElement::NonvocalEnd(label));
     }

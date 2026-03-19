@@ -47,8 +47,8 @@ pub fn build_speaker_map(speakers_in_order: &[String], diag: &mut Diagnostics) -
 }
 
 fn create_id(name: &str) -> String {
-    // Strip > prefix for environment speakers, # for anonymized speakers.
-    let name = name.trim_start_matches('>').trim_start_matches('#');
+    // Strip > prefix for environment speakers, # for anonymized, * for uncertain.
+    let name = name.trim_start_matches('>').trim_start_matches('#').trim_start_matches('*');
 
     // Special cases from Speakers.java.
     match name {
