@@ -35,6 +35,11 @@ pub fn read_and_decode(path: &std::path::Path, diag: &mut Diagnostics) -> std::i
                     "Windows-1252 right single quote (0x92) mapped to ASCII apostrophe",
                 );
             }
+            // DEL character (0x7F) — strip. Often extra whitespace/corruption.
+            '\x7f' => {
+                // Silently drop — these are junk bytes, typically between words
+                // or at line boundaries.
+            }
             '\n' => {
                 repaired.push('\n');
                 line_number += 1;
