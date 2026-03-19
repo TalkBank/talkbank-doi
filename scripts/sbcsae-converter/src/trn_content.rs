@@ -327,8 +327,15 @@ pub fn parse_trn_content(
 
         // Glottal %
         if chars[i] == '%' {
-            // If in a word context, accumulate.
+            // If in a word context, accumulate (in-word glottal → ʔ).
             if !word_buf.is_empty() {
+                word_buf.push('%');
+                i += 1;
+                continue;
+            }
+            // If followed by > — this is part of a long feature end label (%>).
+            // Accumulate into word buffer so the > handler picks it up.
+            if i + 1 < len && chars[i + 1] == '>' {
                 word_buf.push('%');
                 i += 1;
                 continue;
@@ -406,6 +413,20 @@ pub fn parse_trn_content(
             word_buf.push('/');
             i += 1;
             continue;
+        }
+
+        // Check for LABEL>> (nonvocal end) — uppercase word followed by >>.
+        if chars[i] == '>' && i + 1 < len && chars[i + 1] == '>' && !word_buf.is_empty() {
+            // Check if word_buf is all uppercase (a nonvocal label).
+            let label_start = word_buf.rfind(|c: char| !c.is_ascii_uppercase() && c != '_' && c != '-').map_or(0, |p| p + 1);
+            if label_start < word_buf.len() {
+                let label = word_buf[label_start..].to_string();
+                word_buf.truncate(label_start);
+                flush_word(&mut word_buf, &mut elements);
+                elements.push(TrnElement::NonvocalEnd(label));
+                i += 2; // Skip >>
+                continue;
+            }
         }
 
         // Default: accumulate into word.
