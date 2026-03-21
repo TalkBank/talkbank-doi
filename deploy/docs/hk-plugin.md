@@ -3,7 +3,7 @@
 > **Status:** Retired in March 2026.
 >
 > `batchalign-hk-plugin` is no longer a current package. Its engines were folded
-> into `batchalign3` as built-in HK/Cantonese engines with optional extras.
+> into `batchalign3` as built-in HK/Cantonese engines.
 
 ## Current Release Guidance
 
@@ -14,11 +14,10 @@ Use the public `batchalign3` docs for anything current:
 
 Current install surface:
 
-- `batchalign3[hk-tencent]`
-- `batchalign3[hk-aliyun]`
-- `batchalign3[hk-funaudio]`
-- `batchalign3[hk-cantonese-fa]`
-- `batchalign3[hk]`
+- `batchalign3`
+
+HK/Cantonese engines are part of the normal package surface now; there is no
+separate HK install tier.
 
 Current built-in engine names:
 

@@ -2,25 +2,24 @@
 ---
 - name: Ensure config directory exists
   file:
-    path: "{{ batchalign_config_dir | expanduser }}"
+    path: "{{ batchalign_config_dir }}"
     state: directory
     mode: '0755'
 
 - name: Deploy server.yaml
   template:
     src: server.yaml.j2
-    dest: "{{ batchalign_config_dir | expanduser }}/server.yaml"
+    dest: "{{ batchalign_config_dir }}/server.yaml"
     mode: '0644'
-  notify: restart batchalign server
 
 - name: Deploy fleet.yaml
   template:
     src: fleet.yaml.j2
-    dest: "{{ batchalign_config_dir | expanduser }}/fleet.yaml"
+    dest: "{{ batchalign_config_dir }}/fleet.yaml"
     mode: '0644'
 
-- name: Start batchalign server
-  command: batchalign3 serve start
+- name: Restart batchalign server
+  shell: batchalign3 serve stop || true; sleep 2; batchalign3 serve start
   changed_when: true
 
 - name: Wait for server to be healthy
@@ -28,9 +27,15 @@
     url: "http://localhost:{{ batchalign_port }}/health"
     method: GET
     return_content: true
+    status_code: [200]
   register: health
-  until: health.json.status == "ok"
+  until: health.status == 200
   retries: 36
   delay: 5
+  failed_when: false
   # 36 * 5 = 180 seconds max wait (model warmup)
 
+- name: Fail if server never became healthy
+  fail:
+    msg: "batchalign3 server did not respond to /health after 180s"
+  when: health.status | default(0) != 200

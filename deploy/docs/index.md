@@ -12,6 +12,7 @@ Current release-facing docs live in:
 
 These remain relevant for private lab/fleet operations:
 
+- `ansible-operator-guide.md`
 - `fleet-inventory.md`
 - `ssh-key-migration.md`
 - `tailscale-cli-migration.md`

@@ -42,7 +42,7 @@ Assessment of next steps for turning the lab's Mac fleet into a properly managed
 - `/Volumes/Other/<corpus>` — all other TalkBank corpora (aphasia, dementia, etc.)
 - `/Volumes/HomeBank/homebank` — HomeBank media
 
-**Deployment**: Two bash scripts (`deploy_clients.sh`, `deploy_server.sh`) that SSH into machines, scp wheels, and `uv tool install`. Works but fragile — relies on SSH keys in keychain, no error recovery, no parallel execution, no configuration management.
+**Deployment**: The old SSH-heavy shell scripts have been superseded by Ansible plus a thin wrapper. Build once, deploy via inventory-driven playbooks.
 
 **Server**: Only Net runs as a full server. Clients send HTTP requests to Net. The new daemon feature auto-starts a local server on each machine, but without media access it can only do morphotag/translate/utseg (not align/transcribe).
 
@@ -173,8 +173,8 @@ all:
 All hosts in both `media_server` and `compute` groups are batchalign servers. The distinction is only for NFS: `media_server` exports volumes, `compute` mounts them.
 
 **What Ansible replaces**:
-- `deploy_clients.sh` → `ansible-playbook playbooks/deploy.yml --limit clients`
-- `deploy_server.sh` → `ansible-playbook playbooks/deploy.yml --limit servers`
+- `deploy_batchalign3.sh` becomes a thin wrapper around `ansible-playbook`
+- the older `deploy_clients.sh` and `deploy_server.sh` scripts go away entirely
 - Manual SSH + scp for config → `ansible-playbook playbooks/configure.yml`
 - Manual health checks → `ansible-playbook playbooks/status.yml`
 
@@ -253,7 +253,7 @@ Once media is mounted via NFS, making every machine a full server is straightfor
 1. Install Ansible on ming: `uv tool install ansible` or `brew install ansible`
 2. Create inventory file with all machines
 3. Verify connectivity: `ansible all -m ping`
-4. Write a minimal deploy playbook that replaces `deploy_clients.sh`
+4. Write a minimal deploy playbook that replaces the old shell deployment logic
 5. Test on one machine, then roll out to all
 
 ### Phase 3: Tailscale SSH (1 hour)
@@ -267,7 +267,7 @@ Once media is mounted via NFS, making every machine a full server is straightfor
 1. Write Ansible roles for NFS client mount + server.yaml + LaunchDaemon
 2. Deploy to all clients
 3. Verify each machine can serve align/transcribe requests
-4. Update deploy scripts (or replace entirely with Ansible)
+4. Replace deployment scripts with Ansible-first workflows
 
 ### Phase 5: Multi-Server Workflow (optional)
 

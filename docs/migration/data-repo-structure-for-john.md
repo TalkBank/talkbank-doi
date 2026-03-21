@@ -1,232 +1,163 @@
-# Data Repo Structure: Migration Guide for TBB
+# Data Repo Structure: Migration Guide for John's App
 
-**Status:** Draft
-**Last updated:** 2026-03-18
+**Status:** Current
+**Last updated:** 2026-03-21
 
-This doc describes how the data repos are being reorganized and where CHAT files will live on talkbank.org after migration. This is for John to plan the TBB filesystem mapping.
+This doc describes how the data repos are being reorganized and how John's app will
+access them on talkbank.org after migration from git.talkbank.org.
 
 ---
 
 ## Summary
 
-The 16 data repos on git.talkbank.org are being split into 24 repos on GitHub. After migration, all 24 repos will be cloned flat into a single directory on talkbank.org (e.g., `/var/data/`). John's app reads from these clones directly.
+The 16 data repos on git.talkbank.org have been split into 24 repos on GitHub (4 banks
+were split: CHILDES, CA, Phon, HomeBank). All 24 repos will be cloned into
+`/home/macw/data/` on talkbank.org. A **mergerfs** union filesystem presents the split
+repos as a flat per-bank view at `/var/data/view/{bank}/`, preserving the same
+directory layout John's app sees today.
+
+**John's app changes: update the data root path. No code changes.**
+
+His app reads from `/var/data/view/{bank}/` (read-only) instead of
+`~/staging/build/{bank}/data-orig/`. The directory structure within each bank is
+identical to today.
 
 ---
 
-## Current Structure (git-talkbank)
+## How It Works
 
-TBB currently reads from `~/staging/build/{bank}/data-orig/`:
+### Repos on disk
 
-```
-~/staging/build/
-├── aphasia/data-orig/English/GR/*.cha
-├── ca/data-orig/CANDOR/*.cha
-├── ca/data-orig/CallFriend/deu/*.cha
-├── childes/data-orig/Eng-NA/MacWhinney/*.cha
-├── childes/data-orig/French/Lyon/*.cha
-├── homebank/data-orig/Public/VanDam-5minute/*.cha
-├── homebank/data-orig/Password/Cougar/*.cha
-├── phon/data-orig/Eng-NA/*.cha
-├── phon/data-orig/French/Lyon/*.cha
-└── ... (16 banks)
-```
-
-**Key:** `data-orig/` contains the raw repo contents (CHAT files, `0metadata.cdc`, etc.), one flat tree per bank.
-
----
-
-## New Structure (talkbank.org)
-
-All 24 repos cloned flat into a single directory:
+All 24 repos cloned flat into `/home/macw/data/`:
 
 ```
-/var/data/   (or wherever we decide)
-│
-│ # ── Unsplit banks (12 repos, identical internal structure to today) ──
+/home/macw/data/
 ├── aphasia-data/English/GR/*.cha
 ├── asd-data/...
-├── biling-data/...
-├── class-data/...
-├── dementia-data/...
-├── fluency-data/...
-├── motor-data/...
-├── psychosis-data/...
-├── rhd-data/...
-├── samtale-data/...
-├── slabank-data/...
-├── tbi-data/...
-│
-│ # ── CHILDES (was 1 repo, now 4) ──
-├── childes-eng-na-data/
-│   ├── Eng-NA/MacWhinney/*.cha
-│   └── Eng-AAE/...
-├── childes-eng-uk-data/
-│   ├── Eng-UK/Thomas/*.cha
-│   ├── Clinical-Eng/...
-│   └── Clinical-Other/...
-├── childes-romance-germanic-data/
-│   ├── French/Lyon/*.cha
-│   ├── German/Leo/*.cha
-│   ├── Romance/...
-│   ├── Spanish/...
-│   ├── DutchAfrikaans/...
-│   ├── Scandinavian/...
-│   └── Celtic/...
-├── childes-other-data/
-│   ├── Biling/...
-│   ├── Chinese/...
-│   ├── EastAsian/...
-│   ├── Japanese/...
-│   ├── Slavic/...
-│   ├── Finno-Ugric/...
-│   ├── Other/...
-│   ├── Frogs/...
-│   ├── MAIN/...
-│   ├── GlobalTales/...
-│   └── XLing/...
-│
-│ # ── CA (was 1 repo, now 2) ──
-├── ca-candor-data/
-│   └── CANDOR/*.cha          # 1450 Zoom conversations, 4.8 GB
-├── ca-data/
-│   ├── CallFriend/...
-│   ├── CallHome/...
-│   ├── Jefferson/...
-│   └── ... (40+ corpora)
-│
-│ # ── Phon (was 1 repo, now 2) ──
-├── phon-eng-french-data/
-│   ├── Eng-NA/...
-│   └── French/Lyon/*.cha
-├── phon-other-data/
-│   ├── Chinese/...
-│   ├── Clinical/...
-│   ├── Spanish/...
-│   └── ... (10+ language groups)
-│
-│ # ── HomeBank (was 1 repo, now 4) ──
-├── homebank-public-data/
-│   ├── Public/VanDam-5minute/*.cha
-│   └── Secure/...
-├── homebank-cougar-data/
-│   └── Password/Cougar/...    # 5.4 GB
-├── homebank-bergelson-data/
-│   └── Password/Bergelson/... # 3.5 GB
-└── homebank-password-data/
-    └── Password/
-        ├── DavisKean/...      # 1.6 GB
-        ├── SanJoaquin/...     # 1.2 GB
-        ├── FauseyTrio/...     # 947 MB
-        ├── Lyon/...           # 362 MB
-        └── ... (others)
+├── childes-eng-na-data/Eng-NA/MacWhinney/*.cha
+├── childes-eng-uk-data/Eng-UK/Thomas/*.cha
+├── childes-romance-germanic-data/French/Lyon/*.cha
+├── childes-other-data/Biling/*.cha
+├── ca-candor-data/CANDOR/*.cha
+├── ca-data/Jefferson/*.cha
+├── phon-eng-french-data/Eng-NA/*.cha
+├── phon-other-data/Chinese/*.cha
+├── homebank-public-data/Public/VanDam-5minute/*.cha
+├── homebank-cougar-data/Password/Cougar/*.cha
+├── homebank-bergelson-data/Password/Bergelson/*.cha
+├── homebank-password-data/Password/DavisKean/*.cha
+└── ... (24 repos total)
 ```
 
+### mergerfs virtual view
+
+mergerfs mounts present the split repos as one flat directory per bank:
+
+```
+/var/data/view/
+├── aphasia/      ← mergerfs mount of aphasia-data (1 repo)
+├── childes/      ← mergerfs mount of 4 childes repos merged
+├── ca/           ← mergerfs mount of 2 ca repos merged
+├── phon/         ← mergerfs mount of 2 phon repos merged
+├── homebank/     ← mergerfs mount of 4 homebank repos merged
+├── asd/          ← mergerfs mount of asd-data (1 repo)
+└── ... (18 banks)
+```
+
+What John's app sees at `/var/data/view/childes/`:
+```
+Eng-NA/MacWhinney/foo.cha      <-- from childes-eng-na-data
+French/Lyon/bar.cha             <-- from childes-romance-germanic-data
+Chinese/Zhou/baz.cha            <-- from childes-other-data
+```
+
+This is the same flat layout as the current `~/staging/build/childes/data-orig/`.
+
+### How updates work
+
+1. Push to a data repo on GitHub triggers a GitHub Actions self-hosted runner on
+   talkbank.org
+2. Runner does `git pull` in `/home/macw/data/{repo}/`
+3. mergerfs reads through to the source directories on every access — changes are
+   immediately visible, no rebuild step needed
+
+### Filtering
+
+`.git` and `.gitignore` are visible in the merged view (the old rsync approach excluded
+them). John's app should filter these from directory listings.
+
 ---
 
-## Path Mapping: Old → New
+## What John's App Needs
 
-### Unsplit Banks (no change in file paths within repo)
+| Setting | Value |
+|---------|-------|
+| Data root | `/var/data/view/` |
+| Bank path pattern | `/var/data/view/{bank}/` |
+| Port | 4000 |
+| Access | Read-only |
+| Auth backend | sla2.talkbank.org (unchanged) |
 
-| Bank | Old path | New path |
-|------|----------|----------|
-| aphasia | `build/aphasia/data-orig/English/GR/file.cha` | `aphasia-data/English/GR/file.cha` |
-| asd | `build/asd/data-orig/.../file.cha` | `asd-data/.../file.cha` |
-| (same pattern for all 12 unsplit banks) | | |
+The app serves:
+- `/{bank}/data/{path}.zip` — on-the-fly ZIP downloads
+- `/{bank}/data-orig/{path}` — raw CHAT file browsing/download
 
-**Mapping rule:** Strip `build/{bank}/data-orig/` prefix → prepend `{bank}-data/`.
-
-### Split Banks
-
-| Bank | Old path | New repo | New path |
-|------|----------|----------|----------|
-| childes | `build/childes/data-orig/Eng-NA/MacWhinney/file.cha` | `childes-eng-na-data` | `childes-eng-na-data/Eng-NA/MacWhinney/file.cha` |
-| childes | `build/childes/data-orig/French/Lyon/file.cha` | `childes-romance-germanic-data` | `childes-romance-germanic-data/French/Lyon/file.cha` |
-| ca | `build/ca/data-orig/CANDOR/file.cha` | `ca-candor-data` | `ca-candor-data/CANDOR/file.cha` |
-| ca | `build/ca/data-orig/Jefferson/NB/file.cha` | `ca-data` | `ca-data/Jefferson/NB/file.cha` |
-| phon | `build/phon/data-orig/Eng-NA/file.cha` | `phon-eng-french-data` | `phon-eng-french-data/Eng-NA/file.cha` |
-| phon | `build/phon/data-orig/Chinese/file.cha` | `phon-other-data` | `phon-other-data/Chinese/file.cha` |
-| homebank | `build/homebank/data-orig/Public/file.cha` | `homebank-public-data` | `homebank-public-data/Public/file.cha` |
-| homebank | `build/homebank/data-orig/Password/Cougar/file.cha` | `homebank-cougar-data` | `homebank-cougar-data/Password/Cougar/file.cha` |
-
-**Mapping rule for split banks:** The top-level directory inside the repo tells you which split repo it belongs to. See the lookup tables below.
+nginx on talkbank.org proxies these routes to the app on port 4000.
 
 ---
 
-## Lookup Tables: Directory → Repo
+## Bank-to-Repo Mapping (for reference)
 
-### CHILDES
+John's app doesn't need this mapping (mergerfs handles it), but it's documented here
+for operational reference.
 
-| Top-level directory | Repo |
-|--------------------|------|
-| Eng-NA | childes-eng-na-data |
-| Eng-AAE | childes-eng-na-data |
-| Eng-UK | childes-eng-uk-data |
-| Clinical-Eng | childes-eng-uk-data |
-| Clinical-Other | childes-eng-uk-data |
-| French | childes-romance-germanic-data |
-| Romance | childes-romance-germanic-data |
-| Spanish | childes-romance-germanic-data |
-| German | childes-romance-germanic-data |
-| DutchAfrikaans | childes-romance-germanic-data |
-| Scandinavian | childes-romance-germanic-data |
-| Celtic | childes-romance-germanic-data |
-| Biling | childes-other-data |
-| Chinese | childes-other-data |
-| EastAsian | childes-other-data |
-| Japanese | childes-other-data |
-| Slavic | childes-other-data |
-| Finno-Ugric | childes-other-data |
-| Other | childes-other-data |
-| Frogs | childes-other-data |
-| MAIN | childes-other-data |
-| GlobalTales | childes-other-data |
-| XLing | childes-other-data |
-
-### CA
-
-| Top-level directory | Repo |
-|--------------------|------|
-| CANDOR | ca-candor-data |
-| (everything else) | ca-data |
-
-### Phon
-
-| Top-level directory | Repo |
-|--------------------|------|
-| Eng-NA | phon-eng-french-data |
-| French | phon-eng-french-data |
-| (everything else) | phon-other-data |
-
-### HomeBank
-
-| Top-level directory | Repo |
-|--------------------|------|
-| Public | homebank-public-data |
-| Secure | homebank-public-data |
-| Password/Cougar | homebank-cougar-data |
-| Password/Bergelson | homebank-bergelson-data |
-| Password/* (everything else) | homebank-password-data |
+| Bank | Repos |
+|------|-------|
+| aphasia | aphasia-data |
+| asd | asd-data |
+| biling | biling-data |
+| ca | ca-candor-data, ca-data |
+| childes | childes-eng-na-data, childes-eng-uk-data, childes-romance-germanic-data, childes-other-data |
+| class | class-data |
+| dementia | dementia-data |
+| fluency | fluency-data |
+| homebank | homebank-public-data, homebank-cougar-data, homebank-bergelson-data, homebank-password-data |
+| motor | motor-data |
+| open | open-data |
+| phon | phon-eng-french-data, phon-other-data |
+| psyling | psyling-data |
+| psychosis | psychosis-data |
+| rhd | rhd-data |
+| samtale | samtale-data |
+| slabank | slabank-data |
+| tbi | tbi-data |
 
 ---
 
 ## What Stays the Same
 
-- File paths WITHIN each repo are identical to today (same directory names, same `.cha` file names)
-- `0metadata.cdc` files stay in the same relative location within each corpus directory
-- Media files are NOT in data repos — they're on `net.talkbank.org` organized by bank name (unchanged)
-- Bank-level domain names (childes.talkbank.org, etc.) are unchanged
+- File paths within each bank are identical to today
+- `0metadata.cdc` files stay in the same relative locations
+- Media files are NOT in data repos — they're on net, synced to talkbank-02 separately
+- Auth for password-protected corpora works the same way (sla2.talkbank.org)
 
 ## What Changes
 
-- No more `build/{bank}/data-orig/` and `build/{bank}/data/` split — just the repo contents directly
-- No more pre-built ZIP files in `data/` — TBB generates ZIPs dynamically
-- 4 banks now span multiple repos (CHILDES, CA, Phon, HomeBank)
-- Repos updated via GitHub Actions `git pull` (push to GitHub triggers automatic pull on talkbank.org)
+- Data root path: `/var/data/view/{bank}/` instead of `~/staging/build/{bank}/data-orig/`
+- No more pre-built ZIP files — app generates ZIPs on the fly (already implemented)
+- `.git` directories visible in listings (filter them)
+- Repos updated via GitHub Actions `git pull` instead of the old staging deploy script
 
 ---
 
-## Questions for John
+## Prerequisites
 
-1. Does TBB need a config mapping from bank name to list of repo directories? (e.g., `"childes" → ["childes-eng-na-data", "childes-eng-uk-data", ...]`)
-2. What base path should the repos be cloned to on talkbank.org? (`/var/data/`? Something else?)
-3. Does the auth system for password-protected corpora need changes? (HomeBank password repos are now separate, which may simplify access control)
+Before John can deploy:
+
+1. **Disk resize** — talkbank.org needs at least 250 GB total disk (currently 117 GB,
+   repos are 72 GB). Brian needs to request this from CMU Campus Cloud.
+2. **Repos cloned** — Franklin clones all 24 repos to `/home/macw/data/`
+3. **mergerfs mounted** — Franklin sets up the union mounts at `/var/data/view/`
+4. **nginx proxy** — Franklin adds the `/{bank}/data/` and `/{bank}/data-orig/` routes
+
+Full cutover plan: `docs/migration/git-talkbank-cutover-plan.md`

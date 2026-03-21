@@ -1,5 +1,8 @@
+mod audit;
 mod cdc;
 mod datacite;
+mod doi;
+mod tui;
 
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
@@ -46,10 +49,39 @@ enum Command {
         #[arg(long, default_value = "dois.csv")]
         output: PathBuf,
     },
+    /// Interactive TUI review: page through all corpora with Brian.
+    Review {
+        /// Root directory containing data repos (e.g., ~/talkbank/data)
+        #[arg(long, default_value = ".")]
+        data_dir: PathBuf,
+        /// Root directory containing web repos for HTML scanning (optional)
+        #[arg(long)]
+        web_dir: Option<PathBuf>,
+        /// Query DataCite for each known DOI to verify state and detect orphans.
+        /// Makes one paginated API call to list all our DOIs. Requires credentials.
+        #[arg(long)]
+        verify: bool,
+    },
+    /// Three-source reconciliation report (DataCite, CDC files, HTML).
+    /// Prints a summary and writes a decisions CSV you can apply with `apply`.
+    Audit {
+        /// Root directory containing data repos
+        #[arg(long, default_value = ".")]
+        data_dir: PathBuf,
+        /// Root directory containing web repos for HTML scanning (optional)
+        #[arg(long)]
+        web_dir: Option<PathBuf>,
+        /// Query DataCite to verify DOI states and detect orphans.
+        #[arg(long)]
+        verify: bool,
+        /// Output CSV path for audit results
+        #[arg(long, default_value = "doi-audit.csv")]
+        output: PathBuf,
+    },
 }
 
 /// Map a data repo name to its bank name.
-fn repo_to_bank(repo_name: &str) -> &str {
+pub(crate) fn repo_to_bank(repo_name: &str) -> &str {
     let base = repo_name.strip_suffix("-data").unwrap_or(repo_name);
     match base {
         "childes-eng-na" | "childes-eng-uk" | "childes-romance-germanic" | "childes-other" => {
@@ -73,7 +105,7 @@ fn bank_domain(bank: &str) -> String {
 }
 
 /// Construct the DOI landing page URL from a CDC file path.
-fn target_url(cdc_path: &Path, data_dir: &Path) -> Option<String> {
+pub(crate) fn target_url(cdc_path: &Path, data_dir: &Path) -> Option<String> {
     let relative = cdc_path.parent()?.strip_prefix(data_dir).ok()?;
     let mut components = relative.components();
     let repo_dir = components.next()?.as_os_str().to_str()?;
@@ -317,6 +349,117 @@ fn cmd_sync(data_dir: &Path, dry_run: bool) -> Result<()> {
     Ok(())
 }
 
+fn build_audit_entries(
+    data_dir: &Path,
+    web_dir: Option<&Path>,
+    verify: bool,
+) -> Result<Vec<audit::AuditEntry>> {
+    let client = reqwest::blocking::Client::new();
+
+    eprintln!("Scanning CDC files in {}…", data_dir.display());
+    let mut entries = audit::build_from_cdc(data_dir);
+    eprintln!("  Found {} corpora", entries.len());
+
+    if verify {
+        let config = datacite::Config::from_env()?;
+        eprintln!("Fetching all DOIs from DataCite…");
+        let remote = datacite::list_all(&client, &config)?;
+        eprintln!("  DataCite returned {} DOIs under our prefix", remote.len());
+        audit::apply_datacite(&mut entries, remote);
+    }
+
+    if let Some(web) = web_dir {
+        eprintln!("Scanning HTML files in {}…", web.display());
+        let html_map = audit::scan_html(web);
+        eprintln!("  Found {} DOI references in HTML", html_map.len());
+        audit::apply_html(&mut entries, html_map);
+    }
+
+    Ok(entries)
+}
+
+fn cmd_review(data_dir: &Path, web_dir: Option<&Path>, verify: bool) -> Result<()> {
+    let entries = build_audit_entries(data_dir, web_dir, verify)?;
+
+    let suspicious = entries.iter().filter(|e| e.status.is_suspicious()).count();
+    eprintln!(
+        "\n{} corpora loaded  ({} suspicious)\n",
+        entries.len(),
+        suspicious
+    );
+
+    let decided = tui::run(entries)?;
+
+    // Report decisions
+    let mut adopted = 0u32;
+    let mut retiring = 0u32;
+    let mut minting = 0u32;
+    let mut other = 0u32;
+
+    for entry in &decided {
+        match entry.decision {
+            audit::Decision::Adopt => adopted += 1,
+            audit::Decision::Retire | audit::Decision::Delete => retiring += 1,
+            audit::Decision::Mint | audit::Decision::Publish => minting += 1,
+            audit::Decision::Keep | audit::Decision::Skip | audit::Decision::Pending => other += 1,
+        }
+    }
+
+    println!("\nSession complete:");
+    println!("  Adopt (write DOI to CDC):  {adopted}");
+    println!("  Retire/delete from DC:     {retiring}");
+    println!("  Mint/publish:              {minting}");
+    println!("  Keep/skip/pending:         {other}");
+    println!("\nTo apply decisions, run: talkbank-doi apply --decisions doi-decisions.csv");
+    println!("(decisions not yet saved — apply command coming in next release)");
+
+    Ok(())
+}
+
+fn cmd_audit(data_dir: &Path, web_dir: Option<&Path>, verify: bool, output: &Path) -> Result<()> {
+    let entries = build_audit_entries(data_dir, web_dir, verify)?;
+
+    let mut writer = csv::Writer::from_path(output)?;
+    writer.write_record(["status", "decision", "doi", "title", "bank", "path", "target_url"])?;
+
+    let mut counts: HashMap<&str, u32> = HashMap::new();
+    for entry in &entries {
+        let doi = entry
+            .doi()
+            .map(|d| d.to_string())
+            .unwrap_or_default();
+        let title = entry.cdc.title.as_deref().or_else(|| {
+            if let audit::DataCiteInfo::Found(r) = &entry.datacite {
+                Some(r.title.as_str())
+            } else {
+                None
+            }
+        }).unwrap_or("");
+        writer.write_record([
+            entry.status.label(),
+            entry.decision.label().trim(),
+            &doi,
+            title,
+            &entry.bank,
+            &entry.display_path,
+            entry.target_url.as_deref().unwrap_or(""),
+        ])?;
+        *counts.entry(entry.status.label()).or_default() += 1;
+    }
+    writer.flush()?;
+
+    println!("Audit results written to {}", output.display());
+    println!("\nBreakdown:");
+    let mut pairs: Vec<_> = counts.iter().collect();
+    pairs.sort_by_key(|(k, _)| *k);
+    for (status, count) in pairs {
+        println!("  {status:<16} {count}");
+    }
+    println!("  {:<16} {}", "TOTAL", entries.len());
+
+    Ok(())
+}
+
 fn main() -> Result<()> {
     let cli = Cli::parse();
 
@@ -325,5 +468,11 @@ fn main() -> Result<()> {
         Command::Sync { data_dir, dry_run } => cmd_sync(&data_dir, dry_run),
         Command::Query { doi } => cmd_query(&doi),
         Command::Export { data_dir, output } => cmd_export(&data_dir, &output),
+        Command::Review { data_dir, web_dir, verify } => {
+            cmd_review(&data_dir, web_dir.as_deref(), verify)
+        }
+        Command::Audit { data_dir, web_dir, verify, output } => {
+            cmd_audit(&data_dir, web_dir.as_deref(), verify, &output)
+        }
     }
 }

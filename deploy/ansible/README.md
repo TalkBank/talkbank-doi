@@ -31,11 +31,15 @@ ansible-playbook playbooks/tailscale-fix.yml --limit brian
 # Batchalign server health (HTTP /health endpoint)
 ansible-playbook playbooks/status.yml
 
-# Deploy batchalign to a specific machine
+# Deploy batchalign3 to one host from a pre-built wheel
 ansible-playbook playbooks/deploy.yml --limit bilbo \
-  -e batchalign3_wheel=/path/to/wheel.whl \
-  -e batchalign_core_wheel=/path/to/core.whl
+  -e batchalign3_wheel=/path/to/batchalign3.whl
+
+# Or use the thin wrapper that builds once and calls Ansible
+bash ../scripts/deploy_batchalign3.sh --clients
 ```
+
+If you are new to Ansible, start with [the operator runbook](/Users/chen/talkbank/deploy/docs/ansible-operator-guide.md).
 
 ## Inventory Groups
 
@@ -47,6 +51,9 @@ ansible-playbook playbooks/deploy.yml --limit bilbo \
 | `hongkong` | tb-hk, cbs | Hong Kong machines |
 | `cloud` | talkbank, git-talkbank | Linux servers |
 | `all_macs` | all of the above except cloud | macOS-specific tasks |
+| `batchalign3_server` | net | Current internal batchalign3 server target |
+| `batchalign3_clients` | study, bilbo, brian, davida, frodo, andrew, lilly, sue, vaishnavi, ming | Current internal client-install targets |
+| `batchalign3_fleet` | `batchalign3_server` + `batchalign3_clients` | Wrapper default target |
 
 See `inventory.yml` for per-host RAM values and batchalign worker counts.
 
@@ -79,15 +86,16 @@ Actions:
 3. Checks if SSH is enabled, warns if not
 4. Checks for `ts.net` DNS resolver, deploys it if missing (macOS only)
 
-### `playbooks/status.yml` — Batchalign Server Health
+### `playbooks/status.yml` — Batchalign3 Server Health
 
-Queries the `/health` HTTP endpoint on each compute server. Reports worker
-count, active jobs, and version.
+Queries the `/health` HTTP endpoint on the internal batchalign3 server hosts.
+Reports worker count, active jobs, and version.
 
 ### `playbooks/deploy.yml` — Deploy Batchalign
 
-Full deployment: install wheels, configure, restart. Runs one host at a time
-(`serial: 1`). Requires pre-built wheels passed as extra vars.
+Deploys the monolithic `batchalign3` wheel. Server hosts get config + restart;
+client hosts get the tool install only. Requires a pre-built wheel passed as
+`-e batchalign3_wheel=/path/to/wheel.whl`.
 
 ### `playbooks/configure.yml` — Update Configuration
 
@@ -111,6 +119,7 @@ Both are handled gracefully by `ignore_unreachable: true` in the Tailscale playb
 
 ## Related Docs
 
+- `../docs/ansible-operator-guide.md` — first-time operator guide and day-to-day commands
 - `../docs/fleet-inventory.md` — Canonical machine inventory with Tailscale IPs
 - `../docs/fleet-management-plan.md` — Architecture and future plans
 - `../docs/ssh-key-migration.md` — SSH key state per machine

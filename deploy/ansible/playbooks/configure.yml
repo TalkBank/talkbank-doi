@@ -4,6 +4,6 @@
 #   ansible-playbook -i inventory.yml playbooks/configure.yml
 ---
 - name: Configure batchalign fleet
-  hosts: compute_servers
+  hosts: batchalign3_server
   roles:
     - server

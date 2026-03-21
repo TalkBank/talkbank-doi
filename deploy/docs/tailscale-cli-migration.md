@@ -439,7 +439,7 @@ Fixes MagicDNS for all protocols (SSH, VNC, HTTP, etc.).
 
 ## 9. Tailscale API Reference
 
-**API key:** `tskey-api-kbwEvQrJxq11CNTRL-RaNy9Kp69naTuKRd629BnarXUSU2sYNb`
+**API key:** `$TAILSCALE_API_KEY`
 
 **Auth key (lab machines, expires 2026-02-27):**
 `tskey-auth-k1acv4nvg911CNTRL-PuyA8iWWRS6KsEFcCm9PS6nmz6zyBp7u`
@@ -481,7 +481,7 @@ the SSH config IP mappings on all machines if this happens.
 ### Common API calls
 
 ```bash
-export TS_API_KEY="tskey-api-kbwEvQrJxq11CNTRL-RaNy9Kp69naTuKRd629BnarXUSU2sYNb"
+export TS_API_KEY="$TAILSCALE_API_KEY"
 
 # List all devices
 curl -s -H "Authorization: Bearer $TS_API_KEY" \

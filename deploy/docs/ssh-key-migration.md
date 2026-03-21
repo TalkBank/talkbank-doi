@@ -1036,7 +1036,7 @@ curl -s -X POST -u "$TAILSCALE_API_KEY:" \
 
 **GitLab URL:** https://git.talkbank.org:8929 (SSH on port 22)
 
-**Admin API token:** `L1cU-joyQkraVDgvjGdF` (scope: `api`, expires ~2026-02-27)
+**Admin API token:** `$GL_TOKEN (expired)` (scope: `api`, expires ~2026-02-27)
 
 ### All Users
 
@@ -1055,7 +1055,7 @@ curl -s -X POST -u "$TAILSCALE_API_KEY:" \
 ### API Examples
 
 ```bash
-GL_TOKEN="L1cU-joyQkraVDgvjGdF"
+GL_TOKEN="$GL_TOKEN (expired)"
 GL_URL="https://git.talkbank.org:8929/api/v4"
 
 # List all users

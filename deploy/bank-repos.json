@@ -1,0 +1,18 @@
+{
+  "aphasia": ["aphasia-data"],
+  "asd": ["asd-data"],
+  "biling": ["biling-data"],
+  "ca": ["ca-candor-data", "ca-data"],
+  "childes": ["childes-eng-na-data", "childes-eng-uk-data", "childes-romance-germanic-data", "childes-other-data"],
+  "class": ["class-data"],
+  "dementia": ["dementia-data"],
+  "fluency": ["fluency-data"],
+  "homebank": ["homebank-public-data", "homebank-cougar-data", "homebank-bergelson-data", "homebank-password-data"],
+  "motor": ["motor-data"],
+  "phon": ["phon-eng-french-data", "phon-other-data"],
+  "psychosis": ["psychosis-data"],
+  "rhd": ["rhd-data"],
+  "samtale": ["samtale-data"],
+  "slabank": ["slabank-data"],
+  "tbi": ["tbi-data"]
+}

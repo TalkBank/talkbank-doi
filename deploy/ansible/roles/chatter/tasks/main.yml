@@ -1,0 +1,14 @@
+# Install the chatter CLI binary on macOS hosts.
+---
+- name: Copy chatter binary
+  copy:
+    src: "{{ chatter_binary }}"
+    dest: /Users/macw/bin/chatter
+    mode: '0755'
+
+- name: Ad-hoc codesign the binary
+  command: codesign -s - /Users/macw/bin/chatter
+
+- name: Verify installation
+  command: /Users/macw/bin/chatter --help
+  changed_when: false

@@ -1,16 +1,21 @@
-# Full deployment: build, install, configure, restart all fleet servers
+# Full deployment: install batchalign3 everywhere, and restart/configure the
+# internal server hosts.
 #
 # Usage:
 #   ansible-playbook -i inventory.yml playbooks/deploy.yml
 #   ansible-playbook -i inventory.yml playbooks/deploy.yml --limit bilbo
 #
-# Requires pre-built wheels (set via extra vars):
+# Requires a pre-built wheel passed via extra vars:
 #   -e batchalign3_wheel=/path/to/wheel.whl
-#   -e batchalign_core_wheel=/path/to/core.whl
 ---
-- name: Deploy batchalign fleet
-  hosts: compute_servers
+- name: Deploy batchalign3 server hosts
+  hosts: batchalign3_server
   serial: 1  # One server at a time to avoid downtime
   roles:
     - batchalign
     - server
+
+- name: Deploy batchalign3 client hosts
+  hosts: batchalign3_clients
+  roles:
+    - batchalign

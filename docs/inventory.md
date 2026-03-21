@@ -1,7 +1,7 @@
 # TalkBank Project Inventory
 
 **Status:** Current
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-20
 
 Complete map of all TalkBank project assets, their locations, and migration status.
 Created 2026-03-10 to support the consolidation into `talkbank-dev`.
@@ -11,7 +11,7 @@ Created 2026-03-10 to support the consolidation into `talkbank-dev`.
 | Platform | URL | Purpose | Repo Count |
 |----------|-----|---------|------------|
 | **GitHub** | github.com/TalkBank | Code, web repos, some data banks | 54 |
-| **GitLab** (self-hosted) | git.talkbank.org/talkbank | Corpus data repos | 16 |
+| **GitLab** (self-hosted) | git.talkbank.org/talkbank | Corpus data repos — **GitLab deleted 2026-03-19, data migrating to GitHub (16 → 24 repos). VM still runs John's Node app; being decommissioned.** | 16 → 24 |
 | **Dropbox** | ~/Dropbox/documentation/ | Legacy infrastructure docs | 84 files |
 | **Local only** | ~/ (various) | Experiments, prototypes, archived work | ~50+ dirs |
 

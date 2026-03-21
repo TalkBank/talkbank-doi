@@ -1,5 +1,7 @@
 # CLAUDE.md
 
+**Last modified:** 2026-03-21 12:13 EDT
+
 This file provides guidance to Claude Code (claude.ai/code) when working in the `talkbank-dev` private workspace.
 
 ## Succession-Aware Design (applies to ALL decisions)
@@ -18,6 +20,51 @@ These principles override convenience. When in doubt, choose the option that mak
 8. **Document or automate every process that currently requires "ask someone."**
 
 Full succession plan: `docs/migration/phase4-succession.md`
+
+## Cross-Repo Engineering Rules (applies to ALL code work)
+
+These rules are intended to keep the codebase survivable for future
+contributors, especially when they browse code before docs.
+
+1. **Types are the primary documentation.** Prefer named structs, enums,
+   traits, and newtypes over relying on parameter names or comments to explain
+   meaning.
+2. **No primitive obsession at stable boundaries.** Do not introduce raw
+   `String`, `&str`, `usize`, `i32`, or `bool` parameters/fields when the value
+   has a domain meaning such as CHAT text, language code, speaker ID, file
+   role, nonnegative count, bounded index, or state choice. Parse and validate
+   primitives at the edge, then carry typed values internally.
+3. **No tuple-packed domain seams.** Replace shapes like `(String, String)` or
+   `Vec<(String, Result<String, String>)>` with named structs or newtypes as
+   soon as the field meanings are stable.
+4. **No panic-based control flow in long-lived code.** Do not add
+   `unwrap()`, `expect()`, or equivalents in servers, workers, CLI
+   orchestration, persistence, background tasks, or other code that owns real
+   state. Return typed domain errors instead.
+5. **Use real domain errors.** Prefer `thiserror`-based error types in Rust and
+   specific exception/result types in Python over stringly errors.
+6a. **`From<T>` must be infallible.** Never implement `From<&str>` or
+   `From<String>` on a type whose construction can fail. Use `TryFrom`
+   instead. Provide named factory methods for well-known constants (e.g.,
+   `LanguageCode3::eng()`).
+6b. **No silent defaults via `unwrap_or` / `unwrap_or_else`.** If a value can
+   fail validation, propagate the error — never silently substitute a default.
+   Silent fallbacks hide bugs. Use `unwrap_or` only when the fallback is
+   explicitly documented and semantically correct.
+6. **Avoid boolean blindness.** Do not encode multi-state behavior as one or
+   more booleans when an enum or state type would make the invariant explicit.
+7. **Organize code for browsing.** Keep modules small, name them by workflow or
+   concept, and split catch-all files once they start hiding multiple
+   responsibilities.
+8. **Use methods when they clarify ownership and invariants.** Behavior that is
+   intrinsic to a type, owns its state, or depends on its invariants should
+   usually live in an `impl`. Use free functions for symmetric transforms,
+   adapters, and glue code that does not naturally belong to one owner.
+9. **Comments must explain the boundary.** New comments should say why a seam
+   exists, who owns the state, and what invariants callers rely on. Avoid
+   narration comments that merely restate the next line.
+10. **Touched docs need timestamps.** Any documentation file changed in a patch
+    should update its `Last modified` field with date and time.
 
 ## Overview
 
@@ -177,7 +224,7 @@ cargo run --release -p talkbank-cli -- validate ../data/ --skip-alignment     # 
 - **Process one file at a time** on a developer machine — always smoke-test one file first
 - **For large corpus runs** (>5 files or >1 GB audio), use net (M3 Ultra, 256 GB RAM), not a developer machine
 - **Always pass `--no-open-dashboard`** to prevent browser tab spam
-- **WARNING: `--workers N` is currently a no-op** — it is parsed but never wired to the server config. Do not rely on it.
+- **`--workers N`** controls per-job file parallelism (wired to `ServerConfig.max_workers_per_job`). Use `--workers 1` for safe local runs.
 
 ```bash
 # Correct: single file, local
@@ -215,11 +262,14 @@ All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run 
 
 | Host | Access | OS | Role |
 |------|--------|----|------|
-| `net.talkbank.org` | `ssh macw@net` or `ssh macw@talkbank` | Ubuntu 26.04 (Mac Studio, M3 Ultra, 256 GB) | Internal (CMU only): local media drives, batchalign server, web (nginx) |
+| `talkbank.org` | `ssh macw@talkbank` | Ubuntu (CMU Cloud VM) | **Public-facing.** Nginx (all bank websites), GitHub Actions self-hosted runner, web repos at `/var/www/web/` |
+| `net` | `ssh macw@net` | macOS (Mac Studio, M3 Ultra, 256 GB) | **CMU LAN only.** Media drives, batchalign server, ML processing. NOT publicly accessible. |
+| `git.talkbank.org` | `ssh macw@git-talkbank` | Ubuntu (CMU Cloud VM) | **Being decommissioned.** Currently runs John's Node.js data browsing/ZIP app. GitLab deleted 2026-03-19. |
+| `talkbank-02` (`media.talkbank.org`) | `ssh macw@talkbank-02` | Ubuntu (CMU Campus Cloud Plus VM) | Media server. |
 
 `net` runs `batchalign-next` on port 8000 (Python 3.12). Being upgraded to `batchalign3` (Rust) on port 8001 (coexistence), then port 8000 (takeover).
 
-**Full server reference:** `docs/net-talkbank-server.md` — services (nginx, fcgiwrap, CGI, Tailscale, batchalign), OS upgrade checklist, and comparison with homebank.
+**Full server reference:** `docs/net-talkbank-server.md` — services on net (batchalign, Tailscale, etc.).
 
 ### Batchalign Repos and Deployed Versions
 
@@ -248,11 +298,11 @@ Incident reports live in `docs/postmortems/`. Check these before deploying to un
 
 ## Documentation Conventions
 
-**Date every document you touch.** All markdown docs across the workspace must include a date header. Use this frontmatter block at the top of every doc (after the `#` title):
+**Date every document you touch.** All markdown docs across the workspace must include a date and time header. Use this frontmatter block at the top of every doc (after the `#` title):
 
 ```
 **Status:** Current | Historical | Reference | Draft
-**Last updated:** YYYY-MM-DD
+**Last updated:** YYYY-MM-DD HH:MM
 ```
 
 - **Current** — actively maintained, reflects reality
@@ -261,9 +311,9 @@ Incident reports live in `docs/postmortems/`. Check these before deploying to un
 - **Draft** — work in progress
 
 **Rules:**
-- When you create a new doc, add the date header.
-- When you edit an existing doc, update `Last updated` to today. If the doc has no date header, add one.
-- Use ISO 8601 dates only (`2026-03-12`), never prose dates (`February 15, 2026`).
+- When you create a new doc, add the date/time header.
+- When you edit an existing doc, update `Last updated` to the current date and time. If the doc has no date header, add one.
+- Use ISO 8601 dates with 24-hour time and timezone (`2026-03-12 14:30 EDT`), never prose dates (`February 15, 2026`). **Always run `date` to get the actual system time** — do not guess or use the conversation date.
 - Do NOT do a bulk sweep to stamp dates on docs you haven't verified — that creates false confidence. Only date docs you've actually read and confirmed are accurate.
 - Postmortems use the date-in-filename convention (`YYYY-MM-DD-description.md`) and don't need a separate date header.
 
@@ -282,4 +332,3 @@ Full project inventory: `docs/inventory.md`
 
 ---
 Last Updated: 2026-03-18
-

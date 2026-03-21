@@ -1,30 +1,15 @@
-# Install batchalign3[serve] + batchalign-core via uv tool
+# Install the monolithic batchalign3 wheel via uv tool.
 ---
 - name: Copy batchalign3 wheel
   copy:
     src: "{{ batchalign3_wheel }}"
-    dest: /tmp/batchalign3.whl
+    dest: "/tmp/{{ batchalign3_wheel | basename }}"
     mode: '0644'
 
-- name: Copy batchalign-core wheel
-  copy:
-    src: "{{ batchalign_core_wheel }}"
-    dest: /tmp/batchalign_core.whl
-    mode: '0644'
-
-- name: Stop existing server
-  command: batchalign3 serve stop
-  ignore_errors: true
-
-- name: Uninstall old versions
-  command: uv tool uninstall batchalign3
-  ignore_errors: true
-
-- name: Install batchalign3 with serve extra
+- name: Install batchalign3
   command: >
     uv tool install --python {{ python_version }} --force-reinstall
-    /tmp/batchalign3.whl
-    --with /tmp/batchalign_core.whl
+    /tmp/{{ batchalign3_wheel | basename }}
 
 - name: Verify installation
   command: batchalign3 --help
@@ -32,8 +17,5 @@
 
 - name: Clean up wheel files
   file:
-    path: "{{ item }}"
+    path: "/tmp/{{ batchalign3_wheel | basename }}"
     state: absent
-  loop:
-    - /tmp/batchalign3.whl
-    - /tmp/batchalign_core.whl

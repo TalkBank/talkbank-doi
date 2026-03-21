@@ -1,0 +1,13 @@
+# Deploy the chatter CLI to all chatter hosts.
+#
+# Usage:
+#   ansible-playbook playbooks/deploy-chatter.yml
+#   ansible-playbook playbooks/deploy-chatter.yml --limit brian
+#
+# Requires a pre-built binary passed via extra vars:
+#   -e chatter_binary=/path/to/chatter
+---
+- name: Deploy chatter
+  hosts: all_macs
+  roles:
+    - chatter

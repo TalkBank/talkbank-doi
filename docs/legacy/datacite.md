@@ -1,5 +1,15 @@
 # DataCite DOI management
 
+**Status:** Historical
+**Last updated:** 2026-03-20 14:00
+
+> **This document describes the old `cdcs-to-csv` system (pre-2026) and is preserved for historical reference only.**
+> For the current workflow, see:
+> - `docs/doi-workflow.md` — user guide (Brian, Davida, team members)
+> - `talkbank-doi/README.md` — developer and operational reference
+
+---
+
 We have an arrangement (TODO Brian details?) to use
 [DataCite](https://datacite.org/) as our provider for DOIs for our
 work.

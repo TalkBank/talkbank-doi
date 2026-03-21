@@ -1,9 +1,8 @@
 # Shared variables for all hosts
 batchalign_version: "0.8.0"  # Updated by CI/deploy
-batchalign_config_dir: "~/.batchalign3"
-batchalign_port: 8000
+batchalign_config_dir: "{{ ansible_facts['user_dir'] }}/.batchalign3"
+batchalign_port: 8001
 default_lang: eng
-warmup: true
 job_ttl_days: 7
 
 # NFS media mount point on clients
@@ -24,17 +23,9 @@ client_media_mappings:
   clinical-data: /Volumes/TalkBank/data/clinical-data
   other-data: /Volumes/TalkBank/data/other-data
 
-# Fleet server list (all CMU lab machines that run batchalign3 serve)
+# Internal batchalign3 server fleet for generated fleet.yaml.
 fleet_servers:
-  - { name: net, url: "http://net:8000" }
-  - { name: bilbo, url: "http://bilbo:8000" }
-  - { name: brian, url: "http://brian:8000" }
-  - { name: davida, url: "http://davida:8000" }
-  - { name: frodo, url: "http://frodo:8000" }
-  - { name: andrew, url: "http://andrew:8000" }
-  - { name: lilly, url: "http://lilly:8000" }
-  - { name: sue, url: "http://sue:8000" }
-  - { name: vaishnavi, url: "http://vaishnavi:8000" }
+  - { name: net, url: "http://net:8001" }
 
 # Redis (on net only)
 redis_host: net

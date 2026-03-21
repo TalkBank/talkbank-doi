@@ -1,0 +1,670 @@
+HARDWARE ASSESSMENT: FRANKLIN'S DEV MACHINE vs. BILBO
+======================================================
+Date: 2026-03-20
+
+EXECUTIVE SUMMARY
+-----------------
+Franklin's M4 Max (64 GB) is memory-constrained for the combined workload
+of Rust compilation, ML model inference, and Claude Code sessions. Bilbo's
+M3 Ultra (256 GB) would eliminate the memory bottleneck at the cost of less
+internal disk space. The swap is recommended.
+
+Apple is expected to announce new machines (M5 Ultra or similar) in summer
+2025. If Brian is willing to purchase a new machine then, that would be the
+ideal long-term solution.
+
+
+PART 1: MACHINE COMPARISON
+===========================
+
+Spec                  Franklin (M4 Max)        Bilbo (M3 Ultra)         Winner
+----                  -----------------        ----------------         ------
+CPU cores             16 (12P + 4E)            28 (20P + 8E)            Bilbo (1.75x)
+RAM                   64 GB                    256 GB                   Bilbo (4x)
+GPU cores             40                       60                       Bilbo (1.5x)
+Memory bandwidth      ~546 GB/s                ~800 GB/s                Bilbo (1.5x)
+Internal SSD          4 TB                     1 TB                     Franklin (4x)
+External SSD          --                       3.8 TB OWC (empty)       Bilbo
+Single-core perf      ~15% faster per core     --                       Franklin
+Chip generation       M4 (2024, 3nm)           M3 (2023, 3nm)           Franklin (slightly)
+Metal version         Metal 4                  Metal 4                  Tie
+macOS version         26.3.1                   26.3.1                   Tie
+
+Current load (Franklin, at time of assessment):
+  - Load average: 67 / 96 / 96 (on 16 cores = 4-6x overloaded)
+  - Memory: 61 GB used / 64 GB total (95%)
+  - 5 Claude processes + WindowServer consuming most CPU
+  - No swap activity (yet), but essentially zero headroom
+
+Current load (Bilbo):
+  - Load average: 1.7 / 1.8 / 1.8 (idle)
+  - Uptime: 16 days
+  - Role: batchalign fleet client (lightly used)
+
+
+PART 2: WORKLOAD ANALYSIS
+==========================
+
+Rust compilation (daily driver):
+  Bilbo wins. Full `cargo build` parallelizes across all available cores.
+  28 cores vs 16 = ~40-50% faster full builds. Incremental builds (1-4
+  cores) are roughly a wash since M4 cores are individually ~15% faster.
+  The Rust target/ directories alone are 296 GB — more cores means less
+  time waiting for builds.
+
+Concurrent ML model inference (Whisper, Stanza):
+  Bilbo wins overwhelmingly. Each Whisper model instance consumes 2-5 GB
+  RAM. At 64 GB with 61 GB already used, Franklin cannot safely run even
+  one concurrent worker alongside a dev workload. At 256 GB, multiple
+  workers can run simultaneously with room to spare. The GPU memory
+  bandwidth advantage (800 vs 546 GB/s) also accelerates MPS inference.
+
+Claude Code + dev environment:
+  Bilbo wins. At the time of assessment, 5 Claude processes were running
+  on Franklin, contributing to a load average of 96 on 16 cores. With
+  256 GB RAM and 28 cores, Bilbo can absorb this easily.
+
+Disk space:
+  Franklin wins on internal storage (4 TB vs 1 TB). However, Bilbo has a
+  3.8 TB external OWC SSD that is currently empty. With disciplined
+  partitioning (source code on internal, data/artifacts on external),
+  the total available space is comparable.
+
+
+PART 3: DISK SPACE AUDIT (FRANKLIN'S CURRENT MACHINE)
+======================================================
+
+Total APFS container: 4.0 TB
+Used: 3.7 TB (~93%)
+Free: ~300 GB
+
+This is tighter than it looks. Here is where the space is going:
+
+TOP-LEVEL BREAKDOWN
+-------------------
+  1.1 TB   ~/isos/                      ISO images (!!!)
+  411 GB   ~/talkbank/                  Main workspace
+  391 GB   ~/Library/                   macOS caches and app data
+  212 GB   .copilot/session-state/      GitHub Copilot session cache
+  158 GB   ~/old-talkbank/              Old workspace copy
+   79 GB   ~/.cache/                    Build and model caches
+   72 GB   ~/talkbank-utils/            Old talkbank-tools clone
+   38 GB   ~/.ghcup/                    Haskell toolchains
+   30 GB   ~/.elan/                     Lean 4 toolchains
+   30 GB   ~/talkbank-roundtrip-json/   Roundtrip test data
+   29 GB   ~/.stack/                    Haskell Stack packages
+   29 GB   ~/old/                       Old files
+   25 GB   ~/chatter/                   Old chatter clone
+   23 GB   ~/.rustup/                   Rust toolchains
+   19 GB   ~/.local/                    uv, containers, etc.
+   16 GB   ~/mathematics_in_lean/       Lean math project
+   13 GB   ~/batchalign3-rearch/        Old batchalign3 rearchitecture
+   12 GB   ~/talkbank-utils-cleanup/    Old cleanup branch
+   11 GB   ~/stream-slayer/             Personal project
+   11 GB   ~/old-downloads/             Old downloads
+   10 GB   ~/tutorials4/                Tutorials
+  9.3 GB   ~/.vscode/extensions/        VS Code extensions
+  9.9 GB   ~/sat-smt/                   SAT/SMT project
+  8.9 GB   ~/talkbank-utils-word-token/ Old branch
+  7.7 GB   ~/stanza_resources/          Stanza NLP models
+  7.6 GB   ~/pittsburgh-chess-club.../  Chess club entries
+  7.6 GB   ~/lalrpop/                   Parser generator project
+  7.5 GB   ~/discrete_math_lean/        Lean math project
+  7.4 GB   ~/paip-lean/                 PAIP in Lean
+  6.2 GB   ~/.ollama/models/            Ollama local models
+  5.3 GB   ~/.cabal/                    Haskell Cabal packages
+  4.9 GB   ~/.esy/                      OCaml/Reason package manager
+  4.8 GB   ~/.sbt/                      Scala build tool
+
+INSIDE ~/talkbank/ (411 GB)
+----------------------------
+  195 GB   batchalign3/target/          Rust build artifacts
+  101 GB   talkbank-tools/target/       Rust build artifacts
+   35 GB   data/                        Corpus data (24 repos)
+   17 GB   analysis/                    Workspace audits
+   12 GB   web/                         Bank websites
+    1 GB   (everything else)
+
+INSIDE ~/Library/ (391 GB)
+--------------------------
+  116 GB   Library/Caches/              (71 GB is Homebrew alone)
+   90 GB   Library/Application Support/ (12 GB Claude, 3 GB Firefox)
+   11 GB   Library/Containers/
+    2 GB   Library/Group Containers/
+    2 GB   Library/Developer/
+
+INSIDE ~/.cache/ (79 GB)
+-------------------------
+   38 GB   uv/                          Python package cache
+   33 GB   huggingface/                 ML model cache
+    4 GB   mathlib/                     Lean mathlib cache
+    1 GB   torch/                       PyTorch cache
+
+
+PART 4: WHAT TO OFFLOAD OR DELETE
+==================================
+
+CATEGORY A: SAFE TO DELETE (would recover ~600+ GB)
+----------------------------------------------------
+
+  1.1 TB   ~/isos/
+           ISO images. Almost certainly not needed on an SSD dev machine.
+           If any are needed, move to an external drive or NAS.
+
+  212 GB   ~/.copilot/session-state/
+           GitHub Copilot session cache. Safe to delete entirely; it will
+           regenerate what it needs. This is absurdly large.
+
+  158 GB   ~/old-talkbank/
+           Old copy of the workspace. Everything is in git. Delete.
+
+   72 GB   ~/talkbank-utils/
+           Old clone of talkbank-tools (pre-rename). Already exists as
+           ~/talkbank/talkbank-tools/. Delete.
+
+   30 GB   ~/talkbank-roundtrip-json/
+           Roundtrip test output. Regenerable. Delete.
+
+   29 GB   ~/old/
+           Old files. Review briefly, then delete.
+
+   25 GB   ~/chatter/
+           Old chatter clone. Now at ~/talkbank/java-chatter-stable/. Delete.
+
+   13 GB   ~/batchalign3-rearch/
+           Old rearchitecture branch. In git history. Delete.
+
+   12 GB   ~/talkbank-utils-cleanup/
+           Old cleanup branch. In git history. Delete.
+
+   11 GB   ~/old-downloads/
+           Old downloads. Delete.
+
+    9 GB   ~/talkbank-utils-word-token/
+           Old branch. In git history. Delete.
+
+    7 GB   ~/stanza_resources/
+           Stanza models. Cached and re-downloadable. Delete.
+
+CATEGORY B: OFFLOAD TO EXTERNAL DRIVE (~130 GB)
+------------------------------------------------
+
+   71 GB   ~/Library/Caches/Homebrew/
+           `brew cleanup` will clear old versions. Run it.
+
+   33 GB   ~/.cache/huggingface/
+           ML model cache. Re-downloadable but slow. Keep if space allows,
+           otherwise delete (models re-download on demand).
+
+   38 GB   ~/.cache/uv/
+           Python package cache. `uv cache clean` to reclaim.
+
+CATEGORY C: LANGUAGE TOOLCHAINS -- DELETE IF NOT ACTIVELY USING (~100 GB)
+--------------------------------------------------------------------------
+
+   38 GB   ~/.ghcup/ (Haskell)         Are you writing Haskell currently?
+   30 GB   ~/.elan/ (Lean 4)           Are you doing Lean proofs currently?
+   29 GB   ~/.stack/ (Haskell)         Redundant with ghcup if not using Stack.
+    5 GB   ~/.cabal/ (Haskell)         Three Haskell package managers!
+    5 GB   ~/.esy/ (OCaml/Reason)      Are you writing OCaml currently?
+    5 GB   ~/.sbt/ (Scala)             Are you writing Scala currently?
+
+   Also the associated projects:
+   16 GB   ~/mathematics_in_lean/
+    8 GB   ~/discrete_math_lean/
+    7 GB   ~/paip-lean/
+   10 GB   ~/sat-smt/
+
+CATEGORY D: RUST BUILD ARTIFACTS -- CLEAN PERIODICALLY (~200 GB recoverable)
+-----------------------------------------------------------------------------
+
+  195 GB   ~/talkbank/batchalign3/target/
+  101 GB   ~/talkbank/talkbank-tools/target/
+
+  These are the single largest items in your workspace. Options:
+  - `cargo clean` in both repos recovers ~296 GB instantly (next build
+    takes longer but is a one-time cost)
+  - Use `cargo-sweep` to remove artifacts older than N days
+  - On Bilbo's 1 TB internal, you would NEED to manage these aggressively
+    or put target/ on the external OWC SSD via symlink
+
+CATEGORY E: KEEP
+-----------------
+
+  411 GB   ~/talkbank/           Active workspace (minus target/ above)
+   35 GB   ~/talkbank/data/      Corpus data (needed for validation)
+   23 GB   ~/.rustup/            Active Rust toolchains (needed)
+    4 GB   ~/.cargo/             Cargo binaries and registry
+    9 GB   ~/.vscode/extensions/ Active extensions
+
+
+PART 5: IF YOU SWAP TO BILBO
+==============================
+
+Bilbo has 1 TB internal + 3.8 TB external OWC SSD. Strategy:
+
+Internal SSD (1 TB) -- keep fast, lean:
+  - macOS + ~/Library/                    (~150 GB)
+  - ~/.rustup/, ~/.cargo/, ~/.cache/      (~50 GB after cleanup)
+  - ~/talkbank/ source code (minus data/) (~80 GB without target/)
+  - Rust target/ directories              (~300 GB, will grow)
+  - Headroom                              (~420 GB)
+
+External OWC SSD (3.8 TB):
+  - ~/talkbank/data/                      (35 GB, will grow)
+  - ISOs if you need them                 (1.1 TB)
+  - Personal projects (Lean, chess, etc.) (as needed)
+  - Backups
+
+Key: symlink target/ dirs to the external SSD if the internal gets tight.
+NVMe-over-Thunderbolt on the OWC is fast enough for build artifacts.
+
+Alternatively: do the cleanup in Category A first (~600 GB recoverable)
+and your active workspace fits comfortably on 1 TB internal without the
+external drive for daily work.
+
+
+PART 6: RECOMMENDATION
+========================
+
+NEAR-TERM (now):
+
+  1. Swap with Bilbo. The 4x RAM (256 GB) and 1.75x cores (28) eliminate
+     your current bottleneck. You gain the ability to run concurrent ML
+     workers locally, compile faster, and run multiple Claude Code sessions
+     without the machine grinding to a halt.
+
+  2. Before the swap, clean up Category A items (~600+ GB). This makes
+     migration to Bilbo's 1 TB internal trivial -- your actual working
+     set is well under 500 GB.
+
+  3. Verify with Brian that removing Bilbo from the fleet is acceptable.
+     Since it's a client machine (not the server) and you maintain
+     batchalign3, having it as your dev machine is a better use.
+
+SUMMER/FALL (when Apple announces new machines):
+
+  Apple is expected to announce M5-generation chips at WWDC (June 2025)
+  or fall events. What to watch for:
+
+  - M5 Ultra: If it follows the pattern, ~32 CPU cores, 80+ GPU cores,
+    and potentially 256-512 GB unified memory. The memory bandwidth
+    could hit 1 TB/s+, which significantly accelerates large model
+    inference on MPS.
+
+  - M5 Max: Likely 16 cores, 40 GPU cores, up to 128 GB. If Apple
+    bumps Max to 128 GB with M5, that might be sufficient -- but
+    256 GB is strongly preferred for your workload.
+
+  - Mac Pro with M5 Ultra: If Apple refreshes the Mac Pro, it could
+    offer 2-4 TB internal SSD options and potentially higher memory
+    configurations (384-512 GB).
+
+  Ideal purchase: Mac Studio with M5 Ultra, maximum RAM (256+ GB),
+  2-4 TB internal SSD. This would combine the best of both current
+  machines: fast per-core performance, many cores, massive RAM, and
+  enough internal storage to avoid external drive gymnastics.
+
+  If Apple delays the Ultra to late 2025 or 2026: Bilbo (M3 Ultra,
+  256 GB) remains a strong dev machine. There's no urgency to replace
+  it immediately -- the 256 GB RAM is the critical factor, and that
+  won't become insufficient for your workload anytime soon.
+
+  Budget guidance for Brian: A maxed Mac Studio with M5 Ultra will
+  likely be in the $7,000-$10,000 range based on M3/M4 Ultra pricing.
+  The 4 TB SSD upgrade is expensive (~$1,200) but eliminates the need
+  for external storage management.
+
+
+PART 7: TIME MACHINE EXCLUSIONS
+=================================
+
+Time Machine will back up everything by default, including hundreds of GB
+of regenerable build artifacts, caches, and model files. This fills up
+the backup drive fast and makes backups slow.
+
+The following paths should be excluded from Time Machine. A setup script
+is provided at scripts/setup-timemachine-exclusions.sh.
+
+MUST EXCLUDE (regenerable build artifacts):
+  ~/talkbank/batchalign3/target/         Rust build artifacts (195 GB)
+  ~/talkbank/talkbank-tools/target/      Rust build artifacts (101 GB)
+  ~/talkbank/batchalign3/.venv/          Python venv (1.4 GB)
+  ~/.copilot/session-state/              Copilot session cache (212 GB)
+
+SHOULD EXCLUDE (re-downloadable caches):
+  ~/.cache/                              All build/model caches (79 GB)
+  ~/.rustup/toolchains/                  Rust toolchains (re-installable)
+  ~/Library/Caches/                      macOS app caches (116 GB)
+  ~/.ollama/models/                      Ollama models (6 GB)
+  ~/stanza_resources/                    Stanza NLP models (8 GB)
+
+EXCLUDE IF PRESENT (language toolchains, re-installable):
+  ~/.ghcup/                              Haskell (38 GB)
+  ~/.elan/                               Lean 4 (30 GB)
+  ~/.stack/                              Haskell Stack (29 GB)
+  ~/.cabal/                              Haskell Cabal (5 GB)
+  ~/.esy/                                OCaml/Reason (5 GB)
+  ~/.sbt/                                Scala (5 GB)
+
+EXCLUDE (ephemeral/large):
+  ~/isos/                                ISO images (1.1 TB)
+
+Total excluded: ~800+ GB of data that does not need to be backed up,
+freeing the Time Machine drive for actual irreplaceable work.
+
+
+PART 8: WINDOWS TESTING STRATEGY
+===================================
+
+CONTEXT
+-------
+
+Franklin needs to build and test chatter (talkbank-cli) and batchalign3
+on Windows. Specific needs:
+
+  1. Verify CLI binaries work correctly on Windows (path handling, Unicode,
+     process spawning, send2clan-sys WM_APP IPC with CLAN.exe)
+  2. Test the Chatter desktop app (Tauri) on Windows
+  3. Test batchalign3 end-to-end on Windows (Rust server + Python workers)
+  4. Eventually: Windows code signing workflow (SmartScreen blocks unsigned .exe)
+
+Current state:
+  - CI already builds for Windows (windows-latest, x86_64-pc-windows-msvc)
+    in both talkbank-tools and batchalign3 release workflows
+  - CI does NOT run tests on Windows -- only builds
+  - Windows-specific Rust code is minimal: only send2clan-sys/build.rs has
+    #[cfg(target_os = "windows")] for WM_APP IPC with CLAN.exe
+  - No Windows-specific code in batchalign3 Rust crates at all
+  - Franklin has a UTM VM (Windows 11 ARM, QEMU backend, 10 GB RAM,
+    47 GB disk image) that was "super super slow"
+
+WHY THE UTM VM WAS SLOW
+-------------------------
+
+The VM config reveals the problem: it uses the QEMU backend with
+virtio-ramfb-gl display. UTM has two backends:
+
+  1. QEMU — software emulation layer on top of Apple Hypervisor. Supports
+     x86 emulation (very slow) and ARM virtualization (faster). The
+     virtio-ramfb-gl display driver is a generic fallback.
+
+  2. Apple Virtualization Framework — native macOS hypervisor, much faster
+     for ARM guests. Near-native performance for ARM Windows.
+
+The VM IS aarch64 (ARM), which is good — it can use hardware
+virtualization. But QEMU adds overhead compared to Apple's native
+framework. The virtio-ramfb-gl display is also slower than the native
+Virtualization.framework GPU passthrough.
+
+Other likely issues:
+  - CPUCount: 0 means "auto" in UTM/QEMU, which may not allocate enough
+    cores. Should be set to 8+ explicitly.
+  - 10 GB RAM is marginal for Windows 11 + Rust compilation + Python ML.
+  - The Windows Insider Preview build may have debug/telemetry overhead.
+
+VM TECHNOLOGY OPTIONS
+---------------------
+
+Option 1: VMware Fusion (RECOMMENDED — already installed, free)
+  - Already on the machine (VMware Fusion + Horizon Client installed)
+  - Uses Apple Hypervisor.framework for ARM Windows — near-native speed
+  - Mature, battle-tested Windows guest support
+  - Shared Folders (HGFS) are fast, reliable, and well-documented
+  - NAT networking with easy SSH access to guest from host
+  - Free personal-use license
+  - Cost: $0
+
+Option 2: UTM with Apple Virtualization Framework (free alternative)
+  - Open source, also uses Apple's virtualization stack
+  - VirtioFS for shared folders (fast but less polished than VMware HGFS)
+  - UTM 4.7.5 already installed
+  - Less mature Windows guest tooling than VMware
+  - NOTE: Franklin's existing UTM VM used the QEMU backend (slow).
+    A Virtualization-mode VM would be much faster, but VMware Fusion
+    is still the better choice since it's already installed and more
+    polished.
+  - Cost: $0
+
+Option 3: Parallels Desktop ($100-120/year)
+  - Gold standard for Windows-on-Mac — best graphics, coherence mode
+  - One-click Windows 11 ARM install
+  - Overkill for occasional dev testing. Skip unless free options disappoint.
+  - Cost: ~$100/year (Standard) or ~$120/year (Pro)
+
+Option 4: GitHub Actions Windows runner (for CI, not interactive)
+  - Already in use for release builds
+  - Add `windows-latest` to the CI test matrix to run tests automatically
+  - Free for public repos (talkbank-tools and batchalign3 are now public)
+  - Cannot replace interactive testing (desktop app, CLAN IPC, user flows)
+  - Cost: $0
+
+RECOMMENDED APPROACH
+--------------------
+
+Use a LAYERED strategy — automate what you can, VM for the rest:
+
+Layer 1: GitHub Actions CI (automate — do first)
+  Add `windows-latest` to the CI test matrix in both repos. This catches
+  most regressions automatically: path handling, Unicode, process spawning,
+  compilation. Both repos are public, so GitHub Actions minutes are free
+  and unlimited. This eliminates the need for local Windows testing for
+  the majority of changes.
+
+  Files to modify:
+    talkbank-tools/.github/workflows/ci.yml — add windows-latest to matrix
+    batchalign3/.github/workflows/test.yml  — add windows-latest to matrix
+
+Layer 2: VMware Fusion (interactive testing — recommended)
+  Create a Windows 11 ARM VM for the things CI cannot test:
+    - Chatter desktop app (Tauri) — visual testing, installer behavior
+    - send2clan-sys WM_APP IPC with Windows-CLAN
+    - Windows code signing and SmartScreen behavior
+    - batchalign3 end-to-end with Python workers
+    - User experience testing (does a researcher understand the UI?)
+
+  Setup steps:
+    1. Download Windows 11 ARM ISO from Microsoft (retail, not Insider)
+    2. In VMware Fusion: New VM → Install from disc/image → Windows 11 ARM
+    3. Allocate 8+ cores, 16-32 GB RAM (on Bilbo: use 8 cores, 32 GB)
+    4. Install VMware Tools in the guest (enables shared folders, clipboard,
+       dynamic resolution, drag-and-drop)
+    5. Enable Shared Folders (HGFS) for transferring test data and binaries
+    6. Inside the VM, install:
+       - Rust toolchain (rustup, MSVC target)
+       - Visual Studio Build Tools (for the MSVC linker)
+       - Python 3.12 + uv
+       - Git (with core.autocrlf=false)
+
+  On Bilbo (256 GB RAM, 28 cores), this VM will run at near-native speed
+  with plenty of room for your host dev environment alongside it.
+
+Layer 3: UTM (fallback)
+  If VMware Fusion has any issues, UTM in Virtualize mode (not Emulate)
+  is a zero-cost fallback. Delete the existing QEMU-based VM first.
+
+SHARED FILESYSTEM: PITFALLS AND BEST PRACTICES
+-----------------------------------------------
+
+Q: Can I share the same git clone between macOS host and Windows VM?
+A: DO NOT build from the same clone on both OSes. Here's why:
+
+  1. Line endings: Git on Windows defaults to CRLF checkout. The Rust
+     source, Python source, and .cha files are all LF. A shared clone
+     will have constant line-ending conflicts.
+
+  2. Build artifacts: Rust's target/ directory is platform-specific.
+     A macOS target/ and Windows target/ in the same directory will
+     collide and cause build failures.
+
+  3. Symlinks: macOS uses symlinks freely; NTFS symlinks require
+     elevated privileges and behave differently.
+
+  4. File locking: Windows locks open files (DLLs, .exe). Rust builds
+     on one OS will fail if the other OS has files locked.
+
+INSTEAD, use one of these workflows:
+
+  Option A: Git over LAN — separate clones, no GitHub round-trip (RECOMMENDED)
+    - Host: ~/talkbank/ (your normal workspace, commit as usual)
+    - VM: C:\Users\you\talkbank-tools\ (separate clone FROM the host)
+    - Clone directly from the macOS host over the VM's virtual network:
+
+        # In the Windows VM (one-time setup):
+        git clone ssh://chen@192.168.64.1/Users/chen/talkbank/talkbank-tools C:\talkbank-tools
+        git clone ssh://chen@192.168.64.1/Users/chen/talkbank/batchalign3 C:\batchalign3
+
+        # Day-to-day: commit on macOS, then in the VM:
+        git pull
+
+    - No push to GitHub needed. The VM pulls directly from your macOS
+      working tree over the local virtual network (sub-millisecond latency).
+    - Each clone has its own target/, .venv, line endings, etc.
+    - VMware Fusion's NAT networking makes the host accessible from the
+      guest. The exact host IP depends on the network config — check with
+      `ipconfig` in the VM or VMware's Virtual Network Editor. Often
+      192.168.64.1 or the gateway shown in `route print`.
+    - macOS SSH server must be enabled: System Settings → General →
+      Sharing → Remote Login.
+
+  Option B: Shared folder (read-only) + local build dir
+    - Share the source tree read-only via VMware Shared Folders (HGFS)
+    - In the VM, set environment variables:
+        set CARGO_TARGET_DIR=C:\rust-target
+        set CARGO_HOME=C:\cargo-home
+    - Build from the shared source but write all artifacts locally
+    - Configure git in the VM: core.autocrlf=false
+    - Pro: no separate clone to maintain, always see latest saved files
+    - Con: can't test uncommitted changes that require git operations;
+      line ending issues may still surface in some tools
+    - Best for quick "does this compile on Windows?" checks
+
+  Option C: Push to GitHub (simplest but slowest)
+    - Push to a branch on GitHub from macOS
+    - Pull in the VM
+    - Most overhead per iteration, but zero setup
+
+  Option A is recommended for regular Windows testing. Option B is good
+  for quick one-off build checks. Option C is the fallback when networking
+  between host and guest is being difficult.
+
+SCRIPTING VMWARE FUSION WITH vmrun
+-------------------------------------
+
+VMware Fusion ships with `vmrun`, a CLI for automating VM operations.
+With VMware Tools installed in the guest, it can run commands inside the
+VM, transfer files, and manage snapshots — all from the macOS terminal.
+
+  Key commands:
+
+    # VM lifecycle
+    vmrun start /path/to/Windows.vmx
+    vmrun stop /path/to/Windows.vmx
+    vmrun suspend /path/to/Windows.vmx
+
+    # Run commands inside the guest (requires VMware Tools)
+    vmrun -gu <user> -gp <pass> runScriptInGuest /path/to/Windows.vmx \
+      "C:\Windows\System32\cmd.exe" \
+      "cd C:\talkbank-tools && git pull && cargo nextest run"
+
+    # File transfer (host <-> guest)
+    vmrun copyFileFromGuestToHost /path/to/Windows.vmx \
+      "C:\talkbank-tools\test-results.xml" ./test-results.xml
+
+    # Snapshots (clean-state testing)
+    vmrun snapshot /path/to/Windows.vmx "dev-ready"
+    vmrun revertToSnapshot /path/to/Windows.vmx "dev-ready"
+
+  Recommended workflow:
+
+    1. Set up VM once: install Windows, Rust, Python, uv, Git, VS Build
+       Tools. Take a "dev-ready" snapshot.
+
+    2. Automate the test cycle (e.g., a Makefile target):
+       a. Revert to "dev-ready" snapshot (clean state)
+       b. Start VM
+       c. runScriptInGuest: git pull from macOS host over LAN
+       d. runScriptInGuest: cargo nextest run (or cargo build, etc.)
+       e. copyFileFromGuestToHost: retrieve test results
+       f. Suspend VM
+
+    3. For interactive-only tests (Tauri desktop app, SmartScreen, CLAN
+       IPC), start the VM and work manually — but even then, vmrun can
+       automate the build step so you only do visual verification.
+
+  This is not as clean as GitHub Actions CI, but it means you can run
+  `make test-windows` from your macOS terminal and get Windows test
+  results without touching the VM GUI for most things.
+
+WHAT TO TEST ON WINDOWS (PRIORITIZED)
+--------------------------------------
+
+Must test interactively (cannot automate in CI):
+  1. Chatter desktop app (Tauri) — installer, UI, Windows-specific UX
+  2. send2clan-sys WM_APP IPC with Windows-CLAN (CLAN.exe)
+  3. Code signing and SmartScreen behavior
+  4. batchalign3 end-to-end: server + Python workers (process spawning
+     on Windows is different — CreateProcess vs fork/exec)
+
+Can and should automate in CI:
+  5. Rust compilation on Windows (already done in release, add to CI)
+  6. Rust tests on Windows (path handling, Unicode filenames)
+  7. Python tests on Windows (uv run pytest)
+  8. CLI smoke tests (validate, to-json, etc.)
+
+WINDOWS LICENSING
+------------------
+
+Windows 11 ARM licensing options:
+
+  1. Windows Insider Preview ARM64 (RECOMMENDED — free, no expiration)
+     Download VHDX from:
+       https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewARM64
+     Requires a free Microsoft account enrolled in the Insider Program.
+     No license key needed, no expiration, rolling updates. This is what
+     Franklin used previously and is the simplest path.
+
+  2. CMU software portal — may provide Windows 11 ARM retail keys via
+     Azure Dev Tools for Teaching. Worth checking if a non-Insider
+     build is preferred.
+
+  3. Windows 11 ARM evaluation ISO — free 90-day evaluation, can be
+     rearmed. Fallback if Insider Program changes terms.
+
+  NOTE: Windows Server 2025 Standard (available via CMU academic access)
+  is x86_64 only — no ARM version exists. Running x86 Windows on an ARM
+  Mac requires full emulation (not virtualization) and is unusably slow
+  for development. Do not use it.
+
+The existing UTM VM (Windows 11 Insider Preview, QEMU backend, 47 GB)
+should be deleted. It was used once to test send2clan-sys WM_APP IPC
+and is not worth migrating — QEMU-specific drivers (virtio) would
+bluescreen in VMware, and the Insider Preview build has debug overhead.
+A fresh retail install in VMware Fusion takes about an hour and gives
+a clean, stable system with proper VMware drivers.
+
+DISK BUDGET FOR THE VM
+-----------------------
+
+A properly set up Windows dev VM needs:
+  - Windows 11 ARM:  ~25 GB
+  - Rust toolchain:  ~5 GB
+  - Python + uv:     ~3 GB
+  - Visual Studio Build Tools (for MSVC linker): ~8 GB
+  - Source + builds:  ~20 GB (separate target dir)
+  - Headroom:        ~20 GB
+  Total:             ~80 GB
+
+On Bilbo's 1 TB internal or 3.8 TB external, this is trivial.
+On your current 4 TB drive, also trivial (your existing VM is 47 GB).
+
+SUMMARY
+-------
+
+  1. Add Windows to CI test matrix FIRST — catches 80% of issues for free
+  2. Recreate UTM VM using Virtualization mode (not QEMU emulation) —
+     this will be dramatically faster than your previous experience
+  3. On Bilbo (256 GB), allocate 8 cores + 32 GB to the VM — near-native
+  4. Keep separate git clones for macOS and Windows — don't share builds
+  5. Skip Parallels unless the free options disappoint
+  6. VMware Fusion (already installed) is available as a fallback

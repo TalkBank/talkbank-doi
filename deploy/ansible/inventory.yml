@@ -10,7 +10,7 @@ all:
   vars:
     ansible_user: macw
     ansible_python_interpreter: /usr/bin/python3
-    batchalign_port: 8000
+    batchalign_port: 8001
     python_version: "3.12"
 
   children:
@@ -103,3 +103,29 @@ all:
         home:
         laptop:
         hongkong:
+
+    # ── Current batchalign3 Internal Deployment Targets ──────────────
+    # For now only net runs the internal batchalign3 server; the others
+    # receive client installs only.
+    batchalign3_server:
+      hosts:
+        net:
+
+    batchalign3_clients:
+      hosts:
+        study:
+        bilbo:
+        brian:
+        davida:
+        frodo:
+        andrew:
+        lilly:
+        sue:
+        vaishnavi:
+        ming:
+          ansible_user: chen
+
+    batchalign3_fleet:
+      children:
+        batchalign3_server:
+        batchalign3_clients:
