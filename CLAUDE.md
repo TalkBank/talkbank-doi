@@ -313,7 +313,7 @@ Incident reports live in `docs/postmortems/`. Check these before deploying to un
 **Rules:**
 - When you create a new doc, add the date/time header.
 - When you edit an existing doc, update `Last updated` to the current date and time. If the doc has no date header, add one.
-- Use ISO 8601 dates with 24-hour time and timezone (`2026-03-12 14:30 EDT`), never prose dates (`February 15, 2026`). **Always run `date` to get the actual system time** — do not guess or use the conversation date.
+- Use ISO 8601 dates with 24-hour time and timezone (`2026-03-12 14:30 EDT`), never prose dates (`February 15, 2026`). **Always run `date '+%Y-%m-%d %H:%M %Z'` to get the actual system time** — do not guess, hardcode, or use the conversation date.
 - Do NOT do a bulk sweep to stamp dates on docs you haven't verified — that creates false confidence. Only date docs you've actually read and confirmed are accurate.
 - Postmortems use the date-in-filename convention (`YYYY-MM-DD-description.md`) and don't need a separate date header.
 
