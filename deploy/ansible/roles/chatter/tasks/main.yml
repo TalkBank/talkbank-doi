@@ -1,14 +1,20 @@
 # Install the chatter CLI binary on macOS hosts.
 ---
+- name: Ensure ~/bin exists
+  file:
+    path: "{{ ansible_env.HOME }}/bin"
+    state: directory
+    mode: '0755'
+
 - name: Copy chatter binary
   copy:
     src: "{{ chatter_binary }}"
-    dest: /Users/macw/bin/chatter
+    dest: "{{ ansible_env.HOME }}/bin/chatter"
     mode: '0755'
 
 - name: Ad-hoc codesign the binary
-  command: codesign -s - /Users/macw/bin/chatter
+  command: "codesign -s - {{ ansible_env.HOME }}/bin/chatter"
 
 - name: Verify installation
-  command: /Users/macw/bin/chatter --help
+  command: "{{ ansible_env.HOME }}/bin/chatter --help"
   changed_when: false

@@ -65,6 +65,14 @@ contributors, especially when they browse code before docs.
    narration comments that merely restate the next line.
 10. **Touched docs need timestamps.** Any documentation file changed in a patch
     should update its `Last modified` field with date and time.
+11. **Red/green TDD for all new code.** Every new feature and bug fix must start
+    with a failing test (RED), then the minimum implementation (GREEN), then
+    cleanup (REFACTOR). No exceptions. This applies to Rust, Python, and
+    TypeScript across all repos.
+12. **Use fragment parsers, not fake documents.** The tree-sitter parser
+    supports parsing individual CHAT fragments (a word, a tier line) via
+    source union. Use `parse_word()`, `parse_main_tier()`, `parse_mor_tier()`
+    etc. instead of wrapping fragments in fake `@UTF8/@Begin/@End` scaffolding.
 
 ## Overview
 
@@ -249,7 +257,21 @@ All deploy scripts live in `deploy/scripts/`. Read these scripts before deployin
 
 All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run with `--help` for full usage.
 
-**Fleet install policy:** batchalign3 deploy scripts always install with `[hk]` extras (HK/Cantonese engines: Tencent, Aliyun, FunASR, Cantonese FA). All fleet machines get the full engine set.
+**Fleet install policy:** batchalign3 deploy scripts always install with `[hk]` extras (Cantonese engines: Tencent, Aliyun, FunASR, Cantonese FA). All fleet machines get the full engine set.
+
+### API Credentials
+
+Cloud ASR credentials are stored in `~/.batchalign.ini` on fleet machines (not in any repo). The CMU development team has credentials for:
+
+| Service | Config Key | Purpose | Status |
+|---------|-----------|---------|--------|
+| Rev.AI | `engine.rev.key` | English ASR (cloud) | Active, on all fleet machines |
+| Tencent Cloud | `engine.tencent.{id,key,region,bucket}` | Cantonese/Mandarin ASR | Active, on net + bilbo only |
+| Aliyun NLS | `engine.aliyun.{ak_id,ak_secret,ak_appkey}` | Cantonese ASR (streaming) | Active, on net + bilbo only |
+
+**Known gap (2026-03-23):** Tencent and Aliyun credentials are only on `net` and `bilbo`. Other fleet machines (`brian`, `davida`, `frodo`, `andrew`, `lilly`, `sue`, `vaishnavi`) have only the Rev.AI key. To sync credentials to all machines, copy `~/.batchalign.ini` from `net` to each host.
+
+Credentials are managed by Brian MacWhinney. Contact him for new keys or renewals.
 
 ### Fleet Machines
 
@@ -285,6 +307,17 @@ All scripts support `--dry-run`, `--no-build`, and explicit host arguments. Run 
 **Critical baseline commit:** `84ad500b` (2026-01-09) in batchalign2 — the Python optimization push (lazy imports, parallelism, Hirschberg DP, Stanza caching) that is the anchor point for the entire batchalign2→batchalign3 migration. Documented in `batchalign3/book/src/migration/index.md`. A secondary comparison point is `e8f8bfad` (2026-02-09) on batchalign2 master.
 
 Until batchalign3 is released, bug reports and hotfixes may target batchalign-next on the fleet machines.
+
+### Media Resolution
+
+Corpus media files (audio/video) live on external volumes attached to `net`. To find a media file:
+
+1. **Read the `@Media` header** in the CHAT file: `@Media: A023, video`
+2. **Identify the data repo** from the file's path in `data/`: e.g., `data/aphasia-data/Cantonese/Protocol/HKU/PWA/A023.cha` → repo is `aphasia-data`
+3. **Look up the volume mapping** in `deploy/ansible/inventory.yml` under `net.media_mappings`: e.g., `aphasia-data: /Volumes/Other/aphasia`
+4. **Construct the media path**: volume root + corpus-relative path + extension from `@Media` type. e.g., `/Volumes/Other/aphasia/Cantonese/Protocol/HKU/PWA/A023.mp4`
+
+**Never search `/Volumes` with `find`.** The volumes are large (multi-TB) and searching them is slow and unnecessary. Always use the YAML mapping.
 
 ### Postmortems
 
@@ -331,4 +364,4 @@ Coding standards live in each repo's CLAUDE.md:
 Full project inventory: `docs/inventory.md`
 
 ---
-Last Updated: 2026-03-18
+Last Updated: 2026-03-23

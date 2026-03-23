@@ -22,13 +22,41 @@ all:
           ram_gb: 256
           max_concurrent_jobs: 8
           is_media_server: true
-          media_roots:
-            - /Volumes/Net/TalkBank/media/
+          # No media_roots — all access through explicit mappings.
+          # Prevents accidental full-volume walks on NFS mounts.
+          media_roots: []
+          # All 24 split data repos mapped to net's media volumes.
+          # Key = directory name in brian's ~/0data/<key>/ path.
           media_mappings:
-            english-data: /Volumes/Net/data/english-data
-            biling-data: /Volumes/Net/data/biling-data
-            clinical-data: /Volumes/Net/data/clinical-data
-            other-data: /Volumes/Net/data/other-data
+            # CHILDES (4 split repos → same volume)
+            childes-eng-na-data:          /Volumes/CHILDES/CHILDES
+            childes-eng-uk-data:          /Volumes/CHILDES/CHILDES
+            childes-romance-germanic-data: /Volumes/CHILDES/CHILDES
+            childes-other-data:           /Volumes/CHILDES/CHILDES
+            # HomeBank (4 split repos → same volume)
+            homebank-public-data:         /Volumes/HomeBank/homebank
+            homebank-cougar-data:         /Volumes/HomeBank/homebank
+            homebank-bergelson-data:      /Volumes/HomeBank/homebank
+            homebank-password-data:       /Volumes/HomeBank/homebank
+            # Phon (2 split repos → same volume)
+            phon-eng-french-data:         /Volumes/Other/phon
+            phon-other-data:              /Volumes/Other/phon
+            # CA (2 split repos → same volume)
+            ca-data:                      /Volumes/Other/ca
+            ca-candor-data:               /Volumes/Other/ca
+            # Unsplit (12 repos)
+            aphasia-data:                 /Volumes/Other/aphasia
+            asd-data:                     /Volumes/Other/asd
+            biling-data:                  /Volumes/Other/biling
+            class-data:                   /Volumes/Other/class
+            dementia-data:                /Volumes/Other/dementia
+            fluency-data:                 /Volumes/Other/fluency
+            motor-data:                   /Volumes/Other/motor
+            psychosis-data:               /Volumes/Other/psychosis
+            rhd-data:                     /Volumes/Other/rhd
+            samtale-data:                 /Volumes/Other/samtale
+            slabank-data:                 /Volumes/Other/slabank
+            tbi-data:                     /Volumes/Other/tbi
         bilbo:
           ram_gb: 256
           max_concurrent_jobs: 8

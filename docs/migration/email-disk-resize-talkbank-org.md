@@ -1,7 +1,7 @@
 # Email: talkbank.org disk resize for git.talkbank.org decommission
 
-**Status:** Draft
-**Last updated:** 2026-03-21
+**Status:** Historical (resize completed 2026-03-23, 120 GB → 520 GB)
+**Last updated:** 2026-03-23 14:35 EDT
 
 ---
 

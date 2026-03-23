@@ -1,7 +1,7 @@
 # talkbank.org Server Reference
 
 **Status:** Current
-**Last updated:** 2026-03-21
+**Last updated:** 2026-03-23 14:35 EDT
 
 ## Hardware & Access
 
@@ -9,7 +9,7 @@
 - **OS:** Ubuntu 26.04 Resolute Raccoon (kernel 7.0.0-7-generic)
 - **CPU:** Intel Xeon Gold 6248R @ 3.00GHz, 4 vCPUs
 - **RAM:** 8 GB
-- **Disk:** 117 GB LVM (76% used — needs resize to 250+ GB for data repo migration, see [Disk Resize](#disk-resize))
+- **Disk:** 520 GB LVM (resized 2026-03-23 from 120 GB; 406 GB free)
 - **IP:** 128.2.24.68
 - **Access:** `ssh macw@talkbank` (`talkbank` is the Tailscale hostname)
 
@@ -151,13 +151,31 @@ The nginx config is **generated, not hand-edited**. Hand edits get overwritten o
 next deploy.
 
 - **Source of truth:** `webdev/config.toml` + `webdev/src/templates/nginx.conf.j2`
-- **Generate:** `cd webdev && uv run generate-web-confs`
-- **Deploy:**
-  ```bash
-  sudo cp conf.d/talkbank.conf /etc/nginx/conf.d/
-  sudo nginx -t && sudo systemctl reload nginx
-  ```
-- **Helper script:** `webdev/scripts/apply_talkbank_nginx.sh`
+- **Local repo:** `webdev/` in this workspace
+- **Server repo:** `~/webdev` on talkbank.org (cloned from GitHub)
+
+### Deploy workflow
+
+```bash
+# 1. Edit templates/config locally in webdev/
+# 2. Generate and verify locally
+cd webdev && uv run generate-web-confs
+# 3. Commit and push
+git add -A && git commit -m "description" && git push
+
+# 4. On talkbank.org: pull and apply
+ssh macw@talkbank
+cd ~/webdev && git pull
+bash scripts/apply_talkbank_nginx.sh
+```
+
+The helper script (`scripts/apply_talkbank_nginx.sh`) generates the config, copies it
+to `/etc/nginx/conf.d/talkbank.conf`, runs `nginx -t`, and reloads nginx. It falls back
+to `.venv/bin/python` if `uv` is not installed (as on the server). Options:
+
+- `--skip-generate` — skip generation, just copy/test/reload
+- `--no-reload` — test only, don't reload
+- `--no-sudo` — run without sudo (for testing)
 
 ### Virtual hosts
 
@@ -203,22 +221,61 @@ sudo certbot certonly --webroot -w /var/www/letsencrypt/ \
 
 ## mergerfs Setup
 
-mergerfs presents the 24 split data repos as 18 flat per-bank directories for John's
+mergerfs presents the 24 split data repos as 16 flat per-bank directories for John's
 app. Read-only union filesystem — zero extra disk space, changes from `git pull` are
 immediately visible.
 
 - **Install:** `sudo apt install mergerfs`
-- **Setup script:** `deploy/scripts/setup_mergerfs_views.py`
-- **Mount:** `sudo python3 setup_mergerfs_views.py mount`
-- **Unmount:** `sudo python3 setup_mergerfs_views.py unmount`
-- **Status:** `sudo python3 setup_mergerfs_views.py status`
-- **Generate fstab entries:** `python3 setup_mergerfs_views.py fstab`
+- **Setup script source:** `deploy/scripts/setup_mergerfs_views.py` (in this workspace)
+- **Deployed to server:** `~/setup_mergerfs_views.py` (copy manually after changes)
 
 The script mounts `/home/macw/data/{repo}` → `/var/data/view/{bank}/`. For unsplit
-banks (14 of 18), this is a 1:1 mount. For split banks (childes, ca, phon, homebank),
+banks (12 of 16), this is a 1:1 mount. For split banks (childes, ca, phon, homebank),
 multiple repos are merged into one view.
 
-Add fstab entries for persistence across reboots — see script output.
+### First-time setup
+
+```bash
+# 1. Copy the script to the server
+scp deploy/scripts/setup_mergerfs_views.py macw@talkbank:~/
+
+# 2. On talkbank.org: mount all views
+sudo python3 ~/setup_mergerfs_views.py mount
+
+# 3. Verify
+sudo python3 ~/setup_mergerfs_views.py status
+ls /var/data/view/childes/    # should show merged contents of 4 repos
+
+# 4. Add fstab entries so mounts survive reboots
+python3 ~/setup_mergerfs_views.py fstab   # prints entries to stdout
+# Append the output to /etc/fstab:
+python3 ~/setup_mergerfs_views.py fstab | sudo tee -a /etc/fstab
+```
+
+### Day-to-day operations
+
+```bash
+sudo python3 ~/setup_mergerfs_views.py status     # show mount status
+sudo python3 ~/setup_mergerfs_views.py mount       # mount (skips already-mounted)
+sudo python3 ~/setup_mergerfs_views.py unmount     # unmount all
+```
+
+### After updating the script
+
+If the bank-to-repo mapping changes in `deploy/scripts/setup_mergerfs_views.py`:
+
+```bash
+# 1. Copy updated script to server
+scp deploy/scripts/setup_mergerfs_views.py macw@talkbank:~/
+
+# 2. Unmount, remount
+sudo python3 ~/setup_mergerfs_views.py unmount
+sudo python3 ~/setup_mergerfs_views.py mount
+
+# 3. Regenerate and replace fstab entries
+#    (manually remove old mergerfs lines from /etc/fstab first)
+python3 ~/setup_mergerfs_views.py fstab | sudo tee -a /etc/fstab
+```
 
 ## CGI Scripts
 
@@ -291,24 +348,37 @@ sudo rm -f /etc/apt/sources.list.d/tailscale.list.{migrate,disabled,distUpgrade}
 The VM disk can be expanded via CMU Campus Cloud (vSphere). Brian requests the
 additional space from CMU IT, then we expand the partition on the VM side.
 
+**Resize history:**
+- 2017-08-14: 40 GB → 120 GB (when machine was "homebank"). See `docs/legacy/homebank-disk-expansion-2017.md`.
+- 2026-03-23: 120 GB → 520 GB (for data repo migration).
+
 **After CMU provisions more space:**
 
 ```bash
-# Rescan the disk
+# 1. Rescan the disk so the kernel sees the new size
 echo 1 | sudo tee /sys/class/block/sda/device/rescan
 
-# Expand partitions
-sudo parted /dev/sda resizepart 2 100%
-sudo parted /dev/sda resizepart 5 100%
+# Verify the disk is larger (sectors × 512 = bytes)
+cat /sys/class/block/sda/size
 
-# Expand LVM physical volume and filesystem
-sudo pvresize /dev/sda5
+# 2. Expand the LVM partition (sda3) to fill the disk
+#    parted will prompt: Fix (GPT), Yes (partition in use), then expand.
+#    NOTE: This is sda3, NOT sda2 (/boot). Do NOT resize sda2.
+sudo parted /dev/sda resizepart 3 100%
+
+# 3. Expand LVM physical volume and filesystem
+sudo pvresize /dev/sda3
 sudo lvextend -l +100%FREE /dev/mapper/ubuntu--vg-ubuntu--lv
 sudo resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 
-# Verify
+# 4. Verify
 df -h /
 ```
+
+No reboot required. The partition layout is GPT:
+- sda1: 1 MB (BIOS grub)
+- sda2: 1 GB (/boot)
+- sda3: remainder (LVM → ubuntu-vg/ubuntu-lv → /)
 
 Full reference with example output: `docs/legacy/resize.md`
 
@@ -334,19 +404,18 @@ When upgrading Ubuntu on this machine:
    - Verify mergerfs mounts: `sudo python3 setup_mergerfs_views.py status`
    - Verify John's Node app: `systemctl status talkbank-data` (or whatever service name)
 
-## Current State (as of 2026-03-21)
+## Current State (as of 2026-03-23)
 
 **Already deployed:**
+- Disk resized to 520 GB (2026-03-23, from 120 GB — 406 GB free)
 - All 24 data repos cloned at `/home/macw/data/`
-- mergerfs installed, mount points created at `/var/data/view/{bank}/` (not yet mounted)
+- mergerfs mounted: 16 banks at `/var/data/view/{bank}/`, fstab entries added (2026-03-23)
 - `setup_mergerfs_views.py` copied to home directory
 - Node.js v22 installed
 - Test Node app (`node-3000.js`) used for nginx proxy testing (May 2025)
 - nginx proxy config tested (`talkbank.conf-with-node` — test artifact, not live)
 
-**Pending (blocked on disk resize):**
-- Disk resize from 117 GB → 250+ GB (Brian needs to request from CMU)
-- mergerfs mounts activated (run `sudo python3 setup_mergerfs_views.py mount`)
+**Pending:**
 - John deploys his real Node app
 - nginx config updated with data proxy routes
 - URL cutover from git.talkbank.org → talkbank.org

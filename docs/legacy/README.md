@@ -25,6 +25,7 @@ material needed for succession planning and future automation.
 | [macos.md](macos.md) | macOS version notes, CLAN compatibility history |
 | [sudoers.txt](sudoers.txt) | Sudoers config for git.talkbank.org + DNS resolution debugging |
 | [resize.md](resize.md) | LVM disk resize procedure for cloud VMs |
+| [homebank-disk-expansion-2017.md](homebank-disk-expansion-2017.md) | Command log from 2017-08-14: expanded talkbank.org (then "homebank") from 40 GB → 120 GB. Superseded by `parted`-based steps in `docs/talkbank-org-server.md`. |
 | [development-environment.md](development-environment.md) | Gaps in standardized dev environment (being addressed by `make clone`) |
 
 ## SSL & Certificates

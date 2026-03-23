@@ -1,7 +1,7 @@
 # Plan: Migrate git.talkbank.org to talkbank.org and Decommission
 
 **Status:** Draft
-**Last updated:** 2026-03-20
+**Last updated:** 2026-03-23 14:52 EDT
 
 ## Context
 
@@ -224,7 +224,7 @@ sudo nginx -t && sudo systemctl reload nginx
 - Browse public corpus data-orig (e.g., `/childes/data-orig/Eng-NA/MacWhinney/`)
 - Download ZIP (e.g., `/childes/data/Biling/Bailleul.zip`)
 - Password-protected corpora (homebank)
-- All 18 banks
+- All 16 banks
 
 ### Phase 3: URL cutover (Franklin)
 
@@ -267,7 +267,7 @@ server {
 | File | Action |
 |------|--------|
 | `/var/data/mount-views.sh` (on talkbank.org) | Create — mergerfs mount script |
-| `/etc/fstab` (on talkbank.org) | Add mergerfs entries for all 18 banks |
+| `/etc/fstab` (on talkbank.org) | Add mergerfs entries for all 16 banks |
 | `webdev/src/templates/nginx.conf.j2` | Modify — add data proxy route |
 | `webdev/conf.d/talkbank.conf` | Regenerated |
 | All `*-bank` web repos (HTML files) | Find-and-replace: `git.talkbank.org` → `talkbank.org` |
@@ -282,7 +282,7 @@ server {
 
 1. `https://talkbank.org/childes/data/Biling/Bailleul.zip` downloads correctly
 2. `https://talkbank.org/childes/data-orig/Eng-NA/MacWhinney/` browses correctly
-3. All 18 banks work (both data/ and data-orig/ paths)
+3. All 16 banks work (both data/ and data-orig/ paths)
 4. Password-protected corpora require auth
 5. `https://git.talkbank.org/childes/data/...` redirects to `https://talkbank.org/childes/data/...`
 6. Existing static bank pages (`talkbank.org/childes/access/...`) still work (no nginx conflict)

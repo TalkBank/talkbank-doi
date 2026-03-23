@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Set up mergerfs union mounts for John's data app on talkbank.org.
 
-Creates a flat /var/data/view/{bank}/ view for each of the 18 banks,
+Creates a flat /var/data/view/{bank}/ view for each of the 16 banks,
 merging split repos transparently. John's app reads from /var/data/view/
 and sees a single directory tree per bank regardless of how many repos
 back it.
@@ -31,7 +31,7 @@ MERGERFS_OPTS = (
 # Bank-to-repos mapping. Unsplit banks have one repo, split banks have 2-4.
 # Order matters for mergerfs priority (first listed = highest priority for conflicts).
 BANK_REPOS: dict[str, list[str]] = {
-    # Unsplit banks (14)
+    # Unsplit banks (12)
     "aphasia": ["aphasia-data"],
     "asd": ["asd-data"],
     "biling": ["biling-data"],
@@ -39,8 +39,6 @@ BANK_REPOS: dict[str, list[str]] = {
     "dementia": ["dementia-data"],
     "fluency": ["fluency-data"],
     "motor": ["motor-data"],
-    "open": ["open-data"],
-    "psyling": ["psyling-data"],
     "psychosis": ["psychosis-data"],
     "rhd": ["rhd-data"],
     "samtale": ["samtale-data"],

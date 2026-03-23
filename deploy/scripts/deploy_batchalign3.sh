@@ -65,12 +65,12 @@ elif [[ -z "$LIMIT" ]]; then
 fi
 
 if ! $NO_BUILD; then
-    echo "=== Building CLI binary + dashboard + wheel ==="
+    echo "=== Building dashboard + CLI binary + wheel ==="
     (
         cd "$BA3_REPO"
+        make build-dashboard
         cargo build --release -p batchalign-cli --bin batchalign3
         cp target/release/batchalign3 batchalign/_bin/batchalign3
-        make build-dashboard
         uv run maturin build --release -m pyo3/Cargo.toml -F pyo3/extension-module --out dist/
     )
     echo ""

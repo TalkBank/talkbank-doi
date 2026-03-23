@@ -1,7 +1,7 @@
 # Data Repo Structure: Migration Guide for John's App
 
 **Status:** Current
-**Last updated:** 2026-03-21
+**Last updated:** 2026-03-23 14:52 EDT
 
 This doc describes how the data repos are being reorganized and how John's app will
 access them on talkbank.org after migration from git.talkbank.org.
@@ -61,7 +61,7 @@ mergerfs mounts present the split repos as one flat directory per bank:
 ├── phon/         ← mergerfs mount of 2 phon repos merged
 ├── homebank/     ← mergerfs mount of 4 homebank repos merged
 ├── asd/          ← mergerfs mount of asd-data (1 repo)
-└── ... (18 banks)
+└── ... (16 banks)
 ```
 
 What John's app sees at `/var/data/view/childes/`:
@@ -123,9 +123,7 @@ for operational reference.
 | fluency | fluency-data |
 | homebank | homebank-public-data, homebank-cougar-data, homebank-bergelson-data, homebank-password-data |
 | motor | motor-data |
-| open | open-data |
 | phon | phon-eng-french-data, phon-other-data |
-| psyling | psyling-data |
 | psychosis | psychosis-data |
 | rhd | rhd-data |
 | samtale | samtale-data |
@@ -154,10 +152,9 @@ for operational reference.
 
 Before John can deploy:
 
-1. **Disk resize** — talkbank.org needs at least 250 GB total disk (currently 117 GB,
-   repos are 72 GB). Brian needs to request this from CMU Campus Cloud.
-2. **Repos cloned** — Franklin clones all 24 repos to `/home/macw/data/`
-3. **mergerfs mounted** — Franklin sets up the union mounts at `/var/data/view/`
-4. **nginx proxy** — Franklin adds the `/{bank}/data/` and `/{bank}/data-orig/` routes
+1. ~~**Disk resize**~~ — Done 2026-03-23 (120 GB → 520 GB).
+2. ~~**Repos cloned**~~ — Done. All 24 repos at `/home/macw/data/`.
+3. **mergerfs mounted** — Franklin activates the union mounts at `/var/data/view/`
+4. **nginx proxy** — Franklin deploys the config with `/{bank}/data/` and `/{bank}/data-orig/` routes
 
 Full cutover plan: `docs/migration/git-talkbank-cutover-plan.md`
