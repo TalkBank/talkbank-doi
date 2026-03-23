@@ -1,7 +1,7 @@
 # Language-Specific Documentation Audit
 
-**Status:** Current
-**Last updated:** 2026-03-23 11:55 EDT
+**Status:** Historical — docs created per audit findings
+**Last updated:** 2026-03-23 19:50 EDT
 
 ## Problem
 

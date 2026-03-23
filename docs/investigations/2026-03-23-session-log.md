@@ -1,16 +1,14 @@
 # Session Log: CJK Word Segmentation + Cantonese POS
 
 **Date:** 2026-03-23
-**Last updated:** 2026-03-23 14:15 EDT
+**Last updated:** 2026-03-23 19:50 EDT
 
-## Commits (chronological)
+## Final Pushed Commits
 
-1. `b45832e9` — feat: CJK word segmentation via --retokenize (124 files)
-2. `98678105` — test: verify retokenize-vs-engine claims (Houjun's claim)
-3. `d7df9d9c` — test: Stanza 50% POS accuracy on Cantonese
-4. `cb381cd3` — test: zh-hant also wrong (batchalignHK audit)
-5. `51533c97` — test: PyCantonese POS beats Stanza (~94% vs ~50%)
-6. `b2eb7e90` — feat: PyCantonese POS override for Cantonese morphotag
+1. `2f9a1703` — feat: CJK word segmentation, Cantonese POS override, OOM guard infrastructure
+2. `3c03fe3b` — fix: retrace bugs, pre-code routing, string hacking, all-corpora validation
+
+These were squashed from ~20 working commits covering the full day's work.
 
 ## Key Decisions Made
 

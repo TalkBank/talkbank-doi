@@ -1,7 +1,7 @@
 # CJK Word Segmentation: Unverified Claims and Next Steps
 
-**Status:** Current
-**Last updated:** 2026-03-23 11:50 EDT
+**Status:** Historical — all items either shipped or tracked in known-bugs doc
+**Last updated:** 2026-03-23 19:50 EDT
 
 ## What We Verified
 

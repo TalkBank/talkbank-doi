@@ -1,7 +1,7 @@
 # Cantonese --retokenize Known Bugs
 
 **Status:** Active tracking
-**Last updated:** 2026-03-23 19:30 EDT
+**Last updated:** 2026-03-23 19:39 EDT
 
 ## Fixed
 
@@ -31,16 +31,24 @@
 - **Fix:** Removed — Rust cleaned_text() handles CHAT notation
 - **Commit:** `db8407ea`
 
-## Open
-
-### 5. `[- zho]` language pre-code causes word count mismatch
+### 5. `[- zho]` pre-code triggered Mandarin retokenize in yue job
 - **Symptom:** "MOR item count (7) does not match alignable word count (8)"
 - **Source:** MOST 10011/40412d.cha, utterance with `[- zho]`
-- **Root cause:** Unknown — `[- zho]` is a language pre-code, not a retrace. The extractor or rebuild may be counting it differently from how Stanza sees it.
-- **Status:** Not investigated. Files without `[- zho]` work correctly.
-- **Workaround:** Use morphotag without --retokenize on files with language pre-codes.
+- **Root cause:** `use_retok_pipeline` checked only per-utterance `lang_code` (`zho`), not job-level `req.lang` (`yue`). This activated Stanza's neural tokenizer on a Cantonese utterance, re-segmenting words unpredictably.
+- **Fix:** Added `req.lang in ("zho", "cmn")` check — retokenize pipeline only activates when the JOB language is Mandarin, not just per-utterance pre-codes.
+- **Test:** `test_retok_pipeline_not_activated_for_precode_language`
+- **Commit:** `3c03fe3b`
 
-### 6. Tree-sitter parser joins some adjacent CJK characters
+### 6. Mandarin retokenize join lost Latin word boundaries
+- **Symptom:** `"hello你好世界"` merged into one token instead of three
+- **Root cause:** `"".join(words)` for Mandarin retokenize merged Latin+CJK without spaces
+- **Fix:** Changed to `" ".join(words)` — Stanza's neural tokenizer handles spacing correctly
+- **Test:** `test_mandarin_join_loses_latin_boundaries`
+- **Commit:** `3c03fe3b`
+
+## Open
+
+### 7. Tree-sitter parser joins some adjacent CJK characters
 - **Symptom:** Error messages show `食飯`, `下次`, `最危` as joined words when source has spaces
 - **Root cause:** Unknown — tree-sitter parse produces 9 separate standalone_word nodes (confirmed by talkbank-tools investigation), but something in batchalign3's extraction or injection path joins them
 - **Status:** Partially investigated. The joining doesn't cause failures by itself (the retokenize mapping handles N:1 merges). But it means the AST doesn't perfectly preserve the original tokenization.
@@ -54,5 +62,6 @@
 | #2 (AnnotatedWord) | (covered by MOST e2e) | — | (MOST corpus succeeds) |
 | #3 (segment join) | — | `test_segment_cantonese_preserves_existing_multichar` | — |
 | #4 (paren strip) | — | `test_paren_strip_reduces_word_count` | — |
-| #5 (pre-code) | — | — | — (needs test) |
-| #6 (CJK joining) | — | — | — (needs investigation) |
+| #5 (pre-code) | — | `test_retok_pipeline_not_activated_for_precode_language` | — |
+| #6 (Mandarin join) | — | `test_mandarin_join_loses_latin_boundaries` | — |
+| #7 (CJK joining) | — | — | — (needs investigation) |

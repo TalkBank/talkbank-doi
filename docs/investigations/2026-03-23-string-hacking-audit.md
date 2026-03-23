@@ -1,7 +1,7 @@
 # String Hacking Audit: batchalign3 Python Code
 
-**Status:** Current
-**Last updated:** 2026-03-23 17:30 EDT
+**Status:** Historical — all findings fixed in commit 3c03fe3b
+**Last updated:** 2026-03-23 19:50 EDT
 
 ## Purpose
 

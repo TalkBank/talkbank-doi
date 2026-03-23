@@ -1,7 +1,7 @@
 # Investigation: Cantonese POS Tagging Quality
 
-**Status:** Current
-**Last updated:** 2026-03-23 13:00 EDT
+**Status:** Historical — findings incorporated into corpus inventory and session log
+**Last updated:** 2026-03-23 19:50 EDT
 
 ## Problem
 
