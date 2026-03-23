@@ -1,7 +1,7 @@
 # Semantic Layer Design: Declarative vs. Procedural Transformation
 
 **Status:** Draft — open question for further review
-**Last updated:** 2026-03-22 19:12 EDT
+**Last updated:** 2026-03-23 06:54 EDT
 
 ## Context
 
@@ -322,3 +322,26 @@ Deferred. Record this analysis and revisit after:
 - Implementing 5-10 more semantic conversions to calibrate the effort estimate
 - Building the grammar linter to see what grammar improvements are possible
 - Testing Option E (thin wrapper) on one vertical slice
+
+
+## Postscript: Chumsky Eliminated (2026-03-23)
+
+The Chumsky parser was eliminated entirely. The structured word grammar
+in tree-sitter provides the CST children that `convert_word_node` walks
+to build the `Word` model. Key findings:
+
+- `WordContents` is built from CST children (`word_segment`, `shortening`,
+  `stress_marker`, `lengthening`, `+` compound markers)
+- `FormType`, `WordLanguageMarker`, and `WordCategory` are extracted from
+  their respective CST nodes
+- `WordLengthening` needed a `count` field to preserve multi-colon
+  lengthening (`::`  vs `:`  — lossless roundtrip)
+- 77/77 reference corpus roundtrip passes
+- 100,039/100,039 real data files parse clean
+
+The semantic layer question (Chapter 4 options) is partially resolved:
+- **Option B** (generate Tier 1 automatically) was effectively implemented
+  for words — the CST provides the structural breakdown
+- **Option A** (procedural) was used for the conversion code — it's ~100
+  lines of Rust in `convert_word_node` 
+- The word conversion is the template for how other rules would be converted

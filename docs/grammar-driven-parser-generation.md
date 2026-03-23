@@ -1,7 +1,7 @@
 # Grammar-Driven Parser Generation for TalkBank
 
 **Status:** Current
-**Last updated:** 2026-03-22 17:59 EDT
+**Last updated:** 2026-03-23 06:54 EDT
 
 A research analysis of whether the hand-written Rust tree-sitter CST walker
 (`talkbank-parser`, ~21,000 lines) can be substantially auto-generated from the
@@ -9,9 +9,8 @@ tree-sitter grammar definition (`grammar.js`, 2,045 lines), and whether the
 Chumsky-based direct parser (`talkbank-direct-parser`, ~9,400 lines) should be
 replaced by a different approach to fragment parsing.
 
-**Implementation status:** Phase 1.1 (supertype predicates) and Phase 1.2
-(grammar-aware traversal generation) complete. The traversal generator produces
-116 extraction functions (21,333 lines of valid Rust) from the CHAT grammar.
+**Implementation status:** Chumsky eliminated. Multi-root grammar with
+structured word parsing. 77/77 roundtrip, 100,039/100,039 real files clean.
 See the long-term roadmap at
 `/Users/chen/.claude/plans/federated-crunching-spark.md` for the execution plan.
 
