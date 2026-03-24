@@ -1,0 +1,290 @@
+Scanning corpus with rg...
+Total main tier lines: 57,644,020
+Lines with multi-annotation sequences: 47,590
+
+======================================================================
+SECTION 1: ANNOTATION PAIR FREQUENCY (grammar base_annotation only)
+======================================================================
+
+Total annotation pairs: 48,425
+
+--- Abstract type pairs (top 30) ---
+
+    4680 ( 9.7%)  ERROR → RETRACE_FULL
+    3258 ( 6.7%)  OVERLAP_BEGIN → OVERLAP_END
+    3220 ( 6.6%)  PARALINGUISTIC → PARALINGUISTIC
+    2976 ( 6.1%)  PARALINGUISTIC → OVERLAP_BEGIN
+    2928 ( 6.0%)  UNCERTAIN → PARALINGUISTIC
+    2624 ( 5.4%)  PARALINGUISTIC → OVERLAP_END
+    2602 ( 5.4%)  ERROR → RETRACE_PARTIAL
+    1470 ( 3.0%)  EXPLANATION → ERROR
+    1353 ( 2.8%)  ERROR → ERROR
+    1286 ( 2.7%)  UNCERTAIN → OVERLAP_BEGIN
+    1245 ( 2.6%)  OVERLAP_BEGIN → PARALINGUISTIC
+    1102 ( 2.3%)  OVERLAP_END → PARALINGUISTIC
+     981 ( 2.0%)  UNCERTAIN → OVERLAP_END
+     872 ( 1.8%)  OVERLAP_END → RETRACE_FULL
+     763 ( 1.6%)  ERROR → EXPLANATION
+     731 ( 1.5%)  OVERLAP_BEGIN → RETRACE_PARTIAL
+     720 ( 1.5%)  ERROR → UNCERTAIN
+     582 ( 1.2%)  PERCENT → OVERLAP_END
+     574 ( 1.2%)  UNCERTAIN → ERROR
+     567 ( 1.2%)  ERROR → PERCENT
+     556 ( 1.1%)  OVERLAP_BEGIN → UNCERTAIN
+     540 ( 1.1%)  UNCERTAIN → RETRACE_FULL
+     511 ( 1.1%)  OVERLAP_END → PERCENT
+     506 ( 1.0%)  OVERLAP_BEGIN → RETRACE_FULL
+     506 ( 1.0%)  EXPLANATION → RETRACE_PARTIAL
+     488 ( 1.0%)  OVERLAP_BEGIN → PERCENT
+     471 ( 1.0%)  PERCENT → RETRACE_PARTIAL
+     428 ( 0.9%)  PERCENT → ERROR
+     398 ( 0.8%)  PERCENT → RETRACE_FULL
+     384 ( 0.8%)  PERCENT → OVERLAP_BEGIN
+
+======================================================================
+SECTION 2: EXCLUDING DOUBLE ERROR [*][*]
+======================================================================
+
+Pairs excluding ERROR→ERROR: 47,072
+
+    4680 ( 9.9%)  ERROR → RETRACE_FULL
+    3258 ( 6.9%)  OVERLAP_BEGIN → OVERLAP_END
+    3220 ( 6.8%)  PARALINGUISTIC → PARALINGUISTIC
+    2976 ( 6.3%)  PARALINGUISTIC → OVERLAP_BEGIN
+    2928 ( 6.2%)  UNCERTAIN → PARALINGUISTIC
+    2624 ( 5.6%)  PARALINGUISTIC → OVERLAP_END
+    2602 ( 5.5%)  ERROR → RETRACE_PARTIAL
+    1470 ( 3.1%)  EXPLANATION → ERROR
+    1286 ( 2.7%)  UNCERTAIN → OVERLAP_BEGIN
+    1245 ( 2.6%)  OVERLAP_BEGIN → PARALINGUISTIC
+    1102 ( 2.3%)  OVERLAP_END → PARALINGUISTIC
+     981 ( 2.1%)  UNCERTAIN → OVERLAP_END
+     872 ( 1.9%)  OVERLAP_END → RETRACE_FULL
+     763 ( 1.6%)  ERROR → EXPLANATION
+     731 ( 1.6%)  OVERLAP_BEGIN → RETRACE_PARTIAL
+     720 ( 1.5%)  ERROR → UNCERTAIN
+     582 ( 1.2%)  PERCENT → OVERLAP_END
+     574 ( 1.2%)  UNCERTAIN → ERROR
+     567 ( 1.2%)  ERROR → PERCENT
+     556 ( 1.2%)  OVERLAP_BEGIN → UNCERTAIN
+     540 ( 1.1%)  UNCERTAIN → RETRACE_FULL
+     511 ( 1.1%)  OVERLAP_END → PERCENT
+     506 ( 1.1%)  OVERLAP_BEGIN → RETRACE_FULL
+     506 ( 1.1%)  EXPLANATION → RETRACE_PARTIAL
+     488 ( 1.0%)  OVERLAP_BEGIN → PERCENT
+     471 ( 1.0%)  PERCENT → RETRACE_PARTIAL
+     428 ( 0.9%)  PERCENT → ERROR
+     398 ( 0.8%)  PERCENT → RETRACE_FULL
+     384 ( 0.8%)  PERCENT → OVERLAP_BEGIN
+     382 ( 0.8%)  EXPLANATION → PERCENT
+
+======================================================================
+SECTION 3: ORDERING ANALYSIS (≥20 examples, excluding same-type pairs)
+======================================================================
+
+ Total  Dominant order                             Reverse  Consistency
+---------------------------------------------------------------------------
+   4779                 ERROR → RETRACE_FULL             99   97.9%
+   4221        PARALINGUISTIC → OVERLAP_BEGIN          1245   70.5%
+   3726        PARALINGUISTIC → OVERLAP_END            1102   70.4%
+   3273         OVERLAP_BEGIN → OVERLAP_END              15   99.5%
+   3019             UNCERTAIN → PARALINGUISTIC           91   97.0%
+   2692                 ERROR → RETRACE_PARTIAL          90   96.7%
+   2233           EXPLANATION → ERROR                   763   65.8%
+   1842             UNCERTAIN → OVERLAP_BEGIN           556   69.8%
+   1294                 ERROR → UNCERTAIN               574   55.6%
+   1276             UNCERTAIN → OVERLAP_END             295   76.9%
+   1093               PERCENT → OVERLAP_END             511   53.2%
+    995                 ERROR → PERCENT                 428   57.0%
+    893           OVERLAP_END → RETRACE_FULL             21   97.6%
+    872         OVERLAP_BEGIN → PERCENT                 384   56.0%
+    805         OVERLAP_BEGIN → RETRACE_PARTIAL          74   90.8%
+    623             UNCERTAIN → RETRACE_FULL             83   86.7%
+    587               PERCENT → RETRACE_PARTIAL         116   80.2%
+    537           EXPLANATION → RETRACE_PARTIAL          31   94.2%
+    517         OVERLAP_BEGIN → RETRACE_FULL             11   97.9%
+    484           EXPLANATION → PERCENT                 102   78.9%
+    446               PERCENT → RETRACE_FULL             48   89.2%
+    442           OVERLAP_END → EXPLANATION             145   67.2%
+    429           OVERLAP_END → RETRACE_PARTIAL         125   70.9%
+    417         OVERLAP_BEGIN → EXPLANATION             145   65.2%
+    413             UNCERTAIN → PERCENT                 147   64.4%
+    406                 ERROR → OVERLAP_BEGIN           191   53.0%
+    345                 ERROR → OVERLAP_END              82   76.2%
+    341             STRESSING → PERCENT                  87   74.5%
+    331                 ERROR → PARALINGUISTIC           59   82.2%
+    308           ALTERNATIVE → RETRACE_PARTIAL           9   97.1%
+    302             UNCERTAIN → EXPLANATION             151   50.0%
+    287           EXPLANATION → PARALINGUISTIC           23   92.0%
+    277        PARALINGUISTIC → RETRACE_PARTIAL          56   79.8%
+    270             UNCERTAIN → RETRACE_PARTIAL          16   94.1%
+    268               PERCENT → PARALINGUISTIC           45   83.2%
+    216           EXPLANATION → RETRACE_FULL              3   98.6%
+    172             STRESSING → RETRACE_PARTIAL           4   97.7%
+    170           ALTERNATIVE → ERROR                    42   75.3%
+    122        PARALINGUISTIC → RETRACE_FULL             22   82.0%
+    106             STRESSING → OVERLAP_BEGIN            45   57.5%
+    103             UNCERTAIN → RETRACE_MULTIPLE          5   95.1%
+    101             STRESSING → OVERLAP_END              38   62.4%
+     93               PERCENT → ALTERNATIVE              42   54.8%
+     82           ALTERNATIVE → UNCERTAIN                40   51.2%
+     68           ALTERNATIVE → OVERLAP_BEGIN             7   89.7%
+     66             STRESSING → EXPLANATION              27   59.1%
+     65           ALTERNATIVE → PARALINGUISTIC            3   95.4%
+     61         OVERLAP_BEGIN → REFORMULATION             0  100.0%
+     57          RETRACE_FULL → RETRACE_PARTIAL          14   75.4%
+     55           ALTERNATIVE → OVERLAP_END              11   80.0%
+     51           ALTERNATIVE → RETRACE_FULL              4   92.2%
+     51             STRESSING → RETRACE_FULL              2   96.1%
+     46             STRESSING → PARALINGUISTIC            5   89.1%
+     42             STRESSING → UNCERTAIN                17   59.5%
+     41               PERCENT → RETRACE_MULTIPLE         18   56.1%
+     40             STRESSING → ERROR                    15   62.5%
+     35                 ERROR → RETRACE_MULTIPLE          4   88.6%
+     22         OVERLAP_BEGIN → RETRACE_MULTIPLE          0  100.0%
+
+======================================================================
+SECTION 4: STRICT ORDERING RULES (≥95% consistent, ≥20 examples)
+======================================================================
+
+  ERROR BEFORE RETRACE_FULL  (4779 examples, 98%)
+  OVERLAP_BEGIN BEFORE OVERLAP_END  (3273 examples, 100%)
+  UNCERTAIN BEFORE PARALINGUISTIC  (3019 examples, 97%)
+  ERROR BEFORE RETRACE_PARTIAL  (2692 examples, 97%)
+  OVERLAP_END BEFORE RETRACE_FULL  (893 examples, 98%)
+  OVERLAP_BEGIN BEFORE RETRACE_FULL  (517 examples, 98%)
+  ALTERNATIVE BEFORE RETRACE_PARTIAL  (308 examples, 97%)
+  EXPLANATION BEFORE RETRACE_FULL  (216 examples, 99%)
+  STRESSING BEFORE RETRACE_PARTIAL  (172 examples, 98%)
+  UNCERTAIN BEFORE RETRACE_MULTIPLE  (103 examples, 95%)
+  ALTERNATIVE BEFORE PARALINGUISTIC  (65 examples, 95%)
+  OVERLAP_BEGIN BEFORE REFORMULATION  (61 examples, 100%)
+  STRESSING BEFORE RETRACE_FULL  (51 examples, 96%)
+  OVERLAP_BEGIN BEFORE RETRACE_MULTIPLE  (22 examples, 100%)
+
+--- Induced Total Order ---
+
+   1. ALTERNATIVE
+   2. ERROR
+   3. EXPLANATION
+   4. OVERLAP_BEGIN
+   5. OVERLAP_END
+   6. REFORMULATION
+   7. STRESSING
+   8. RETRACE_FULL
+   9. RETRACE_PARTIAL
+  10. UNCERTAIN
+  11. PARALINGUISTIC
+  12. RETRACE_MULTIPLE
+
+  (No cycles — a strict total order is possible)
+
+======================================================================
+SECTION 5: RETRACE + OTHER COMBINATIONS
+======================================================================
+
+Total retrace + other pairs: 14,265
+
+    4680  ERROR → RETRACE_FULL
+    2602  ERROR → RETRACE_PARTIAL
+     872  OVERLAP_END → RETRACE_FULL
+     731  OVERLAP_BEGIN → RETRACE_PARTIAL
+     540  UNCERTAIN → RETRACE_FULL
+     506  OVERLAP_BEGIN → RETRACE_FULL
+     506  EXPLANATION → RETRACE_PARTIAL
+     471  PERCENT → RETRACE_PARTIAL
+     398  PERCENT → RETRACE_FULL
+     304  OVERLAP_END → RETRACE_PARTIAL
+     299  ALTERNATIVE → RETRACE_PARTIAL
+     254  UNCERTAIN → RETRACE_PARTIAL
+     221  PARALINGUISTIC → RETRACE_PARTIAL
+     213  EXPLANATION → RETRACE_FULL
+     168  STRESSING → RETRACE_PARTIAL
+
+======================================================================
+SECTION 6: SEQUENCES OF 3+ ANNOTATIONS
+======================================================================
+
+Sequences of length 3+: 778
+
+--- By abstract type (top 20) ---
+
+     119  PARALINGUISTIC → OVERLAP_BEGIN → OVERLAP_END
+     102  PARALINGUISTIC → PARALINGUISTIC → PARALINGUISTIC
+      79  ERROR → EXPLANATION → PERCENT
+      37  EXPLANATION → ERROR → ERROR
+      35  OVERLAP_BEGIN → OVERLAP_END → PARALINGUISTIC
+      29  ERROR → ERROR → RETRACE_FULL
+      15  EXPLANATION → ERROR → RETRACE_FULL
+      12  OVERLAP_BEGIN → OVERLAP_END → OVERLAP_END
+      12  OVERLAP_END → OVERLAP_END → OVERLAP_END
+      12  PARALINGUISTIC → OVERLAP_END → OVERLAP_END
+      12  ERROR → ERROR → UNCERTAIN
+      11  EXPLANATION → ERROR → PERCENT
+      10  ERROR → ERROR → ERROR
+      10  ERROR → ERROR → RETRACE_PARTIAL
+       9  EXPLANATION → ERROR → RETRACE_PARTIAL
+       8  UNCERTAIN → OVERLAP_BEGIN → OVERLAP_END
+       8  OVERLAP_BEGIN → OVERLAP_END → OVERLAP_BEGIN → OVERLAP_END
+       7  ERROR → PERCENT → ERROR
+       7  OVERLAP_BEGIN → UNCERTAIN → PARALINGUISTIC
+       6  ERROR → UNCERTAIN → PARALINGUISTIC
+
+Sequences of length 4+: 39
+
+       8  OVERLAP_BEGIN → OVERLAP_END → OVERLAP_BEGIN → OVERLAP_END
+       6  PARALINGUISTIC → OVERLAP_BEGIN → OVERLAP_END → OVERLAP_END
+       4  PARALINGUISTIC → OVERLAP_END → OVERLAP_END → OVERLAP_END
+       2  OVERLAP_BEGIN → OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END
+       2  PARALINGUISTIC → PARALINGUISTIC → PARALINGUISTIC → PARALINGUISTIC
+       2  RETRACE_PARTIAL → RETRACE_PARTIAL → RETRACE_PARTIAL → RETRACE_PARTIAL
+       2  ERROR → ERROR → EXPLANATION → PERCENT
+       1  OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END
+       1  OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END
+       1  OVERLAP_END → OVERLAP_END → OVERLAP_END → OVERLAP_END
+
+======================================================================
+SECTION 7: EXAMPLES OF KEY PATTERNS
+======================================================================
+
+--- ERROR + RETRACE ---
+  ../data/biling-data/Eppler/jen2c.cha:1591:  [*] [//]
+  ../data/rhd-data/English/RHD/Nazareth/nazareth01a.cha:1979:  [* s:per] [//]
+  ../data/rhd-data/English/RHD/Nazareth/nazareth05a.cha:1077:  [* p:w] [/]
+  ../data/rhd-data/English/RHD/Nazareth/nazareth05a.cha:1077:  [* p:w] [//]
+  ../data/rhd-data/English/RHD/Minga/minga25a.cha:619:  [* p:w-ret] [//]
+
+--- OVERLAP + RETRACE ---
+  ../data/biling-data/Eppler/jen2c.cha:301:  [<] [/]
+  ../data/rhd-data/Spanish/PerLA/311-MEM.cha:109:  [<] [/]
+  ../data/rhd-data/Spanish/PerLA/308-FMM.cha:516:  [<] [/-]
+  ../data/rhd-data/Spanish/PerLA/305-SMM.cha:1359:  [<] [/]
+  ../data/biling-data/Koge/danish-group/304a-gs.cha:54:  [<] [//]
+
+--- UNCERTAIN + PARALINGUISTIC ---
+  ../data/rhd-data/Spanish/PerLA/304-MGN1.cha:554:  [=! effortful speech] [?]
+  ../data/childes-eng-uk-data/Clinical-Other/MOC/040215.cha:68:  [?] [=! Imitando a la logopeda]
+  ../data/ca-data/CallHome/eng/4485.cha:198:  [?] [=! laughing]
+  ../data/ca-data/CallHome/eng/4610.cha:593:  [?] [=! distorted]
+  ../data/ca-data/CallHome/eng/4571.cha:333:  [?] [=! distorted]
+
+--- 3+ distinct types ---
+  ../data/biling-data/Bangor/Patagonia/23.cha:989:  [=! laughs] [?] [/]
+  ../data/biling-data/Bangor/Siarad/fusser11.cha:1991:  [?] [=! laughs] [///]
+  ../data/biling-data/Bangor/Siarad/stammers6.cha:3332:  [!] [*] [//]
+  ../data/childes-eng-na-data/Eng-NA/Weist/Matt/020504.cha:583:  [= he] [* m:c] [/]
+  ../data/biling-data/Bangor/Siarad/roberts3.cha:765:  [?] [=! laughs] [//]
+
+======================================================================
+SUMMARY
+======================================================================
+
+  Total main tier lines:         57,644,020
+  Multi-annotation sequences:        47,590
+  Total annotation pairs:            48,425
+    of which ERROR→ERROR:             1,353 (data quality issue?)
+    remaining real pairs:             47,072
+  Retrace + other:                   14,265
+  Strict ordering rules:                 14
+  Ordering cycles:             none
+  Rate: 1 multi-annotation per 1,211 main tier lines

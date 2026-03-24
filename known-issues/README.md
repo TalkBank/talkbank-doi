@@ -8,6 +8,10 @@ validation failures so we can distinguish regressions from known issues.
 - `phon-data-validation-baseline.txt` — 128 files in `~/data/phon-data/` that
   fail validation due to Phon tier alignment mismatches (E725–E728). Root cause
   is in PhonTalk's CHAT export. See `talkbank-tools/book/src/chat-format/phon-tiers.md`.
+- `samtale-data-validation-baseline.txt` — 1 file with E704 (speaker self-overlap).
+  Brian is aware; pending data fix.
+- `childes-other-data-greek-validation-baseline.txt` — 1 file with bare `"` as
+  first word in utterance (`punct|"` in %mor). Greek corpus data quality issue.
 
 ## Updating a Baseline
 

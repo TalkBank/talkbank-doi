@@ -49,6 +49,21 @@ talkbank-browser-check/
 data/
 
 # =============================================================
+# Sibling projects (independent repos or local-only)
+# =============================================================
+cantonese-unified-training/
+
+# =============================================================
+# Incoming data (not tracked — large files, WeTransfer downloads)
+# =============================================================
+data-incoming/
+
+# =============================================================
+# Large generated output (reproducible from tools)
+# =============================================================
+chat-corpus-analysis-*.txt
+
+# =============================================================
 # Tool caches & build artifacts
 # =============================================================
 .claude/*

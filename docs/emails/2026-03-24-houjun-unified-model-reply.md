@@ -1,7 +1,7 @@
 # Email: Reply to Thread — Unified Model + Paraformer Analysis
 
-**Status:** Ready for review
-**Last updated:** 2026-03-24 07:03 EDT
+**Status:** Ready to send
+**Last updated:** 2026-03-24 07:30 EDT
 **Thread:** Re: tokenization
 **To:** Brian, Angel, Houjun, Sebastian, Spencer, Spring, Wanlin
 
@@ -44,6 +44,8 @@ Thank you Wanlin for the Paraformer samples! We analyzed the 5 raw transcripts (
 - Paraformer produces 100% per-character output — every Chinese character is a separate token
 - This confirms that all 5 ASR engines (Whisper, Tencent, Aliyun, FunASR, Paraformer) produce per-character output for CJK languages
 - --retokenize on morphotag is needed for all Mandarin and Cantonese ASR output, regardless of which engine is used
+
+We also measured the Paraformer character error rate against the gold transcripts: overall CER is 5.5%, with T04 at 1.6% (cleanest) and T01 at 7.3%. Paraformer does not produce speaker diarization (all output as a single speaker).
 
 The gold transcripts (manually corrected for character accuracy and speaker diarization) are also mostly per-character (98.4%), with only a few incidentally grouped words — they have not been word-segmented.
 
