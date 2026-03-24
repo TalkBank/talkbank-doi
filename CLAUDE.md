@@ -78,6 +78,8 @@ contributors, especially when they browse code before docs.
 
 Private development workspace for [TalkBank](https://talkbank.org/) — the single home for all TalkBank project assets. Contains internal docs, deploy scripts, analysis, and known-issue baselines. All code repos, data repos, and tools are gitignored sub-repos with independent histories, cloned via `make clone`.
 
+**CHAT manual:** https://talkbank.org/0info/manuals/CHAT.html — the authoritative reference for CHAT transcript format. Written by Brian MacWhinney.
+
 Data flows: **spec** (source of truth) → **grammar** (tree-sitter) → **Rust** (parsers, model, validation) → **applications** (CLI, LSP, VS Code, Python pipeline).
 
 ## Workspace Layout
