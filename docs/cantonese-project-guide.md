@@ -1,7 +1,7 @@
 # Cantonese NLP Project Guide
 
 **Status:** Current
-**Last updated:** 2026-03-24 08:29 EDT
+**Last updated:** 2026-03-24 18:01 EDT
 
 Complete reference for all Cantonese/CJK NLP work in TalkBank: what we built,
 where everything lives, how to reproduce it, and who's involved.
@@ -36,6 +36,8 @@ where everything lives, how to reproduce it, and who's involved.
 | 2026-03-24 AM | Paraformer samples received from Wanlin, analyzed (100% per-char, CER 5.5%) |
 | 2026-03-24 AM | Parser threading refactor, batchalign3 pushed to GitHub |
 | 2026-03-24 AM | Reply email sent to full thread |
+| 2026-03-24 PM | Clean `net` baseline v3 rerun completed and evaluated |
+| 2026-03-24 PM | Historical Bilbo models/results archived to `net` for machine cutover |
 
 ## What We Built
 
@@ -59,16 +61,29 @@ Stanza's Mandarin model scored ~50% on Cantonese; PyCantonese scores ~95%.
 
 Applied as post-processing in `batchalign/inference/morphosyntax.py`.
 
-### 3. Unified Cantonese Stanza Model (trained, not yet deployed)
+### 3. Unified Cantonese Stanza Model (clean baseline rerun complete, not yet deployed)
 
-Tokenizer + POS + depparse trained on HKCanCor + UD_Cantonese-HK.
-Will replace the 3-tool pipeline when integrated.
+Tokenizer + POS + baseline depparse trained reproducibly from HKCanCor +
+UD_Cantonese-HK. This remains a candidate future replacement for the 3-tool
+pipeline, but the clean rerun makes clear that deployment claims still need to
+stay cautious.
 
 | Component | Score | Baseline |
 |-----------|-------|----------|
-| Tokenizer F1 (UD held-out) | 90.3% | PyCantonese 77.3% |
-| POS (UD held-out) | 93.4% | PyCantonese 73.1% |
-| Depparse LAS (held-out) | 67.7% | Mandarin model 24% |
+| Tokenizer F1 (UD held-out, clean v3) | 90.3% | PyCantonese 77.3% |
+| Tokenizer F1 (HKCanCor held-out, clean v3) | 90.1% | PyCantonese 93.4% |
+| POS (UD held-out, clean v3) | 93.0% | PyCantonese 73.1% |
+| Depparse LAS (UD held-out, clean v3 baseline) | 64.7% | Mandarin model 24% |
+| Historical parallel-treebank prototype | 67.7% LAS | Not yet rerun clean |
+
+Important caveats:
+
+- the TalkBank corpus script is a **proxy comparison**, not an accuracy
+  evaluation
+- the clean rerun broadly confirms the UD-side tokenizer/POS story
+- HKCanCor held-out tokenization currently trails PyCantonese
+- the historical `67.7` LAS number belongs to a parallel-treebank prototype,
+  not the clean baseline rerun
 
 ### 4. Paraformer Verification
 
@@ -143,15 +158,17 @@ Standalone project for training the unified Stanza model. Not on GitHub — loca
 | `scripts/compare_all_models.py` | Side-by-side model comparison |
 | `tests/test_conllu_quality.py` | CoNLL-U format validation (10 tests) |
 
-**Models on bilbo** (`~/cantonese-unified-training/models/`):
+**Historical prototype models** (originally on bilbo, now archived on `net` at
+`~/cantonese-unified-training-rebuild/runs/2026-03-24-bilbo-historical-archive/models/`):
 
 | Model | Size | What |
 |-------|------|------|
-| `yue_combined_tokenizer.pt` | 971 KB | Cantonese tokenizer (F1=96.4%) |
-| `yue_combined_tagger.pt` | 17 MB | Cantonese POS (93.4%) |
-| `yue_hk_depparse.pt` | 101 MB | Cantonese depparse v1 (LAS 64.7%) |
-| `yue_combined_depparse_v2.pt` | 102 MB | Depparse v2 with parallel data (LAS 67.7%) |
+| `yue_combined_tokenizer.pt` | 971 KB | Historical tokenizer prototype (dev F1=96.4; clean UD held-out F1=90.3) |
+| `yue_combined_tagger.pt` | 17 MB | Historical POS prototype (~93.4 historical; clean UD held-out=93.0) |
+| `yue_hk_depparse.pt` | 101 MB | Baseline parser family (clean held-out LAS=64.7) |
+| `yue_combined_depparse_v2.pt` | 102 MB | Historical parallel-treebank prototype (LAS 67.7; not yet rerun clean) |
 | `yue_forward_charlm.pt` | 28 MB | Forward character LM from Wikipedia |
+| `yue_backward_charlm.pt` | 28 MB | Backward character LM from Wikipedia |
 
 ### paraformer-analysis (`talkbank/data-incoming/paraformer-samples`)
 
@@ -203,13 +220,14 @@ All in `talkbank/docs/investigations/`:
 
 All sources verified safe for public model distribution. Trained models would be CC BY-SA 4.0.
 
-## Bilbo (`ssh macw@bilbo`)
+## Historical Bilbo lane (`ssh macw@bilbo`)
 
-Two training projects live on bilbo:
+The original Cantonese training lane lived on Bilbo under
+`~/cantonese-unified-training/`. Its important `models/` and `results/`
+artifacts have now been copied to `net` and checksum-verified, so Bilbo is no
+longer required as a live machine for this project.
 
-### `~/cantonese-unified-training/` (current)
-
-The main training project, synced from `talkbank/cantonese-unified-training/`.
+### Historical archive contents
 
 ```
 models/
@@ -275,11 +293,14 @@ batchalign3 morphotag --retokenize corpus/ -o output/ --lang cmn
 
 ### Model training
 ```bash
-# On bilbo (or any machine with Python 3.12 + GPU)
-cd cantonese-unified-training
-bash scripts/setup_data.sh        # Download all data
-uv run python scripts/train_all.py --device mps  # Train
-uv run python scripts/run_eval.py                 # Evaluate
+# On a clean clone (for example on net, or on a future rebuilt Bilbo)
+cd cantonese-unified-training-rebuild
+bash scripts/setup_data.sh
+RUN_DIR=runs/2026-03-24-net-baseline-v3
+CANTONESE_DEVICE=mps uv run python scripts/train_all.py --run-dir "$RUN_DIR"
+CANTONESE_DEVICE=mps uv run python scripts/run_eval.py --run-dir "$RUN_DIR"
+CANTONESE_DEVICE=mps uv run python scripts/eval_depparse_heldout.py --run-dir "$RUN_DIR"
+CANTONESE_DEVICE=mps uv run python scripts/eval_talkbank_corpora.py --run-dir "$RUN_DIR"
 ```
 
 ### Paraformer analysis
