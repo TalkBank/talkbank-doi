@@ -1,7 +1,7 @@
 # Phase 3: Decommission git-talkbank
 
 **Status:** Draft
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-24 13:24 EDT
 
 **Prerequisites:** Phases 1-2 complete and stable (all 24 data repos on GitHub, deploy pipeline working with GitHub remotes on git-talkbank).
 
@@ -116,7 +116,41 @@ All hooks run on `git push` (pre-push hook, not pre-commit) so they execute once
 
 **Cross-repo:** No.
 
-### Hook 5 (future): CHAT Validation
+### Hook 5: Media Validation (`check-media`)
+
+**What:** Validate CHAT transcript ↔ media file correspondence. Detects missing media, missing CHAT, case mismatches, wrong corpus names, bullet inconsistencies, missing `%pic` files.
+
+**Replaces:** `staging/scripts/chatmedia.py` (Python, SSH-based, broken for split repos).
+
+**Implementation:** Rust binary, currently at `scripts/check-media/` in talkbank-dev. Will be extracted to its own repo (`TalkBank/check-media`) before deployment. Already written, compiles, has typed diagnostics and JSON output. Key design change: uses a **cached media manifest** instead of SSH `find` on every run.
+
+**Architecture:**
+1. `check-media refresh-manifest` — SSHes to `net` once, builds `~/.cache/talkbank/media-manifest.json` listing all media files by bank. Run periodically (e.g., weekly cron) or manually before audits.
+2. `check-media check <paths>` — reads CHAT files locally, cross-references against the cached manifest. No SSH. Fast enough for pre-push.
+3. `check-media fix add-unlinked` / `fix fix-corpus` — mutation subcommands with `--dry-run`. Separated from checking (no implicit writes).
+
+**Checks (7 kinds):**
+| Check | What it detects |
+|-------|-----------------|
+| `missing-media` | CHAT references media not in manifest |
+| `missing-chat` | Media exists with no CHAT file |
+| `case-mismatch` | Media or CHAT filename differs only in case |
+| `filename-match` | `@Media` name doesn't match CHAT basename |
+| `bullet-consistency` | Bullets present but marked unlinked/notrans, or vice versa |
+| `corpus-name` | `@ID` corpus field doesn't match directory structure |
+| `pic` | `%pic` references nonexistent file |
+
+**Cross-repo:** Yes — reads media manifest (covers all banks). But only checks CHAT files in the paths you give it, so as a pre-push hook it checks only the repo being pushed.
+
+**Deployment:**
+- Build: `cargo build --release -p check-media` (in `scripts/check-media/`)
+- Install binary on Brian/Davida's machines and on talkbank.org
+- Pre-push hook calls `check-media check . --manifest ~/.cache/talkbank/media-manifest.json --fail-on-error`
+- GitHub Actions workflow can also run it post-push on talkbank.org (where manifest is refreshed by cron)
+
+**Current status:** Core logic written. Needs: integration testing against real corpus data, manifest refresh validation, deployment scripts.
+
+### Hook 6 (future): CHAT Validation
 
 **What:** Validate `.cha` files using `talkbank-cli validate`.
 
@@ -273,7 +307,8 @@ Phase 3 Step Dependencies:
    ├── Hook 1: @Types               ← independent
    ├── Hook 2: DOI duplicates       ← independent
    ├── Hook 3: DOI → HTML injection ← needs web repos cloned on user machines
-   └── Hook 4: Large file check     ← independent
+   ├── Hook 4: Large file check     ← independent
+   └── Hook 5: Media validation     ← needs cached manifest from net
 
 2. GitHub Actions for data repos    ← needs repos cloned on talkbank.org
    └── Clone 24 repos to /var/data/ on talkbank.org

@@ -51,7 +51,7 @@ This means:
 | All repos on GitHub (public where possible) | Phase 2 in progress | Data repos private (sensitive materials) |
 | No self-hosted servers required for git | After Phase 2 | GitHub handles all git hosting |
 | Deploy is automated (GitHub Actions) | Phase 3 | No human-operated deploy scripts |
-| Pre-commit hooks handle data quality | Phase 3 | No manual validation steps |
+| Pre-commit hooks handle data quality | Phase 3 | No manual validation steps. Includes `check-media` (Rust, `scripts/check-media/`) for media ↔ CHAT validation. |
 | DOI management is documented and scriptable | Phase 3 | New tool replaces 3 divergent copies |
 | Media server has a maintenance plan | TODO | net is CMU hardware — what happens when CMU reclaims? |
 | talkbank.org VM has a maintenance plan | TODO | CMU Campus Cloud — who pays after Brian? |
