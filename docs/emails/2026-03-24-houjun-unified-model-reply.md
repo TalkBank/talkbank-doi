@@ -1,36 +1,52 @@
-# Email: Reply to Houjun — Unified Cantonese Stanza Model
+# Email: Reply to Thread — Unified Model + Paraformer Analysis
 
-**Status:** Draft for tomorrow
-**Last updated:** 2026-03-23 22:50 EDT
+**Status:** Ready for review
+**Last updated:** 2026-03-24 07:03 EDT
 **Thread:** Re: tokenization
-**To:** Houjun
+**To:** Brian, Angel, Houjun, Sebastian, Spencer, Spring, Wanlin
 
 ---
 
 ## Plain text for Gmail (copy below this line)
 
-Houjun,
+Brian, Angel, Houjun, Spencer, Spring, Wanlin,
 
-You're right — we tested it and the unified model works significantly better.
+Two updates.
 
-We trained a Cantonese-specific Stanza pipeline (tokenizer + POS + depparse) using UD_Cantonese-HK (1,004 sentences from CityU HK) combined with HKCanCor (16,162 utterances of spoken Cantonese, 153K tokens). Results on held-out test data:
+UNIFIED CANTONESE MODEL
 
-Tokenization (token F1 on UD test, 101 sentences):
-- Trained Stanza: 90.3% (dev F1 reached 96.4% — held-out test is lower due to small test set)
+Following up on Houjun's suggestion to train a single Stanza model instead of the 3-tool pipeline: he was right, and we've done it.
+
+We trained a Cantonese-specific Stanza pipeline (tokenizer + POS + depparse) using UD_Cantonese-HK (1,004 sentences from CityU HK) combined with HKCanCor (16,162 utterances of spoken Cantonese, 153K tokens). We also added the parallel Mandarin treebank (UD_Chinese-HK) to double the dependency training data, and are training a Cantonese character language model from Cantonese Wikipedia (76.6 million characters).
+
+Results on held-out test data:
+
+Tokenization (token F1):
+- Trained Stanza: 90.3% on UD test (dev F1 reached 96.4%)
 - PyCantonese dictionary: 77.3%
 
 POS accuracy (UD test, 1,203 tokens):
 - Trained Stanza: 93.4%
 - PyCantonese: 73.1%
 
-The trained tokenizer also matches PyCantonese on common spoken Cantonese (佢哋, 鍾意, 媽媽, 故事 all segmented correctly) and makes finer-grained splits that follow UD conventions (e.g., verb + resultative complement as separate tokens).
-
 Dependency parsing (LAS on held-out 101 sentences):
-- Trained Cantonese model: 64.7%
+- Trained Cantonese model: 67.7% (with parallel Mandarin data)
 - Previous Mandarin model: 24%
 
-Depparse is bottlenecked by the UD_Cantonese-HK treebank size (only 803 training sentences with dependency annotations). HKCanCor has POS but no dependencies. More annotated data would help here.
+Cross-domain testing on all 9 TalkBank Cantonese corpora (180 utterances): the trained model has 0% unknown-word rate across all corpora, vs 0.8-2.5% for PyCantonese. It handles spoken Cantonese vocabulary correctly (佢哋, 鍾意, 媽媽, 故事) while also making finer-grained tokenization splits that follow UD conventions.
 
-We're working on integrating this into batchalign3 to replace the current 3-tool pipeline (PyCantonese segment → Stanza Mandarin model → PyCantonese POS override) with this single trained model.
+We're working on integrating this into batchalign3 to replace the current 3-tool pipeline with this single trained model. The training pipeline and methodology are fully documented and reproducible.
+
+PARAFORMER MANDARIN OUTPUT
+
+Thank you Wanlin for the Paraformer samples! We analyzed the 5 raw transcripts (10,145 CJK tokens):
+
+- Paraformer produces 100% per-character output — every Chinese character is a separate token
+- This confirms that all 5 ASR engines (Whisper, Tencent, Aliyun, FunASR, Paraformer) produce per-character output for CJK languages
+- --retokenize on morphotag is needed for all Mandarin and Cantonese ASR output, regardless of which engine is used
+
+The gold transcripts (manually corrected for character accuracy and speaker diarization) are also mostly per-character (98.4%), with only a few incidentally grouped words — they have not been word-segmented.
+
+Spencer, when you test batchalign3, use `morphotag --retokenize` for word-level tokenization on Cantonese and Mandarin ASR output. Without --retokenize, the per-character tokens will be preserved as-is.
 
 Franklin
