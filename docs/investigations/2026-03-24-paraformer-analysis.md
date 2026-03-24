@@ -34,9 +34,42 @@ ALL five ASR engines produce per-character output for CJK languages:
 of engine. The trained Cantonese Stanza tokenizer (F1=96.36) and PyCantonese
 (F1=77.3) both provide word segmentation for this purpose.
 
+## Character Error Rate
+
+Overall CER: **5.5%** (458 errors / 8,302 gold characters).
+
+| File | Gold chars | CER | Substitutions | Insertions | Deletions |
+|------|-----------|-----|---------------|------------|-----------|
+| T01 | 2,247 | 7.3% | 62 | 63 | 38 |
+| T02 | 2,213 | 6.0% | 81 | 8 | 44 |
+| T03 | 2,027 | 6.6% | 86 | 30 | 17 |
+| T04 | 1,815 | 1.6% | 17 | 6 | 6 |
+
+T04 has notably low CER (1.6%) — likely clearer speech or simpler content.
+T01 highest (7.3%) — more challenging audio with overlapping speakers.
+
+## Speaker Diarization
+
+Paraformer produces no speaker diarization — all output as single speaker PAR0.
+Gold transcripts have INV (investigator) and CHI (child) speakers.
+
+| File | Raw speakers | Gold speakers | Utterance diff |
+|------|-------------|---------------|---------------|
+| T01 | {PAR0} | {INV, CHI} | -18 |
+| T02 | {PAR0} | {INV, CHI} | -15 |
+| T03 | {PAR0} | {INV, CHI} | -5 |
+| T04 | {PAR0} | {INV, CHI} | -6 |
+
+Raw consistently has fewer utterances — Paraformer merges some speaker turns.
+
 ## Gold Transcript Note
 
 The gold transcripts have been manually corrected for character accuracy
 and speaker diarization but NOT word-segmented. They are still 98.4%
 single-character. A few multi-char words appear from manual editing
 (所以, 尽量, 肚子, 干嘛) but this is incidental, not systematic.
+
+## Reproducibility
+
+Analysis script: `data-incoming/paraformer-samples/scripts/analyze_paraformer.py`
+Run with: `uv run python scripts/analyze_paraformer.py`
