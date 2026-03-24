@@ -25,8 +25,12 @@ POS accuracy (UD test, 1,203 tokens):
 
 The trained tokenizer also matches PyCantonese on common spoken Cantonese (佢哋, 鍾意, 媽媽, 故事 all segmented correctly) and makes finer-grained splits that follow UD conventions (e.g., verb + resultative complement as separate tokens).
 
-We're working on integrating this into batchalign3 to replace the current 3-tool pipeline (PyCantonese segment → Stanza Mandarin model → PyCantonese POS override) with this single trained model.
+Dependency parsing (LAS on held-out 101 sentences):
+- Trained Cantonese model: 64.7%
+- Previous Mandarin model: 24%
 
-The training data, scripts, and methodology are documented at cantonese-unified-training/ in the workspace. Models are on bilbo.
+Depparse is bottlenecked by the UD_Cantonese-HK treebank size (only 803 training sentences with dependency annotations). HKCanCor has POS but no dependencies. More annotated data would help here.
+
+We're working on integrating this into batchalign3 to replace the current 3-tool pipeline (PyCantonese segment → Stanza Mandarin model → PyCantonese POS override) with this single trained model.
 
 Franklin
