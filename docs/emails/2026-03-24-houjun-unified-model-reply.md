@@ -16,7 +16,7 @@ You're right — we tested it and the unified model works significantly better.
 We trained a Cantonese-specific Stanza pipeline (tokenizer + POS + depparse) using UD_Cantonese-HK (1,004 sentences from CityU HK) combined with HKCanCor (16,162 utterances of spoken Cantonese, 153K tokens). Results on held-out test data:
 
 Tokenization (token F1 on UD test, 101 sentences):
-- Trained Stanza: 90.3%
+- Trained Stanza: 90.3% (dev F1 reached 96.4% — held-out test is lower due to small test set)
 - PyCantonese dictionary: 77.3%
 
 POS accuracy (UD test, 1,203 tokens):
