@@ -16,6 +16,7 @@ generate-from-chat/
 cdcs-to-csv/
 
 # Pre-commit / build tools
+check-media/
 update-chat-types/
 save-word-html-pdf/
 talkbank-xml-schema/

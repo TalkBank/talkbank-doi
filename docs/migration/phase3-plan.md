@@ -122,7 +122,7 @@ All hooks run on `git push` (pre-push hook, not pre-commit) so they execute once
 
 **Replaces:** `staging/scripts/chatmedia.py` (Python, SSH-based, broken for split repos).
 
-**Implementation:** Rust binary, currently at `scripts/check-media/` in talkbank-dev. Will be extracted to its own repo (`TalkBank/check-media`) before deployment. Already written, compiles, has typed diagnostics and JSON output. Key design change: uses a **cached media manifest** instead of SSH `find` on every run.
+**Implementation:** Rust binary in its own repo (`check-media/` in the workspace, future `TalkBank/check-media` on GitHub). Already written, compiles, has typed diagnostics and JSON output. Key design change: uses a **cached media manifest** instead of SSH `find` on every run.
 
 **Architecture:**
 1. `check-media refresh-manifest` — SSHes to `net` once, builds `~/.cache/talkbank/media-manifest.json` listing all media files by bank. Run periodically (e.g., weekly cron) or manually before audits.
@@ -143,7 +143,7 @@ All hooks run on `git push` (pre-push hook, not pre-commit) so they execute once
 **Cross-repo:** Yes — reads media manifest (covers all banks). But only checks CHAT files in the paths you give it, so as a pre-push hook it checks only the repo being pushed.
 
 **Deployment:**
-- Build: `cargo build --release -p check-media` (in `scripts/check-media/`)
+- Build: `cargo build --release` (in `check-media/`)
 - Install binary on Brian/Davida's machines and on talkbank.org
 - Pre-push hook calls `check-media check . --manifest ~/.cache/talkbank/media-manifest.json --fail-on-error`
 - GitHub Actions workflow can also run it post-push on talkbank.org (where manifest is refreshed by cron)
