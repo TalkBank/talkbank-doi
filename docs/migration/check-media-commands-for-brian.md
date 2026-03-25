@@ -5,7 +5,9 @@
 
 **Context:** Based on your answers to the first questionnaire, we've designed specific commands. We want to make sure these match how you'd actually use them before we build them.
 
-**Key rule:** `check` can run from anywhere (it's read-only). `fix` must be run from inside a data repo — it operates on the repo you're standing in, like `git`. Fixes never auto-commit or auto-push — you commit when ready.
+**Key rules:**
+- `check` is read-only. Defaults to checking all repos.
+- `fix` must be run from inside a data repo — it operates on the repo you're standing in, like `git`. Fixes never auto-commit or auto-push — you commit when ready.
 
 ---
 
@@ -13,12 +15,12 @@
 
 ### `check-media check` — what's wrong? (read-only)
 
-Scans `.cha` files and tells you what's wrong. Doesn't change any files. You can point it at one repo, several repos, or all repos.
+Scans `.cha` files and tells you what's wrong. Doesn't change any files. Checks all repos by default.
 
 ```
-check-media check ~/data/aphasia-data/          # one bank
-check-media check ~/data/*-data/                # all banks
-check-media check ~/data/*-data/ --refresh      # refresh media list from net first
+check-media check                              # all repos (default)
+check-media check --bank aphasia               # just one bank
+check-media check ~/data/aphasia-data/         # explicit path
 ```
 
 Example output:
@@ -60,13 +62,25 @@ Fixed 4 files. Review with `git status`, then commit and push.
 
 ---
 
+## Important: the media list problem
+
+`check-media` needs to know what media files exist on net (the Mac Studio with the drives). Today, it SSHes to net and runs `find` to get the list. But **net is not reliably reachable** — it's on the CMU LAN, and the VPN request to CMU Help hasn't been answered. Right now, someone has to manually sign into VPN on net for remote access to work.
+
+This means:
+- **If you're on net itself**, the tool can scan the media drives directly (fast, no SSH needed).
+- **If you're on another machine**, the tool needs a *cached copy* of the media file list. But that cached copy can only be updated when net is reachable.
+
+We have a few options for how to handle this — see Q4 below.
+
+---
+
 ## Questions
 
 ### Q1. When you check, what machine are you typically on?
 
-- **(A)** I'm on net itself — I just moved media files around, and I want to check right away from that machine.
-- **(B)** I'm on my own Mac — I have data repos cloned there, and I check from there (net is accessed via SSH for the media list only).
-- **(C)** Both — sometimes I'm at net, sometimes on my Mac. It depends on what I was just doing.
+- **(A)** I'm on net itself — I just moved media files around, and I want to check right away.
+- **(B)** I'm on my own Mac — I have data repos cloned there, and I check from there.
+- **(C)** Both — sometimes I'm at net, sometimes on my Mac.
 - **(D)** I'm on a different machine entirely (e.g., a laptop at home).
 
 ---
@@ -85,32 +99,30 @@ Fixed 4 files. Review with `git status`, then commit and push.
 **Scenario: You just uploaded new media to net for aphasia.**
 
 ```
-Step 1:  check-media check ~/data/aphasia-data/ --refresh
-         → "3 media files have no transcript, 1 corpus name wrong"
-
-Step 2:  cd ~/data/aphasia-data/
-         check-media fix
-         → "Created 3 stubs, fixed 1 corpus name"
-
-Step 3:  git add . && git commit -m "Add stubs, fix corpus" && git push
-
-Step 4:  check-media check ~/data/aphasia-data/
-         → "0 errors"
+Step 1 (on net):     check-media refresh       # update the media file list
+Step 2 (anywhere):   check-media check          # see what's wrong
+                     → "3 media files have no transcript, 1 corpus name wrong"
+Step 3 (at clone):   cd ~/data/aphasia-data/
+                     check-media fix
+                     → "Created 3 stubs, fixed 1 corpus name"
+Step 4 (at clone):   git add . && git commit -m "Add stubs, fix corpus" && git push
 ```
 
 - **(A)** Yes, this is exactly how I'd work.
-- **(B)** I'd skip step 4 (re-check after push) — I trust the fix worked.
-- **(C)** I'd want `fix` and `check` to be one step — tell me what you fixed AND confirm it's clean.
+- **(B)** I'd skip step 1 — I shouldn't have to remember to refresh.
+- **(C)** I'd want `fix` to also show the re-check result — tell me what you fixed AND confirm it's clean.
 - **(D)** I'd want something different: ________________
 
 ---
 
-### Q4. The `--refresh` flag makes the tool SSH to net to get the current list of media files. This takes 10-30 seconds. How often do you want this to happen?
+### Q4. Since net isn't always reachable from other machines, how should the media file list stay up to date?
 
-- **(A)** Every time I run `check`. I always want the freshest data.
-- **(B)** Only when I ask (`--refresh`). Most of the time, the cached list from the last refresh is fine.
-- **(C)** Automatically if the cached list is older than a few hours. I shouldn't have to think about it.
-- **(D)** I'd rather refresh separately (`check-media refresh-manifest`), then run `check` many times quickly.
+**Background:** The tool needs a list of what media files exist on net. Getting this list requires access to net's drives. Options:
+
+- **(A)** **I'll refresh it manually on net.** When I'm at net after moving media, I run `check-media refresh`. That updates the list. Later, when I `check` from my Mac, it uses the list I last generated on net. *(Requires copying the list file to your Mac, or a shared location.)*
+- **(B)** **Keep the list on net, and I'll always run `check` on net too.** I don't need to check from other machines — I'll just do everything on net. *(Simplest, but means you can only check from net.)*
+- **(C)** **Put the list in a git repo** (or a shared Dropbox/iCloud folder) so it syncs automatically. I refresh it on net, and it shows up on my Mac. *(The list is a few MB of JSON — small enough for any sync mechanism.)*
+- **(D)** **Something else:** ________________
 
 ---
 
