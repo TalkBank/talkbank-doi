@@ -116,39 +116,24 @@ All hooks run on `git push` (pre-push hook, not pre-commit) so they execute once
 
 **Cross-repo:** No.
 
-### Hook 5: Media Validation (`check-media`)
+### Hook 5: Media Validation + Fixes (`tb`)
 
-**What:** Validate CHAT transcript ↔ media file correspondence. Detects missing media, missing CHAT, case mismatches, wrong corpus names, bullet inconsistencies, missing `%pic` files.
+**What:** Validate CHAT transcript ↔ media file correspondence and fix common issues. Detects missing media, missing CHAT, case mismatches, wrong corpus names, bullet inconsistencies, missing `%pic` files. Also updates `@Types` headers (replaces `update-chat-types`).
 
-**Replaces:** `staging/scripts/chatmedia.py` (Python, SSH-based, broken for split repos).
+**Replaces:** `staging/scripts/chatmedia.py` (Python, SSH-based, broken for split repos) and `update-chat-types` (separate Rust binary).
 
-**Implementation:** Rust binary in its own repo (`check-media/` in the workspace, future `TalkBank/check-media` on GitHub). Already written, compiles, has typed diagnostics and JSON output. Key design change: uses a **cached media manifest** instead of SSH `find` on every run.
+**Implementation:** `tb` — unified Rust binary at `tb/` in the workspace (future `TalkBank/tb` on GitHub, private). SSHes to net for a live `find` across all SSD media volumes (~0.4s), then checks/fixes .cha files locally with rayon parallelism.
 
-**Architecture:**
-1. `check-media refresh-manifest` — SSHes to `net` once, builds `~/.cache/talkbank/media-manifest.json` listing all media files by bank. Run periodically (e.g., weekly cron) or manually before audits.
-2. `check-media check <paths>` — reads CHAT files locally, cross-references against the cached manifest. No SSH. Fast enough for pre-push.
-3. `check-media fix add-unlinked` / `fix fix-corpus` — mutation subcommands with `--dry-run`. Separated from checking (no implicit writes).
+**Commands:**
+- `tb check` — read-only, defaults to all repos. Pre-push hook uses `tb check . --fail-on-error --quiet`.
+- `tb fix` — from inside a data repo, fixes everything by default. `--only stubs|corpus|unlinked` for targeted fixes. `--dry-run` to preview.
+- `tb update-types` — from inside a data repo, updates `@Types` headers.
 
-**Checks (7 kinds):**
-| Check | What it detects |
-|-------|-----------------|
-| `missing-media` | CHAT references media not in manifest |
-| `missing-chat` | Media exists with no CHAT file |
-| `case-mismatch` | Media or CHAT filename differs only in case |
-| `filename-match` | `@Media` name doesn't match CHAT basename |
-| `bullet-consistency` | Bullets present but marked unlinked/notrans, or vice versa |
-| `corpus-name` | `@ID` corpus field doesn't match directory structure |
-| `pic` | `%pic` references nonexistent file |
+**Performance:** 99,907 CHAT files + 69,089 media files across all banks in 6.2 seconds.
 
-**Cross-repo:** Yes — reads media manifest (covers all banks). But only checks CHAT files in the paths you give it, so as a pre-push hook it checks only the repo being pushed.
+**Deployment:** `bash deploy/scripts/deploy_tb.sh` — builds and deploys to all fleet machines via Ansible.
 
-**Deployment:**
-- Build: `cargo build --release` (in `check-media/`)
-- Install binary on Brian/Davida's machines and on talkbank.org
-- Pre-push hook calls `check-media check . --manifest ~/.cache/talkbank/media-manifest.json --fail-on-error`
-- GitHub Actions workflow can also run it post-push on talkbank.org (where manifest is refreshed by cron)
-
-**Current status:** Core logic written. Needs: integration testing against real corpus data, manifest refresh validation, deployment scripts.
+**Current status:** Implemented. 39 tests. Tested against full corpus.
 
 ### Hook 6 (future): CHAT Validation
 
@@ -308,7 +293,7 @@ Phase 3 Step Dependencies:
    ├── Hook 2: DOI duplicates       ← independent
    ├── Hook 3: DOI → HTML injection ← needs web repos cloned on user machines
    ├── Hook 4: Large file check     ← independent
-   └── Hook 5: Media validation     ← needs cached manifest from net
+   └── Hook 5: Media validation (tb) ← needs SSH to net
 
 2. GitHub Actions for data repos    ← needs repos cloned on talkbank.org
    └── Clone 24 repos to /var/data/ on talkbank.org

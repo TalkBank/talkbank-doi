@@ -76,24 +76,19 @@ documentation.
 **Visibility:** Public. The SBCSAE corpus is public and so is the TRN format.
 Having this tool available would help other researchers working with SBCSAE.
 
-### check-media
+### tb (was check-media)
 
 | | |
 |---|---|
 | **Language** | Rust |
-| **Lines** | 1,912 |
-| **Dependencies** | All crates.io (`clap`, `rayon`, `regex`, `walkdir`, `chrono`) |
-| **Purpose** | Verify media files referenced in CHAT headers exist, have correct formats, and match expected patterns |
-| **Users** | Franklin, Davida (media QA) |
-| **Succession** | Needed for ongoing media maintenance |
+| **Dependencies** | All crates.io (`clap`, `rayon`, `regex`, `walkdir`, `chrono`, `anyhow`, `tempfile`) |
+| **Purpose** | Unified data repo tool: media ↔ CHAT validation, CHAT fixes (stubs, corpus, unlinked), @Types updates |
+| **Users** | Brian, Davida, Franklin |
+| **Succession** | Needed for ongoing data maintenance and Phase 3 pre-push hooks |
 
-**Status:** Functional but still evolving. Used internally for media audits.
+**Status:** Extracted to `tb/` as independent repo. 39 tests. Tested on full corpus (99,907 files, 6.2s). Deploy via `bash deploy/scripts/deploy_tb.sh`.
 
-**To extract:** Stabilize the CLI interface. Add a README. Add a few test
-fixtures.
-
-**Visibility:** Public. Generic CHAT media verification — useful to anyone
-working with TalkBank data.
+**Visibility:** Private. TalkBank-internal tooling.
 
 ---
 
