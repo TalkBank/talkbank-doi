@@ -142,24 +142,28 @@ Brian is a command-line power user who wants speed and full automation:
 ### What we learned from further discussion
 
 1. **If a refresh button exists, Brian will press it every single run.** He previously wrote a 20-line shell script to run every command for every bank. Any manual step becomes a ritual.
-2. **Check and fix must be separate commands** — `check` is read-only (safe from anywhere), `fix` writes files (requires being inside a specific repo clone). Fixes never auto-commit or auto-push.
-3. **Net (media server) is not reliably reachable** from other machines — CMU VPN request is pending. This means manifest refresh via SSH is not a reliable user-facing operation.
+2. **Check and fix must be separate commands** — `check` is read-only (safe from anywhere on the fleet), `fix` writes files (requires being inside a specific repo clone). Fixes never auto-commit or auto-push.
 
-### Decision: file watcher on net
+### Decision: no manifest, no caching — live `find` every time
 
-The manifest freshness problem has only one solution that doesn't involve Brian doing something manually:
+We benchmarked `find` on net's media drives (all SSDs):
 
-**A file watcher daemon on net watches `/Users/macw/media/` and keeps the manifest always current.** The manifest file is synced to a shared location (git repo, iCloud, or similar) so any machine can read it.
+| Volume | Files | Time |
+|--------|-------|------|
+| `/Volumes/Other/` (12 banks) | 77,063 | 0.2s |
+| `/Volumes/CHILDES/CHILDES` | 40,802 | 1.9s |
+| `/Volumes/HomeBank/homebank` | 27,236 | 0.07s |
+| **Total** | **~145,000** | **~2.2s** |
 
-Brian runs `check-media check` — it reads the always-fresh manifest. No refresh command. No staleness. No waiting.
+Two seconds for all media across all banks. This is what the old Python `chatmedia.py` already does — SSH to net, run `find`, cross-reference. The manifest/caching/watcher architecture was solving a problem that doesn't exist.
 
-If the watcher dies, nothing breaks — `check` uses whatever manifest exists and warns if it's stale. The pre-push hook still works. This is a convenience optimization, not critical infrastructure.
+All fleet machines (including Brian's Mac) reach net via Tailscale SSH. No connectivity issues.
 
 ### Final command design
 
 ```bash
 # Brian's daily workflow:
-check-media check                              # check all repos, always instant
+check-media check                              # check all repos, all banks (~2s)
 check-media check --bank aphasia               # just one bank
 
 # Fix (from inside a data repo):
@@ -171,20 +175,18 @@ git add . && git commit -m "fixes" && git push
 
 # Pre-push hook (read-only gate):
 check-media check . --fail-on-error --quiet
-
-# Manifest (no user-facing commands — watcher handles it):
-check-media show-manifest                      # inspect if curious
 ```
 
 ### Key design points
 
 | Decision | Rationale |
 |----------|-----------|
+| No manifest or caching | `find` on net's SSDs takes 2s for all banks. Always fresh, zero complexity. |
+| `check` SSHes to net on every run | Fleet machines reach net via Tailscale. ~2s overhead is invisible. |
 | `check` defaults to all repos | Brian always checks everything. No path = all. |
-| No refresh command | Brian would use it every run, wasting minutes. Watcher keeps manifest fresh. |
 | `fix` runs from inside a repo | You can only fix where you have a clone. Like `git`. |
 | `fix` with no flags fixes everything | Brian's default is "fix all" (Q8=A). `--only` for targeted work. |
 | Every fix reports what it changed | Q3=A caveat: "tell me what is being created." |
 | `--dry-run` on fix | Safety valve, not the default. |
 | Pre-push hook uses `check` | Read-only gate. No fixes at push time. |
-| Watcher is advisory, not critical | If it dies, check warns about stale manifest. Pre-push hook still works. |
+| No refresh command | Nothing to refresh. Media list is always live. |
