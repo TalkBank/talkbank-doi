@@ -1,7 +1,7 @@
 # Cantonese NLP Project Guide
 
 **Status:** Current
-**Last updated:** 2026-03-25 09:10 EDT
+**Last updated:** 2026-03-25 10:18 EDT
 
 Complete reference for all Cantonese/CJK NLP work in TalkBank: what we built,
 where everything lives, how to reproduce it, and who's involved.
@@ -38,6 +38,8 @@ where everything lives, how to reproduce it, and who's involved.
 | 2026-03-24 AM | Reply email sent to full thread |
 | 2026-03-24 PM | Clean `net` baseline v3 rerun completed and evaluated |
 | 2026-03-24 PM | Historical Bilbo models/results archived to `net` for machine cutover |
+| 2026-03-25 AM | Token scoring hardened; corrected comparison + HKCanCor gap artifacts regenerated on `net` |
+| 2026-03-25 AM | Disagreement-driven TalkBank spot-check artifact built on `net` (27 review examples) |
 
 ## What We Built
 
@@ -70,7 +72,7 @@ alone: it is the **baseline tokenizer plus charlm+BERT POS/depparse**.
 | Component | Clean baseline v3 | Charlm-only | Charlm+BERT |
 |-----------|-------------------|-------------|-------------|
 | Tokenizer F1 (UD held-out) | 90.3% | 90.3%* | 90.3%* |
-| Tokenizer F1 (HKCanCor held-out) | 90.1% | 90.1%* | 90.1%* |
+| Tokenizer F1 (HKCanCor held-out) | 90.0% | 90.0%* | 90.0%* |
 | POS (UD held-out) | 93.0% | 93.9% | 94.7% |
 | Depparse LAS (UD held-out) | 64.7% | 68.6% | 75.1% |
 
@@ -82,7 +84,9 @@ Important caveats:
 - the TalkBank corpus script is a **proxy comparison**, not an accuracy
   evaluation
 - the clean rerun broadly confirms the UD-side tokenizer/POS story
-- HKCanCor held-out tokenization still trails PyCantonese
+- HKCanCor held-out tokenization still trails PyCantonese (`90.0%` vs `93.3%`)
+- a disagreement-driven TalkBank spot-check artifact now exists for internal
+  human review, but it is qualitative rather than gold-standard evaluation
 - the historical `67.7` LAS number belongs to a parallel-treebank prototype,
   not the clean baseline rerun
 - the current best parsing result is `75.1` LAS, but that claim is still based
@@ -146,7 +150,9 @@ The main product. CJK retokenize + POS override are shipped.
 
 ### cantonese-unified-training (`talkbank/cantonese-unified-training`)
 
-Standalone project for training the unified Stanza model. Not on GitHub — local + bilbo.
+Standalone project for training the unified Stanza model. The canonical rebuild
+lane now lives in a private TalkBank GitHub repo, with isolated runner clones
+on `net` and archived historical artifacts from bilbo.
 
 | File | What |
 |------|------|
@@ -173,9 +179,12 @@ Standalone project for training the unified Stanza model. Not on GitHub — loca
 
 | Run | Key output | Held-out result |
 |-----|------------|-----------------|
-| `2026-03-24-net-baseline-v3` | `yue_combined_tokenizer.pt` | tokenizer 90.3% UD / 90.1% HKCanCor |
+| `2026-03-24-net-baseline-v3` | `yue_combined_tokenizer.pt` | tokenizer 90.3% UD / 90.0% HKCanCor |
 | `2026-03-24-net-charlm-v1` | `yue_combined_tagger_v3_charlm.pt`, `yue_combined_depparse_v3_charlm.pt` | POS 93.9%, LAS 68.6% |
 | `2026-03-24-net-charlm-bert-v1` | `yue_combined_tagger_v3_charlm_bert.pt`, `yue_combined_depparse_v3_charlm_bert.pt` | POS 94.7%, LAS 75.1% |
+| `2026-03-25-net-model-comparison-v3` | `results/model_comparison.json` | corrected side-by-side baseline/charlm/BERT comparison |
+| `2026-03-25-net-hkcancor-tokenizer-gap-v3` | `results/tokenizer_error_analysis.json` | corrected HKCanCor tokenizer gap: Stanza 90.0%, PyCantonese 93.3% |
+| `2026-03-25-net-talkbank-spotcheck-v1` | `results/talkbank_spotcheck.json` | 27 disagreement-driven review examples across 9 TalkBank corpora |
 
 **Historical prototype models** (originally on bilbo, now archived on `net` at
 `~/cantonese-unified-training-rebuild/runs/2026-03-24-bilbo-historical-archive/models/`):
@@ -235,7 +244,7 @@ All in `talkbank/docs/investigations/`:
 | UD_Chinese-HK | CC BY-SA 4.0 | 9,874 | Film + legislative (Mandarin parallel) | Depparse |
 | HKCanCor | CC BY 4.0 | 153,656 | Spoken conversation | Tokenizer, POS |
 | Cantonese Wikipedia | CC BY-SA 3.0 | 76.6M chars | Encyclopedia | Character language model |
-| bert-base-cantonese | MIT | 198M tokens | Common Crawl | BERT features (queued) |
+| bert-base-cantonese | MIT | 198M tokens | Common Crawl | BERT features (clean rerun completed) |
 
 All sources verified safe for public model distribution. Trained models would be CC BY-SA 4.0.
 

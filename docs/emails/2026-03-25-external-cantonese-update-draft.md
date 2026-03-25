@@ -1,7 +1,7 @@
 # Email: Draft — cautious external Cantonese update after reruns
 
 **Status:** Draft
-**Last updated:** 2026-03-25 09:13 EDT
+**Last updated:** 2026-03-25 10:05 EDT
 **Thread:** Re: tokenization
 **To:** Brian, Angel, Houjun, Spencer, Spring, Wanlin
 **Note:** Not sent. This draft is intended as a narrower, corrected external update after the completed reproducibility reruns.
@@ -28,7 +28,7 @@ Current held-out results:
 
 - clean baseline:
   - tokenizer F1: 90.3% on UD held-out
-  - tokenizer F1: 90.1% on held-out HKCanCor
+  - tokenizer F1: 90.0% on held-out HKCanCor
   - POS: 93.0%
   - depparse LAS: 64.7%
 - charlm-only:

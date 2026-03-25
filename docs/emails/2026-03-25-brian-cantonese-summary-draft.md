@@ -1,7 +1,7 @@
 # Email: Draft — Brian-friendly Cantonese summary after reproducibility reruns
 
 **Status:** Draft
-**Last updated:** 2026-03-25 09:10 EDT
+**Last updated:** 2026-03-25 10:05 EDT
 **To:** Brian MacWhinney
 **Note:** Not sent. Internal, boss-friendly summary of the current Cantonese status after the clean rerun, charlm-only comparison, and charlm+BERT comparison.
 
@@ -30,7 +30,7 @@ Current reproducible held-out results:
 
 - clean baseline:
   - tokenizer F1: 90.3% on UD held-out
-  - tokenizer F1: 90.1% on held-out HKCanCor
+  - tokenizer F1: 90.0% on held-out HKCanCor
   - POS: 93.0%
   - depparse LAS: 64.7%
 - charlm-only:
