@@ -1,7 +1,7 @@
 # Cantonese NLP Project Guide
 
 **Status:** Current
-**Last updated:** 2026-03-24 18:01 EDT
+**Last updated:** 2026-03-25 09:10 EDT
 
 Complete reference for all Cantonese/CJK NLP work in TalkBank: what we built,
 where everything lives, how to reproduce it, and who's involved.
@@ -61,29 +61,39 @@ Stanza's Mandarin model scored ~50% on Cantonese; PyCantonese scores ~95%.
 
 Applied as post-processing in `batchalign/inference/morphosyntax.py`.
 
-### 3. Unified Cantonese Stanza Model (clean baseline rerun complete, not yet deployed)
+### 3. Unified Cantonese Stanza Model (baseline + charlm + BERT reruns complete, not yet deployed)
 
-Tokenizer + POS + baseline depparse trained reproducibly from HKCanCor +
-UD_Cantonese-HK. This remains a candidate future replacement for the 3-tool
-pipeline, but the clean rerun makes clear that deployment claims still need to
-stay cautious.
+Tokenizer + POS + depparse have now been rerun reproducibly on `net` from the
+Git-tracked rebuild lane. The strongest current stack is not the clean baseline
+alone: it is the **baseline tokenizer plus charlm+BERT POS/depparse**.
 
-| Component | Score | Baseline |
-|-----------|-------|----------|
-| Tokenizer F1 (UD held-out, clean v3) | 90.3% | PyCantonese 77.3% |
-| Tokenizer F1 (HKCanCor held-out, clean v3) | 90.1% | PyCantonese 93.4% |
-| POS (UD held-out, clean v3) | 93.0% | PyCantonese 73.1% |
-| Depparse LAS (UD held-out, clean v3 baseline) | 64.7% | Mandarin model 24% |
-| Historical parallel-treebank prototype | 67.7% LAS | Not yet rerun clean |
+| Component | Clean baseline v3 | Charlm-only | Charlm+BERT |
+|-----------|-------------------|-------------|-------------|
+| Tokenizer F1 (UD held-out) | 90.3% | 90.3%* | 90.3%* |
+| Tokenizer F1 (HKCanCor held-out) | 90.1% | 90.1%* | 90.1%* |
+| POS (UD held-out) | 93.0% | 93.9% | 94.7% |
+| Depparse LAS (UD held-out) | 64.7% | 68.6% | 75.1% |
+
+\* The tokenizer was intentionally reused from the clean baseline in the charlm
+and charlm+BERT runs, because Stanza tokenizer training does not use charlm.
 
 Important caveats:
 
 - the TalkBank corpus script is a **proxy comparison**, not an accuracy
   evaluation
 - the clean rerun broadly confirms the UD-side tokenizer/POS story
-- HKCanCor held-out tokenization currently trails PyCantonese
+- HKCanCor held-out tokenization still trails PyCantonese
 - the historical `67.7` LAS number belongs to a parallel-treebank prototype,
   not the clean baseline rerun
+- the current best parsing result is `75.1` LAS, but that claim is still based
+  on held-out treebank evaluation rather than production-style TalkBank gold
+  annotations
+
+Current best reproducible stack:
+
+- tokenizer: baseline v3 tokenizer
+- POS: charlm+BERT tagger
+- depparse: charlm+BERT parser
 
 ### 4. Paraformer Verification
 
@@ -157,6 +167,15 @@ Standalone project for training the unified Stanza model. Not on GitHub — loca
 | `scripts/error_analysis.py` | Tokenization error patterns |
 | `scripts/compare_all_models.py` | Side-by-side model comparison |
 | `tests/test_conllu_quality.py` | CoNLL-U format validation (10 tests) |
+
+**Current best reproducible run outputs** (currently on `net` under
+`~/cantonese-unified-training-rebuild/runs/`):
+
+| Run | Key output | Held-out result |
+|-----|------------|-----------------|
+| `2026-03-24-net-baseline-v3` | `yue_combined_tokenizer.pt` | tokenizer 90.3% UD / 90.1% HKCanCor |
+| `2026-03-24-net-charlm-v1` | `yue_combined_tagger_v3_charlm.pt`, `yue_combined_depparse_v3_charlm.pt` | POS 93.9%, LAS 68.6% |
+| `2026-03-24-net-charlm-bert-v1` | `yue_combined_tagger_v3_charlm_bert.pt`, `yue_combined_depparse_v3_charlm_bert.pt` | POS 94.7%, LAS 75.1% |
 
 **Historical prototype models** (originally on bilbo, now archived on `net` at
 `~/cantonese-unified-training-rebuild/runs/2026-03-24-bilbo-historical-archive/models/`):
@@ -264,18 +283,14 @@ better results.
 ## What's Next
 
 ### Immediate (blocked on model integration decision)
-1. **Deploy trained Cantonese model into batchalign3** — needs model packaging decision (see proposal doc)
-2. **Discuss model distribution with Brian** — HuggingFace recommended
-
-### Ready to run (bilbo)
-3. **Forward charlm trained** (28 MB) — backward charlm still needed
-4. **Retrain POS + depparse with charlm** — run `scripts/train_with_charlm_and_bert.py` after backward charlm
+1. **Decide whether to package the current best stack for batchalign3** — baseline tokenizer + charlm+BERT POS/depparse
+2. **Do targeted human spot checks before stronger external claims** — especially for parsing on real TalkBank material
+3. **Discuss model distribution with Brian** — HuggingFace still looks like the cleanest delivery path
 
 ### Future
-5. **BERT-enhanced training** — `indiejoseph/bert-base-cantonese` for deeper features
-6. **CantoNLU benchmark** — evaluate against community standard
-7. **Stanza upstream PR** — contribute `yue` as official Stanza language
-8. **PolyU collaboration** — child Cantonese annotation for depparse improvement
+4. **CantoNLU benchmark** — evaluate against community standard
+5. **Stanza upstream PR** — contribute `yue` as official Stanza language
+6. **PolyU collaboration** — child Cantonese annotation for depparse improvement
 
 ## How to Reproduce
 
