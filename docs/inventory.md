@@ -60,7 +60,7 @@ Created 2026-03-10 to support the consolidation into `talkbank-dev`.
 
 | Repo | GitHub | Local Path | Status |
 |------|--------|------------|--------|
-| check-media | TalkBank/check-media *(planned, private)* | check-media/ | **In progress** — Rust; CHAT ↔ media validation with cached manifest; replaces staging/chatmedia.py; Phase 3 pre-push hook |
+| tb | TalkBank/tb *(planned, private)* | tb/ | **Implemented** — Rust; unified data repo tool: media validation, CHAT fixes, @Types updates; replaces staging/chatmedia.py + update-chat-types; Phase 3 pre-push hook |
 | update-chat-types | TalkBank/update-chat-types | ~/update-chat-types/ | **Active** — Rust; updates @Types headers from 0types.txt; has pre-commit hook + bootstrap.sh |
 | save-word-html-pdf | TalkBank/save-word-html-pdf | ~/save-word-html-pdf/ | **Active** — macOS Word→HTML/PDF export; should be wired as pre-commit for doc repos |
 | talkbank-xml-schema | TalkBank/talkbank-xml-schema | ~/talkbank-xml-schema/ | **Legacy** — TalkBank XML Schema (v3.2.1); Phon may still reference; public repo |
