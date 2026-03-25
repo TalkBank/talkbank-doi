@@ -1,0 +1,20 @@
+# Install the tb CLI binary on macOS hosts.
+---
+- name: Ensure ~/bin exists
+  file:
+    path: "{{ ansible_facts['env']['HOME'] }}/bin"
+    state: directory
+    mode: '0755'
+
+- name: Copy tb binary
+  copy:
+    src: "{{ tb_binary }}"
+    dest: "{{ ansible_facts['env']['HOME'] }}/bin/tb"
+    mode: '0755'
+
+- name: Ad-hoc codesign the binary
+  command: "codesign -s - {{ ansible_facts['env']['HOME'] }}/bin/tb"
+
+- name: Verify installation
+  command: "{{ ansible_facts['env']['HOME'] }}/bin/tb --help"
+  changed_when: false

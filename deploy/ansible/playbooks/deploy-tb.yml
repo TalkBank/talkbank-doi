@@ -1,0 +1,14 @@
+# Deploy the tb CLI to all fleet machines.
+#
+# Usage:
+#   ansible-playbook playbooks/deploy-tb.yml -e tb_binary=/path/to/tb
+#   ansible-playbook playbooks/deploy-tb.yml -e tb_binary=/path/to/tb --limit brian
+#
+# Build first:
+#   cd ~/talkbank/tb && cargo build --release
+#   # Binary at tb/target/release/tb
+---
+- name: Deploy tb
+  hosts: all_macs
+  roles:
+    - tb
