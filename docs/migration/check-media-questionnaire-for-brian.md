@@ -159,23 +159,32 @@ Two seconds for all media across all banks. This is what the old Python `chatmed
 
 All fleet machines (including Brian's Mac) reach net via Tailscale SSH. No connectivity issues.
 
-### Final command design
+### Evolution: `tb` — unified data repo tool
+
+check-media shares patterns with update-chat-types (repo walking, header parsing, in-place file modification, dry-run, reporting). Phase 3 adds more hooks (DOI checks, large file checks). Rather than 5 separate repos and binaries, unify into one tool: **`tb`**.
 
 ```bash
 # Brian's daily workflow:
-check-media check                              # check all repos, all banks (~2s)
-check-media check --bank aphasia               # just one bank
+tb check                                       # all repos, all banks (~2s)
+tb check --bank aphasia                        # just one bank
 
 # Fix (from inside a data repo):
 cd ~/data/aphasia-data/
-check-media fix                                # fix everything fixable, report what changed
-check-media fix --dry-run                      # preview
-check-media fix --only stubs                   # just create stub .cha files
+tb fix                                         # fix all media issues
+tb fix --dry-run                               # preview
+tb fix --only stubs                            # just create stub .cha files
 git add . && git commit -m "fixes" && git push
 
-# Pre-push hook (read-only gate):
-check-media check . --fail-on-error --quiet
+# Other subcommands (Phase 3):
+tb update-types                                # update @Types headers (replaces update-chat-types)
+tb check-dois                                  # duplicate DOI scan
+tb check-large-files                           # reject files over threshold
+
+# Pre-push hook (runs all relevant checks):
+tb check . --fail-on-error --quiet
 ```
+
+**Implementation plan:** Start with check-media + update-types in the `tb` repo. Add DOI and large-file subcommands when Phase 3 reaches them. update-chat-types repo becomes dead code once `tb update-types` is working.
 
 ### Key design points
 
@@ -190,3 +199,5 @@ check-media check . --fail-on-error --quiet
 | `--dry-run` on fix | Safety valve, not the default. |
 | Pre-push hook uses `check` | Read-only gate. No fixes at push time. |
 | No refresh command | Nothing to refresh. Media list is always live. |
+| One tool, not five | Shared repo walk, header parsing, file rewrite, reporting. One install, one hook. |
+| Brian-readable errors | Pre-checks: net reachable, volumes mounted, inside a repo. No raw SSH errors. |
