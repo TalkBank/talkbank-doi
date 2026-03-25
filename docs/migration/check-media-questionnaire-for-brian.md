@@ -128,58 +128,63 @@ Is there something about how you use `check_media` today that frustrates you, or
 
 ---
 
-## Analysis
+## Analysis and Final Design (2026-03-24)
 
 ### What Brian wants
 
-Brian is a **command-line power user who wants speed and full automation**. He does NOT want:
-- File watchers, dashboards, or email notifications (Q1=D)
-- Manual fix workflows or confirmation dialogs (Q8=A)
-- To wait minutes for SSH `find` scans (Q2=B)
-
-He DOES want:
-- A fast command he runs on demand (Q1=D, Q2=B)
-- Automatic fixes with reporting (Q3=A, Q8=A)
-- Zero-error workflow: run → auto-fix → re-run → clean (Q6=A)
+Brian is a command-line power user who wants speed and full automation:
+- Automatic fixes with reporting, no confirmation dialogs (Q3=A, Q8=A)
+- Zero-error workflow: check → fix → confirm clean (Q6=A)
 - Pre-push hook as the safety gate for CHAT-side checks (Q4=A)
-- Flexible scope: all banks or one bank (Q7=C)
-- Both automatic notifications and manual checks available (Q10=C)
+- Checks everything by default; sometimes targets one bank (Q7=C)
+- Switches between machines (Q9=C)
 
-### Design implications
+### What we learned from further discussion
 
-1. **Manifest must be fast to refresh.** Media changes weekly (Q5=B). A `--refresh-if-stale` flag that auto-refreshes when the manifest is older than N hours means Brian rarely waits. When manifest is fresh, checks are instant (local only).
+1. **If a refresh button exists, Brian will press it every single run.** He previously wrote a 20-line shell script to run every command for every bank. Any manual step becomes a ritual.
+2. **Check and fix must be separate commands** — `check` is read-only (safe from anywhere), `fix` writes files (requires being inside a specific repo clone). Fixes never auto-commit or auto-push.
+3. **Net (media server) is not reliably reachable** from other machines — CMU VPN request is pending. This means manifest refresh via SSH is not a reliable user-facing operation.
 
-2. **Auto-fix is the default, not opt-in.** `check-media check` should fix corpus names, add `unlinked`, and create stubs automatically — then report what it did. Today's `--fixcorpus`, `--addunlinked`, `--newchat` flags become the default behavior. Add `--check-only` for read-only mode (CI, pre-push).
+### Decision: file watcher on net
 
-3. **Pre-push hook uses `--check-only`.** No fixes at push time — just reject if errors remain. Brian's workflow: run `check-media` (with auto-fix), verify clean, then push.
+The manifest freshness problem has only one solution that doesn't involve Brian doing something manually:
 
-4. **Stub creation reports what it created.** Q3=A with caveat: "tell me what is being created." After auto-creating stubs, print a summary like:
-   ```
-   Created 3 stub transcripts (notrans):
-     aphasia/English/GR/newfile1.cha
-     aphasia/English/GR/newfile2.cha
-     aphasia/English/GR/newfile3.cha
-   ```
+**A file watcher daemon on net watches `/Users/macw/media/` and keeps the manifest always current.** The manifest file is synced to a shared location (git repo, iCloud, or similar) so any machine can read it.
 
-5. **Q10=C means notifications are a future nice-to-have**, not a blocker. Brian wants manual checks to work well first. Automatic notifications can layer on top later (perhaps a cron on talkbank.org that runs check-media and emails Brian if new errors appear).
+Brian runs `check-media check` — it reads the always-fresh manifest. No refresh command. No staleness. No waiting.
 
-### Revised command design
+If the watcher dies, nothing breaks — `check` uses whatever manifest exists and warns if it's stale. The pre-push hook still works. This is a convenience optimization, not critical infrastructure.
+
+### Final command design
 
 ```bash
-# Brian's daily workflow (auto-fix + report):
-check-media run ~/data/aphasia-data/          # one bank
-check-media run ~/data/*-data/                # all banks
-check-media run ~/data/*-data/ --refresh      # force manifest refresh first
+# Brian's daily workflow:
+check-media check                              # check all repos, always instant
+check-media check --bank aphasia               # just one bank
 
-# Pre-push hook (read-only, gate):
+# Fix (from inside a data repo):
+cd ~/data/aphasia-data/
+check-media fix                                # fix everything fixable, report what changed
+check-media fix --dry-run                      # preview
+check-media fix --only stubs                   # just create stub .cha files
+git add . && git commit -m "fixes" && git push
+
+# Pre-push hook (read-only gate):
 check-media check . --fail-on-error --quiet
 
-# CI on talkbank.org (read-only, JSON):
-check-media check /home/macw/data/*-data/ --format json
-
-# Manifest management:
-check-media refresh-manifest
-check-media show-manifest --bank childes
+# Manifest (no user-facing commands — watcher handles it):
+check-media show-manifest                      # inspect if curious
 ```
 
-The key change: `run` is the new primary command (check + auto-fix + report). `check` becomes the read-only mode for hooks and CI.
+### Key design points
+
+| Decision | Rationale |
+|----------|-----------|
+| `check` defaults to all repos | Brian always checks everything. No path = all. |
+| No refresh command | Brian would use it every run, wasting minutes. Watcher keeps manifest fresh. |
+| `fix` runs from inside a repo | You can only fix where you have a clone. Like `git`. |
+| `fix` with no flags fixes everything | Brian's default is "fix all" (Q8=A). `--only` for targeted work. |
+| Every fix reports what it changed | Q3=A caveat: "tell me what is being created." |
+| `--dry-run` on fix | Safety valve, not the default. |
+| Pre-push hook uses `check` | Read-only gate. No fixes at push time. |
+| Watcher is advisory, not critical | If it dies, check warns about stale manifest. Pre-push hook still works. |
