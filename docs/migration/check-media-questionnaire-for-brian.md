@@ -1,7 +1,7 @@
 # check-media Workflow Questionnaire for Brian
 
-**Status:** Draft
-**Last updated:** 2026-03-24 14:15 EDT
+**Status:** Answered
+**Last updated:** 2026-03-24 14:30 EDT
 
 **Context:** We're rebuilding the media validation tool (`check_media`) as part of the git.talkbank.org decommission. Before we finalize the design, we want to make sure it fits how you actually work — not how we assume you work. Please pick the option closest to what you'd prefer for each question. If none fit, write in your own.
 
@@ -108,3 +108,78 @@
 ### Anything else?
 
 Is there something about how you use `check_media` today that frustrates you, or something you wish it could do that it can't? (Free-form — write as much or as little as you want.)
+
+---
+
+## Brian's Answers (2026-03-24)
+
+| Q | Answer | Summary |
+|---|--------|---------|
+| 1 | **D** | Keep running a command. Just make it work with new repos. |
+| 2 | **B** | Run a command per-bank, fast because manifest is already cached. |
+| 3 | **A** (with caveat) | Auto-create stubs, but tell me what was created. |
+| 4 | **A** | Pre-push hook is sufficient for broken `@Media`. |
+| 5 | **B** | Media changes a few times a week in batches. |
+| 6 | **A** | Zero errors: fix immediately, re-run to confirm clean. |
+| 7 | **C** | All banks after big reorg, one bank after focused work. |
+| 8 | **A** | Fully automatic fixes. Trust the tool. |
+| 9 | **C** | Switches between machines throughout the day. |
+| 10 | **C** | Both: automatic notifications + manual on-demand checks. |
+
+---
+
+## Analysis
+
+### What Brian wants
+
+Brian is a **command-line power user who wants speed and full automation**. He does NOT want:
+- File watchers, dashboards, or email notifications (Q1=D)
+- Manual fix workflows or confirmation dialogs (Q8=A)
+- To wait minutes for SSH `find` scans (Q2=B)
+
+He DOES want:
+- A fast command he runs on demand (Q1=D, Q2=B)
+- Automatic fixes with reporting (Q3=A, Q8=A)
+- Zero-error workflow: run → auto-fix → re-run → clean (Q6=A)
+- Pre-push hook as the safety gate for CHAT-side checks (Q4=A)
+- Flexible scope: all banks or one bank (Q7=C)
+- Both automatic notifications and manual checks available (Q10=C)
+
+### Design implications
+
+1. **Manifest must be fast to refresh.** Media changes weekly (Q5=B). A `--refresh-if-stale` flag that auto-refreshes when the manifest is older than N hours means Brian rarely waits. When manifest is fresh, checks are instant (local only).
+
+2. **Auto-fix is the default, not opt-in.** `check-media check` should fix corpus names, add `unlinked`, and create stubs automatically — then report what it did. Today's `--fixcorpus`, `--addunlinked`, `--newchat` flags become the default behavior. Add `--check-only` for read-only mode (CI, pre-push).
+
+3. **Pre-push hook uses `--check-only`.** No fixes at push time — just reject if errors remain. Brian's workflow: run `check-media` (with auto-fix), verify clean, then push.
+
+4. **Stub creation reports what it created.** Q3=A with caveat: "tell me what is being created." After auto-creating stubs, print a summary like:
+   ```
+   Created 3 stub transcripts (notrans):
+     aphasia/English/GR/newfile1.cha
+     aphasia/English/GR/newfile2.cha
+     aphasia/English/GR/newfile3.cha
+   ```
+
+5. **Q10=C means notifications are a future nice-to-have**, not a blocker. Brian wants manual checks to work well first. Automatic notifications can layer on top later (perhaps a cron on talkbank.org that runs check-media and emails Brian if new errors appear).
+
+### Revised command design
+
+```bash
+# Brian's daily workflow (auto-fix + report):
+check-media run ~/data/aphasia-data/          # one bank
+check-media run ~/data/*-data/                # all banks
+check-media run ~/data/*-data/ --refresh      # force manifest refresh first
+
+# Pre-push hook (read-only, gate):
+check-media check . --fail-on-error --quiet
+
+# CI on talkbank.org (read-only, JSON):
+check-media check /home/macw/data/*-data/ --format json
+
+# Manifest management:
+check-media refresh-manifest
+check-media show-manifest --bank childes
+```
+
+The key change: `run` is the new primary command (check + auto-fix + report). `check` becomes the read-only mode for hooks and CI.
